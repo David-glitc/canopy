@@ -1,0 +1,13 @@
+{
+  "name": "canopy-scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@metaplex-foundation/mpl-core": "^1.10.0",
+    "@metaplex-foundation/umi": "^1.0.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.0.0",
+    "@solana/web3.js": "^1.98.0",
+    "typescript": "^5.0.0"
+  }
+}

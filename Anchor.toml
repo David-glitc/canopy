@@ -1,0 +1,20 @@
+skip_local_validator = true
+
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+canopy = "9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf"
+canopy_futarchy = "BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "cargo test"
+
+[hooks]

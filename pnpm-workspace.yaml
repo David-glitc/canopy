@@ -1,0 +1,6 @@
+packages:
+  - "app"
+  - "packages/*"
+  - "keeper"
+  - "art/generator"
+  - "scripts"
