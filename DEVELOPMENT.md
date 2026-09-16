@@ -20,3 +20,21 @@
   `freezeDelegate` contains BigInt (log with a replacer).
 - Charter: `/home/david/canopy-charter.md` (sleek rewrite; Tessera corrected to
   pre-IPO/T-tokens; §12 = Core, Bubblegum deferred to Season 2).
+
+## 2026-09-17 — D2: Grove lifecycle proven (devnet, 6/6 PASS)
+
+- `canopy` now: `create_grove` (PDA + PDA-owned Token-2022 vault ATA),
+  `deposit` (checked transfer + ShareRecord + sealed Core Share, one tx),
+  `close_grove` (goal met), `cancel_grove` (deadline + underfunded),
+  `refund` (PDA-signed repay, double-refund guarded).
+- Key decisions: **raw `spl-token-2022 v11` + `spl-associated-token-account v8`
+  CPIs, not anchor-spl** (2.0-rc pulls a conflicting anchor-lang);
+  `no-entrypoint` features fix the SBF global-allocator conflict;
+  `transfer_checked` with client-passed decimals (token program enforces);
+  no account unpacking (transfer_checked + key checks suffice).
+- `scripts/prove-d2-groves.mjs`: Grove A funded 2.5 mUSDC → Closed;
+  Grove B expired → Cancelled → refund repaid exactly 0.5 mUSDC →
+  double refund rejected. Second depositor funded without faucet
+  (SOL + mUSDC from payer).
+- Registry live: mock Token-2022 mUSDC/mNVDA/mTSLA/mSPY; payer holds 11M mUSDC.
+- Repo: https://github.com/David-glitc/canopy (main, pushed).
