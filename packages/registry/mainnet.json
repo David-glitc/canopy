@@ -1,0 +1,19 @@
+{
+  "network": "mainnet-beta",
+  "tokenProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "quote": {
+    "symbol": "USDC",
+    "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "decimals": 6
+  },
+  "assets": [
+    {
+      "symbol": "SPYx",
+      "underlying": "SPY",
+      "mint": "XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W",
+      "decimals": 6,
+      "verified": "solana-compass listing, 2026-09-16"
+    }
+  ],
+  "note": "TODO: fill remaining xStock mints via scripts/fetch-xstocks.mjs (Backed public API) before the mainnet demo. Restrict the demo universe to liquid tickers routable on Jupiter."
+}

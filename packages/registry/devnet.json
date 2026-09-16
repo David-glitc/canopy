@@ -1,0 +1,30 @@
+{
+  "network": "devnet",
+  "tokenProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "quote": {
+    "symbol": "mUSDC",
+    "mint": "3PN7iGUrNyk6AgGkGRGx5mD9ftGRGWNJC3FRFkRRhLC5",
+    "decimals": 6
+  },
+  "assets": [
+    {
+      "symbol": "mNVDA",
+      "underlying": "NVDA",
+      "mint": "5pBXdxsQcXcv2BQqNtUXmEYNVahn2CgCPChjYimdoE5W",
+      "decimals": 6
+    },
+    {
+      "symbol": "mTSLA",
+      "underlying": "TSLA",
+      "mint": "A7fsAhtcj8Liqe74G2VSycqEJGzmatwaLuREH3cdLnkc",
+      "decimals": 6
+    },
+    {
+      "symbol": "mSPY",
+      "underlying": "SPY",
+      "mint": "6iqgXsPNzAvVxADEaTj6getvpf2VNZNHX9GY7FxcKFSD",
+      "decimals": 6
+    }
+  ],
+  "note": "Mock Token-2022 mints for devnet iteration. Payer holds 1M each. Mainnet uses real xStocks via Jupiter; see mainnet.json + scripts/fetch-xstocks.mjs."
+}
