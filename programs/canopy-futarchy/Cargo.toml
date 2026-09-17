@@ -1,7 +1,7 @@
 [package]
 name = "canopy-futarchy"
 version = "0.1.0"
-description = "Canopy futarchy sidecar: conditional vault + binary LMSR + TWAP finalize"
+description = "Canopy futarchy sidecar: conditional vault + binary CPMM + TWAP finalize"
 edition.workspace = true
 rust-version.workspace = true
 
@@ -21,6 +21,8 @@ custom-panic = []
 
 [dependencies]
 anchor-lang = "1.2.0"
+spl-associated-token-account = { version = "8.0.0", features = ["no-entrypoint"] }
+spl-token-2022 = { version = "11.0.0", features = ["no-entrypoint"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

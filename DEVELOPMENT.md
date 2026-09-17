@@ -38,3 +38,17 @@
   (SOL + mUSDC from payer).
 - Registry live: mock Token-2022 mUSDC/mNVDA/mTSLA/mSPY; payer holds 11M mUSDC.
 - Repo: https://github.com/David-glitc/canopy (main, pushed).
+
+## 2026-09-17 — D3: futarchy sidecar proven (devnet, 3/3 PASS)
+
+- `canopy-futarchy` now: `init_market` (proposer bonds collateral, split to
+  PASS+FAIL, seeds CPMM book), `split`/`merge` (1:1 collateral, merge allowed
+  post-finalize for pair reclaim), `swap` (CPMM + 30bps fee + TWAP crank),
+  `crank` (permissionless), `finalize` (TWAP > 1.0 = PASS; zero trades =
+  status quo FAILED), `redeem` (winners burn for 1:1 collateral, open-ended).
+- No sweep ix by design: no profit extraction, Grove funds untouched, winner
+  redemption never expires. Losers self-clean via direct token burn.
+- `scripts/prove-d3-futarchy.mjs`: Market 1 traded → PASS → redeem paid
+  exactly 730,236 (500k split + ~230k CPMM buy, as predicted); Market 2
+  silent → FAILED. CPMM + TWAP math confirmed on-chain.
+- Program: `canopy_futarchy` `BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k`.

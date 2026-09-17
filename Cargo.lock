@@ -502,6 +502,8 @@ name = "canopy-futarchy"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
+ "spl-associated-token-account",
+ "spl-token-2022",
 ]
 
 [[package]]
