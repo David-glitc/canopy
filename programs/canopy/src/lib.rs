@@ -28,6 +28,10 @@ const WEIGHT_ONE: u128 = 1_000_000_000_000_000_000;
 /// Multiplier band in bps (0.5x-2.0x), ported from Sherhood RevealEngine.
 const MULT_FLOOR: u64 = 5_000;
 const MULT_SPAN: u64 = 15_001;
+/// Instant-mint floor: $1.50 in 6-dec quote.
+const INSTANT_MIN: u64 = 1_500_000;
+/// Instant-mint protocol fee (100bps = 1%), all to treasury (no creator).
+const INSTANT_FEE_BPS: u64 = 100;
 /// SlotHashes sysvar ID (consensus-stable; bytes from solana-sdk-ids).
 const SLOT_HASHES_ID: Pubkey = Pubkey::new_from_array([
     6, 167, 213, 23, 25, 47, 10, 175, 198, 242, 101, 227, 251, 119, 204, 122, 218,
@@ -570,6 +574,209 @@ pub mod canopy {
         record.status = RECORD_CLAIMED;
         Ok(())
     }
+
+    /// One-time treasury setup for a quote mint (instant-mint fees land here).
+    pub fn init_treasury(ctx: Context<InitTreasury>) -> Result<()> {
+        require!(
+            ctx.accounts.quote_mint.owner == &TOKEN_2022_ID,
+            CanopyError::InvalidQuoteMint
+        );
+        let treasury_key = ctx.accounts.treasury.key();
+        let expected_vault =
+            spl_associated_token_account::get_associated_token_address_with_program_id(
+                &treasury_key,
+                &ctx.accounts.quote_mint.key(),
+                &TOKEN_2022_ID,
+            );
+        require!(
+            ctx.accounts.treasury_vault.key() == expected_vault,
+            CanopyError::VaultMismatch
+        );
+        invoke(
+            &spl_associated_token_account::instruction::create_associated_token_account(
+                &ctx.accounts.admin.key(),
+                &treasury_key,
+                &ctx.accounts.quote_mint.key(),
+                &TOKEN_2022_ID,
+            ),
+            &[
+                ctx.accounts.admin.to_account_info(),
+                ctx.accounts.treasury_vault.to_account_info(),
+                ctx.accounts.treasury.to_account_info(),
+                ctx.accounts.quote_mint.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.token_2022_program.to_account_info(),
+            ],
+        )?;
+        let t = &mut ctx.accounts.treasury;
+        t.authority = ctx.accounts.admin.key();
+        t.quote_mint = ctx.accounts.quote_mint.key();
+        t.vault = expected_vault;
+        t.bump = ctx.bumps.treasury;
+        Ok(())
+    }
+
+    /// Solo instant pull: solo grove + deposit + fee + revealed Core Share in
+    /// one tx. Solo weight is always 1e18 (Legendary band); visual DNA still
+    /// rolls from current entropy so pulls look unique. Instant-grade
+    /// randomness (execution slot unknowable at sign time) — documented.
+    pub fn instant_mint(
+        ctx: Context<InstantMint>,
+        nonce: u64,
+        amount: u64,
+        decimals: u8,
+        name: String,
+        uri: String,
+    ) -> Result<()> {
+        require!(amount >= INSTANT_MIN, CanopyError::BelowMin);
+        require!(name.len() <= 32, CanopyError::NameTooLong);
+        require!(uri.len() <= 200, CanopyError::UriTooLong);
+        require!(
+            ctx.accounts.quote_mint.owner == &TOKEN_2022_ID,
+            CanopyError::InvalidQuoteMint
+        );
+        require!(
+            ctx.accounts.quote_mint.key() == ctx.accounts.treasury.quote_mint,
+            CanopyError::MintMismatch
+        );
+        require!(
+            ctx.accounts.treasury_vault.key() == ctx.accounts.treasury.vault,
+            CanopyError::VaultMismatch
+        );
+
+        let fee = amount
+            .checked_mul(INSTANT_FEE_BPS)
+            .ok_or(CanopyError::MathError)?
+            / 10_000;
+        let net = amount.checked_sub(fee).ok_or(CanopyError::MathError)?;
+        require!(fee > 0 && net > 0, CanopyError::MathError);
+
+        let grove_key = ctx.accounts.grove.key();
+        let expected_vault =
+            spl_associated_token_account::get_associated_token_address_with_program_id(
+                &grove_key,
+                &ctx.accounts.quote_mint.key(),
+                &TOKEN_2022_ID,
+            );
+        require!(
+            ctx.accounts.vault.key() == expected_vault,
+            CanopyError::VaultMismatch
+        );
+        invoke(
+            &spl_associated_token_account::instruction::create_associated_token_account(
+                &ctx.accounts.payer.key(),
+                &grove_key,
+                &ctx.accounts.quote_mint.key(),
+                &TOKEN_2022_ID,
+            ),
+            &[
+                ctx.accounts.payer.to_account_info(),
+                ctx.accounts.vault.to_account_info(),
+                ctx.accounts.grove.to_account_info(),
+                ctx.accounts.quote_mint.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.token_2022_program.to_account_info(),
+            ],
+        )?;
+        // Fund vault (net) + treasury (fee) straight from payer.
+        invoke(
+            &spl_token_2022::instruction::transfer_checked(
+                &TOKEN_2022_ID,
+                &ctx.accounts.payer_ata.key(),
+                &ctx.accounts.quote_mint.key(),
+                &expected_vault,
+                &ctx.accounts.payer.key(),
+                &[],
+                net,
+                decimals,
+            )?,
+            &[
+                ctx.accounts.payer_ata.to_account_info(),
+                ctx.accounts.quote_mint.to_account_info(),
+                ctx.accounts.vault.to_account_info(),
+                ctx.accounts.payer.to_account_info(),
+            ],
+        )?;
+        invoke(
+            &spl_token_2022::instruction::transfer_checked(
+                &TOKEN_2022_ID,
+                &ctx.accounts.payer_ata.key(),
+                &ctx.accounts.quote_mint.key(),
+                &ctx.accounts.treasury_vault.key(),
+                &ctx.accounts.payer.key(),
+                &[],
+                fee,
+                decimals,
+            )?,
+            &[
+                ctx.accounts.payer_ata.to_account_info(),
+                ctx.accounts.quote_mint.to_account_info(),
+                ctx.accounts.treasury_vault.to_account_info(),
+                ctx.accounts.payer.to_account_info(),
+            ],
+        )?;
+
+        // Solo grove: fully funded + revealed by construction.
+        {
+            let grove = &mut ctx.accounts.grove;
+            grove.creator = ctx.accounts.payer.key();
+            grove.nonce = nonce;
+            grove.quote_mint = ctx.accounts.quote_mint.key();
+            grove.vault = expected_vault;
+            grove.goal = net;
+            grove.deadline = Clock::get()?
+                .unix_timestamp
+                .checked_add(3600)
+                .ok_or(CanopyError::MathError)?;
+            grove.min_deposit = net;
+            grove.total_deposited = net;
+            grove.share_count = 1;
+            grove.status = STATUS_REVEALED;
+            grove.bump = ctx.bumps.grove;
+        }
+        {
+            let record = &mut ctx.accounts.share_record;
+            record.grove = grove_key;
+            record.owner = ctx.accounts.payer.key();
+            record.deposit = net;
+            record.core_asset = ctx.accounts.asset.key();
+            record.index = 0;
+            record.revealed = true;
+            record.weight = WEIGHT_ONE as u64;
+            record.status = RECORD_ACTIVE;
+            record.bump = ctx.bumps.share_record;
+        }
+
+        // Visual DNA from current entropy (latest completed slot hash).
+        let slot_now = Clock::get()?.slot;
+        require!(slot_now > 0, CanopyError::MathError);
+        let entropy = slot_hash_for(
+            &ctx.accounts.slot_hashes.to_account_info(),
+            slot_now - 1,
+        )?;
+        let dna = hashv(&[
+            &entropy,
+            ctx.accounts.payer.key().as_ref(),
+            grove_key.as_ref(),
+        ])
+        .to_bytes();
+        let dna_u64 = u64::from_le_bytes(
+            dna[0..8].try_into().map_err(|_| CanopyError::MathError)?,
+        );
+
+        mint_instant_share_cpi(
+            &ctx.accounts.core_program.to_account_info(),
+            &ctx.accounts.asset.to_account_info(),
+            &ctx.accounts.payer.to_account_info(),
+            &ctx.accounts.config.to_account_info(),
+            &ctx.accounts.system_program.to_account_info(),
+            name,
+            uri,
+            net,
+            dna_u64,
+        )?;
+        Ok(())
+    }
 }
 
 /// Shared Core CPI: program PDA as update authority + plugin authority.
@@ -970,7 +1177,8 @@ pub struct Claim<'info> {
         bump = share_record.bump,
     )]
     pub share_record: Account<'info, ShareRecord>,
-    /// CHECK: must equal record.core_asset (verified in handler); burned via delegate.
+    /// CHECK: must equal record.core_asset (verified in handler); marked
+    /// claimed via Attributes update on claim (burn pending mainnet verify).
     #[account(mut)]
     pub core_asset: UncheckedAccount<'info>,
     #[account(seeds = [b"config"], bump)]
@@ -980,4 +1188,154 @@ pub struct Claim<'info> {
     #[account(address = TOKEN_2022_ID)]
     pub token_2022_program: UncheckedAccount<'info>,
     pub system_program: Program<'info, System>,
+}
+
+/// Mint an already-revealed solo Share (instant path). Solo weight is always
+/// WEIGHT_ONE; visual DNA rolls so pulls still look unique.
+fn mint_instant_share_cpi<'info>(
+    core_program: &SolanaAccountInfo<'info>,
+    asset: &SolanaAccountInfo<'info>,
+    payer: &SolanaAccountInfo<'info>,
+    update_authority: &SolanaAccountInfo<'info>,
+    system_program: &SolanaAccountInfo<'info>,
+    name: String,
+    uri: String,
+    deposit: u64,
+    dna: u64,
+) -> Result<()> {
+    require!(name.len() <= 32, CanopyError::NameTooLong);
+    require!(uri.len() <= 200, CanopyError::UriTooLong);
+    let plugins = vec![
+        PluginAuthorityPair {
+            plugin: Plugin::Attributes(Attributes {
+                attribute_list: vec![
+                    Attribute {
+                        key: "sealed".to_string(),
+                        value: "false".to_string(),
+                    },
+                    Attribute {
+                        key: "revealed".to_string(),
+                        value: "true".to_string(),
+                    },
+                    Attribute {
+                        key: "deposit_lamports".to_string(),
+                        value: deposit.to_string(),
+                    },
+                    Attribute {
+                        key: "weight_1e18".to_string(),
+                        value: WEIGHT_ONE.to_string(),
+                    },
+                    Attribute {
+                        key: "rarity".to_string(),
+                        value: "Legendary".to_string(),
+                    },
+                    Attribute {
+                        key: "dna".to_string(),
+                        value: dna.to_string(),
+                    },
+                    Attribute {
+                        key: "instant".to_string(),
+                        value: "true".to_string(),
+                    },
+                ],
+            }),
+            authority: Some(PluginAuthority::UpdateAuthority),
+        },
+        PluginAuthorityPair {
+            plugin: Plugin::Royalties(Royalties {
+                basis_points: 250,
+                creators: vec![Creator {
+                    address: update_authority.key(),
+                    percentage: 100,
+                }],
+                rule_set: RuleSet::None,
+            }),
+            authority: Some(PluginAuthority::UpdateAuthority),
+        },
+        PluginAuthorityPair {
+            plugin: Plugin::FreezeDelegate(FreezeDelegate { frozen: false }),
+            authority: Some(PluginAuthority::UpdateAuthority),
+        },
+        PluginAuthorityPair {
+            plugin: Plugin::BurnDelegate(BurnDelegate {}),
+            authority: Some(PluginAuthority::UpdateAuthority),
+        },
+    ];
+    CreateV1CpiBuilder::new(core_program)
+        .asset(asset)
+        .payer(payer)
+        .owner(Some(payer))
+        .update_authority(Some(update_authority))
+        .system_program(system_program)
+        .data_state(DataState::AccountState)
+        .name(name)
+        .uri(uri)
+        .plugins(plugins)
+        .invoke()?;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct InitTreasury<'info> {
+    #[account(mut)]
+    pub admin: Signer<'info>,
+    #[account(
+        init,
+        payer = admin,
+        space = 8 + Treasury::SIZE,
+        seeds = [b"treasury"],
+        bump
+    )]
+    pub treasury: Account<'info, Treasury>,
+    #[account(mut)]
+    pub treasury_vault: UncheckedAccount<'info>,
+    pub quote_mint: UncheckedAccount<'info>,
+    #[account(address = TOKEN_2022_ID)]
+    pub token_2022_program: UncheckedAccount<'info>,
+    #[account(address = ATA_ID)]
+    pub associated_token_program: UncheckedAccount<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(nonce: u64)]
+pub struct InstantMint<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(
+        init,
+        payer = payer,
+        space = 8 + Grove::SIZE,
+        seeds = [b"grove", payer.key().as_ref(), &nonce.to_le_bytes()],
+        bump
+    )]
+    pub grove: Account<'info, Grove>,
+    #[account(mut)]
+    pub vault: UncheckedAccount<'info>,
+    pub treasury: Account<'info, Treasury>,
+    #[account(mut)]
+    pub treasury_vault: UncheckedAccount<'info>,
+    pub quote_mint: UncheckedAccount<'info>,
+    #[account(mut)]
+    pub payer_ata: UncheckedAccount<'info>,
+    #[account(
+        init,
+        payer = payer,
+        space = 8 + ShareRecord::SIZE,
+        seeds = [b"share", grove.key().as_ref(), payer.key().as_ref(), &[0u8, 0u8, 0u8, 0u8]],
+        bump
+    )]
+    pub share_record: Account<'info, ShareRecord>,
+    #[account(mut, signer)]
+    pub asset: UncheckedAccount<'info>,
+    #[account(seeds = [b"config"], bump)]
+    pub config: Account<'info, Config>,
+    #[account(address = CORE_PROGRAM_ID)]
+    pub core_program: UncheckedAccount<'info>,
+    #[account(address = TOKEN_2022_ID)]
+    pub token_2022_program: UncheckedAccount<'info>,
+    #[account(address = ATA_ID)]
+    pub associated_token_program: UncheckedAccount<'info>,
+    pub system_program: Program<'info, System>,
+    pub slot_hashes: UncheckedAccount<'info>,
 }

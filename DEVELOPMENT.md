@@ -73,6 +73,19 @@
 - No Grove/Record migrations (additive logic only); groves capped at 20
   Shares (single-tx reveal fits 64-account limit).
 
+## 2026-09-17 — D5: instant mint + treasury (devnet, 6/6 PASS)
+
+- `init_treasury` (one-time PDA + quote vault) and `instant_mint`: solo grove
+  + net funding + 1% fee to treasury + already-revealed Core Share, one tx.
+  Solo weight fixed 1e18 (Legendary); visual DNA rolls from current entropy
+  (execution slot unknowable at sign time; simulation cannot preview a future
+  slot — documented instant-grade randomness).
+- Proven: solo Revealed with net 1.98M, record 100%, Legendary + dna seed,
+  treasury +20k, instant claim paid full net. Standard `claim` path works
+  unchanged on instant Shares.
+- Keeper crank (auto close/commit/reveal) deferred to automation batch;
+  manual keeper calls proven via scripts.
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald

@@ -74,3 +74,16 @@ pub struct RevealState {
 impl RevealState {
     pub const SIZE: usize = 32 + 8 + 32 + 1 + 1;
 }
+
+/// Fee treasury (instant-mint cut; pool fee sweep lands here in D5+).
+#[account]
+pub struct Treasury {
+    pub authority: Pubkey,
+    pub quote_mint: Pubkey,
+    pub vault: Pubkey,
+    pub bump: u8,
+}
+
+impl Treasury {
+    pub const SIZE: usize = 32 + 32 + 32 + 1;
+}
