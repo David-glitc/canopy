@@ -86,6 +86,21 @@
 - Keeper crank (auto close/commit/reveal) deferred to automation batch;
   manual keeper calls proven via scripts.
 
+## 2026-09-17 — D6: card-engine + layer set + compositor (7/7 tests, visual QA)
+
+- `packages/card-engine` (zero-dep, isomorphic): cyrb53/mulberry32 DNA,
+  `traits.json`, `composeCard(seed, economicRarity)` with dual rarity
+  (economic from chain + cosmetic DNA-rolled frame). Pool DNA =
+  hash(revealSeed || index) (no program change); instant DNA from attribute.
+- 27 ingredients, 9 slots: 14 pixel bases (72-96 col posters from
+  download.zip refs) + 6 vector rarity frames + seal + 2 sigils +
+  procedural wash/vignette/grain/rays/spores. Frames fixed to transparent
+  art windows (opaque bg bug caught on first sheet).
+- `art/generator/render-card.mjs` (sharp) composites spec → 800×1200 PNG.
+  Sample sheet verifies Masterwork/Elite/Mythic/Ascendant end-to-end
+  (gems, rays, sigil, holo trim all live). Metadata HTTP route lands with
+  the D7 app.
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald

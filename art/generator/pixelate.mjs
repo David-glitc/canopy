@@ -6,15 +6,20 @@ import { Resvg } from "@resvg/resvg-js";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, basename } from "node:path";
 
-const COLS = 72;
-const ROWS = 108; // 2:3 card
-const LEVELS = 5; // per-channel posterize levels
+const DEF_COLS = 72;
+const DEF_ROWS = 108; // 2:3 card
+const DEF_LEVELS = 5; // per-channel posterize levels
 const OUT_W = 800;
 
-const quant = (v) => Math.round((v / 255) * (LEVELS - 1)) * Math.round(255 / (LEVELS - 1));
+const makeQuant = (levels) => (v) =>
+  Math.round((v / 255) * (levels - 1)) * Math.round(255 / (levels - 1));
 const hex = (r, g, b) => `#${[r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")}`;
 
-export async function pixelate(inputJpeg, outPng, outPalette) {
+export async function pixelate(inputJpeg, outPng, outPalette, opts = {}) {
+  const COLS = opts.cols ?? DEF_COLS;
+  const ROWS = opts.rows ?? DEF_ROWS;
+  const LEVELS = opts.levels ?? DEF_LEVELS;
+  const quant = makeQuant(LEVELS);
   const { data } = await sharp(inputJpeg)
     .resize(COLS, ROWS, { fit: "cover", kernel: "lanczos3" })
     .median(2)
@@ -56,6 +61,12 @@ export async function pixelate(inputJpeg, outPng, outPalette) {
   return { png: outPng, palette };
 }
 
-// CLI: node pixelate.mjs <in.jpg> <out.png> [palette.json]
-const [input, output, pal] = process.argv.slice(2);
-if (input && output) await pixelate(input, output, pal);
+// CLI: node pixelate.mjs <in.jpg> <out.png> [palette.json] [cols] [rows] [levels]
+const [input, output, pal, cols, rows, levels] = process.argv.slice(2);
+if (input && output) {
+  const opts = {};
+  if (cols) opts.cols = parseInt(cols, 10);
+  if (rows) opts.rows = parseInt(rows, 10);
+  if (levels) opts.levels = parseInt(levels, 10);
+  await pixelate(input, output, pal, opts);
+}

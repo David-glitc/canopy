@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200" viewBox="0 0 800 1200"><defs><radialGradient id="pod" cx=".5" cy=".46" r=".7">
+      <stop offset="0" stop-color="#1d3a24"/><stop offset=".6" stop-color="#0b1a10"/>
+      <stop offset="1" stop-color="#030705"/></radialGradient>
+      <linearGradient id="crack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd75e"/><stop offset="1" stop-color="#8a5c14"/></linearGradient></defs><rect x="0" y="0" width="800" height="1200" rx="44" fill="url(#pod)"/><ellipse cx="400" cy="552" rx="215" ry="290" fill="none" stroke="url(#crack)" stroke-width="10" opacity=".9"/><ellipse cx="400" cy="552" rx="150" ry="215" fill="none" stroke="url(#crack)" stroke-width="5" opacity=".7"/><polygon points="400,480 452,552 400,624 348,552" fill="none" stroke="url(#crack)" stroke-width="7"/><circle cx="400" cy="552" r="16" fill="#ffd75e" opacity=".95"/><rect x="26" y="26" width="748" height="1148" rx="30" fill="none" stroke="#3d5a34" stroke-width="10"/></svg>

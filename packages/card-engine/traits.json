@@ -1,0 +1,46 @@
+{
+  "bases": [
+    { "id": "guardian", "file": "pixel/body-guardian.png", "weight": 10 },
+    { "id": "fantasy-creature", "file": "pixel/body-fantasy-creature.png", "weight": 10 },
+    { "id": "fantasy-asset", "file": "pixel/body-fantasy-asset.png", "weight": 10 },
+    { "id": "creature", "file": "pixel/body-creature.png", "weight": 10 },
+    { "id": "game-asset", "file": "pixel/body-game-asset.png", "weight": 10 },
+    { "id": "nft-asset", "file": "pixel/body-nft-asset.png", "weight": 10 },
+    { "id": "character", "file": "pixel/body-character.png", "weight": 10 },
+    { "id": "prismatic", "file": "pixel/aura.png", "weight": 6 },
+    { "id": "aura-2", "file": "pixel/aura-2.png", "weight": 6 },
+    { "id": "aura-3", "file": "pixel/aura-3.png", "weight": 6 },
+    { "id": "spore", "file": "pixel/trait-spore.png", "weight": 6 },
+    { "id": "roots", "file": "pixel/trait-roots.png", "weight": 6 },
+    { "id": "pod", "file": "pixel/trait-pod.png", "weight": 3 },
+    { "id": "bark", "file": "pixel/trait-bark.png", "weight": 3 }
+  ],
+  "cosmetic": [
+    { "grade": "Forged", "weight": 600 },
+    { "grade": "Refined", "weight": 250 },
+    { "grade": "Masterwork", "weight": 100 },
+    { "grade": "Elite", "weight": 40 },
+    { "grade": "Mythic", "weight": 9 },
+    { "grade": "Ascendant", "weight": 1 }
+  ],
+  "washes": {
+    "Forged": "#5a2f18",
+    "Refined": "#6b4e26",
+    "Masterwork": "#5f6f5a",
+    "Elite": "#0e5c46",
+    "Mythic": "#7a5c14",
+    "Ascendant": "#5c3df0"
+  },
+  "frames": {
+    "Forged": "vector/frame-forged.svg",
+    "Refined": "vector/frame-refined.svg",
+    "Masterwork": "vector/frame-masterwork.svg",
+    "Elite": "vector/frame-elite.svg",
+    "Mythic": "vector/frame-mythic.svg",
+    "Ascendant": "vector/frame-ascendant.svg"
+  },
+  "sigils": {
+    "leaf": "vector/sigil-leaf.svg",
+    "star": "vector/sigil-star.svg"
+  }
+}
