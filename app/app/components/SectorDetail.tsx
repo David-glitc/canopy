@@ -5,7 +5,6 @@ import {
   ComputeBudgetProgram,
   Keypair,
   PublicKey,
-  SystemProgram,
   Transaction,
 } from "@solana/web3.js";
 import {
@@ -240,17 +239,65 @@ export default function SectorDetail({ address }: { address: string }) {
   async function claimRec(r: RecRow) {
     if (!publicKey || !grove) return;
     await run("Claiming…", async () => {
-      const ix = buildClaim({
-        owner: publicKey,
-        grove: grovePk,
-        nonce: grove.nonce,
-        index: r.index,
-        vault: new PublicKey(grove.vault),
-        ownerAta: ata(MUSDC, publicKey),
-        record: new PublicKey(r.address),
-        coreAsset: new PublicKey(r.coreAsset),
-      });
-      const sig = await sendTransaction(new Transaction().add(ix), connection);
+      const ownerAta = ata(MUSDC, publicKey);
+      const ixs = [];
+      if ((await connection.getAccountInfo(ownerAta)) === null) {
+        ixs.push(
+          createAssociatedTokenAccountInstruction(
+            publicKey,
+            ownerAta,
+            publicKey,
+            MUSDC,
+            TOKEN_2022_PROGRAM_ID
+          )
+        );
+      }
+      ixs.push(
+        buildClaim({
+          owner: publicKey,
+          grove: grovePk,
+          nonce: grove.nonce,
+          index: r.index,
+          vault: new PublicKey(grove.vault),
+          ownerAta,
+          record: new PublicKey(r.address),
+          coreAsset: new PublicKey(r.coreAsset),
+        })
+      );
+      const sig = await sendTransaction(new Transaction().add(...ixs), connection);
+      await connection.confirmTransaction(sig, "confirmed");
+    });
+  }
+
+  async function refundRec(r: RecRow) {
+    if (!publicKey || !grove) return;
+    await run("Refunding…", async () => {
+      const ownerAta = ata(MUSDC, publicKey);
+      const ixs = [];
+      if ((await connection.getAccountInfo(ownerAta)) === null) {
+        ixs.push(
+          createAssociatedTokenAccountInstruction(
+            publicKey,
+            ownerAta,
+            publicKey,
+            MUSDC,
+            TOKEN_2022_PROGRAM_ID
+          )
+        );
+      }
+      ixs.push(
+        buildRefund({
+          depositor: publicKey,
+          grove: grovePk,
+          creator: creatorPk,
+          nonce: grove.nonce,
+          index: r.index,
+          vault: new PublicKey(grove.vault),
+          depositorAta: ownerAta,
+          record: new PublicKey(r.address),
+        })
+      );
+      const sig = await sendTransaction(new Transaction().add(...ixs), connection);
       await connection.confirmTransaction(sig, "confirmed");
     });
   }
@@ -410,7 +457,9 @@ export default function SectorDetail({ address }: { address: string }) {
                       </button>
                     )}
                     {grove.status === 2 && r.status === 0 && (
-                      <span className="font-mono2 text-xs text-[var(--canopy-muted)]">refund via owner flow</span>
+                      <button onClick={() => refundRec(r)} disabled={busy !== null} className="btn-ghost px-4 py-1.5 text-xs disabled:opacity-40">
+                        Refund
+                      </button>
                     )}
                   </div>
                 ))}

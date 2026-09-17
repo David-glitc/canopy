@@ -57,7 +57,7 @@ export async function fetchShare(
     );
     const connection = new Connection(RPC, "confirmed");
     const info = await connection.getAccountInfo(revealPda);
-    if (info && info.data.length >= 80) {
+    if (info && info.data.length >= 82 && info.data[80] === 1) {
       const seedHex = Buffer.from(info.data.subarray(48, 80)).toString("hex");
       seedStr = `pool:${seedHex}:${index}`;
     }

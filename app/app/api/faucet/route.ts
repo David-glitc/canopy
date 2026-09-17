@@ -52,7 +52,6 @@ export async function POST(req: NextRequest) {
   if (Date.now() - last < COOLDOWN_MS) {
     return NextResponse.json({ error: "cooldown: try again in a few minutes" }, { status: 429 });
   }
-  seen.set(key, Date.now());
 
   try {
     const connection = new Connection(RPC, "confirmed");
@@ -91,6 +90,7 @@ export async function POST(req: NextRequest) {
       new Transaction().add(...ixs),
       [faucet]
     );
+    seen.set(key, Date.now());
     return NextResponse.json({ ok: true, sig, musdc: DRIP_USDC / 1e6, sol: DRIP_SOL / 1e9 });
   } catch (e) {
     return NextResponse.json(

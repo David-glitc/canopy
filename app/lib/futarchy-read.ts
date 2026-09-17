@@ -35,7 +35,7 @@ export function parseMarket(address: string, data: Uint8Array): MarketData {
     passed: data[o + 17] === 1,
     passReserve: u64at(o + 18),
     failReserve: u64at(o + 26),
-    tradeCount: u64at(o + 50),
+    tradeCount: u64at(o + 58),
   };
 }
 

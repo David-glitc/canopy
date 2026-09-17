@@ -13,14 +13,14 @@ const TRACKS = [
     kicker: "02 / INSTANT",
     title: "Solo pull. Instant reveal.",
     body: "From $1.50: your own micro-vault, minted and revealed in one transaction. Same engine, same real backing, zero waiting. Fee 1% to the treasury.",
-    cta: "Instant coming online",
+    cta: "/instant",
   },
   {
     id: "shop",
     kicker: "03 / SHOP",
     title: "Trade cipher-keys.",
     body: "Revealed Shares trade with their claim attached. History compounds on-chain — crash survivors and cold-storage keys carry their scars in the open.",
-    cta: "Shop coming online",
+    cta: "/shop",
   },
 ];
 
@@ -79,9 +79,15 @@ export default function Home() {
             <p className="mt-4 max-w-2xl leading-relaxed text-[var(--canopy-muted)]">
               {t.body}
             </p>
-            <span className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-xs text-[var(--canopy-muted)]">
-              {t.cta}
-            </span>
+            {typeof t.cta === "string" && t.cta.startsWith("/") ? (
+              <a href={t.cta} className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-xs text-[var(--canopy-muted)] hover:border-[var(--canopy-green)] hover:text-[var(--canopy-text)]">
+                {t.cta === "/shop" ? "Enter Shop" : t.cta}
+              </a>
+            ) : (
+              <span className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-xs text-[var(--canopy-muted)]">
+                {t.cta}
+              </span>
+            )}
           </div>
         </section>
       ))}
