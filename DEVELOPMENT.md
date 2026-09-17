@@ -113,6 +113,17 @@
   roles; 8 sectors; Diamond Roots → Cold Storage. Charter:
   `/home/david/canopy-charter.md`.
 
+## 2026-09-17 — D7 app shell (Next 16 build green)
+
+- `app/` (Next 16.2.10, React 19, Tailwind 4, Solana wallet-adapter):
+  black + Solana-gradient system, cipher mark header/footer, wallet connect
+  (mount-guarded), live devnet ProgramStatus (slot + program executables +
+  explorer links), hero + Sectors/Instant/Shop tracks + Doctrine. `/`
+  prerenders clean (SSR-safe).
+- Brand assets copied to `app/public` (mark/logo/favicon/touch).
+- Surfaces (pools, shop, people, leaderboard, rip ritual, metadata route)
+  land incrementally on this shell.
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald
