@@ -3,7 +3,7 @@ import WalletButton from "./WalletButton";
 const LINKS = [
   { href: "#sectors", label: "Sectors" },
   { href: "#instant", label: "Instant" },
-  { href: "#shop", label: "Shop" },
+  { href: "/shop", label: "Shop" },
   { href: "#doctrine", label: "Doctrine" },
 ];
 
