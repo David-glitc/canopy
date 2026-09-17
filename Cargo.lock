@@ -493,6 +493,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "mpl-core",
+ "solana-keccak-hasher",
  "spl-associated-token-account",
  "spl-token-2022",
 ]

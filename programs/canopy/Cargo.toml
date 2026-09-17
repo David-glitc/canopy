@@ -22,6 +22,7 @@ custom-panic = []
 [dependencies]
 anchor-lang = "1.2.0"
 mpl-core = "0.12.1"
+solana-keccak-hasher = "3"
 spl-associated-token-account = { version = "8.0.0", features = ["no-entrypoint"] }
 spl-token-2022 = { version = "11.0.0", features = ["no-entrypoint"] }
 

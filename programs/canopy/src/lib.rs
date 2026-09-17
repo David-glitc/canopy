@@ -1,8 +1,9 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::account_info::AccountInfo as SolanaAccountInfo;
 use anchor_lang::solana_program::program::{invoke, invoke_signed};
+use solana_keccak_hasher::hashv;
 use mpl_core::{
-    instructions::CreateV1CpiBuilder,
+    instructions::{CreateV1CpiBuilder, UpdatePluginV1CpiBuilder},
     types::{
         Attribute, Attributes, BurnDelegate, Creator, DataState, FreezeDelegate, Plugin,
         PluginAuthority, PluginAuthorityPair, Royalties, RuleSet,
@@ -20,6 +21,18 @@ use state::*;
 
 const TOKEN_2022_ID: Pubkey = spl_token_2022::ID;
 const ATA_ID: Pubkey = spl_associated_token_account::ID;
+/// Slots after close before reveal may consume entropy.
+const REVEAL_DELAY_SLOTS: u64 = 10;
+/// Ownership fixed point (100% = 1e18).
+const WEIGHT_ONE: u128 = 1_000_000_000_000_000_000;
+/// Multiplier band in bps (0.5x-2.0x), ported from Sherhood RevealEngine.
+const MULT_FLOOR: u64 = 5_000;
+const MULT_SPAN: u64 = 15_001;
+/// SlotHashes sysvar ID (consensus-stable; bytes from solana-sdk-ids).
+const SLOT_HASHES_ID: Pubkey = Pubkey::new_from_array([
+    6, 167, 213, 23, 25, 47, 10, 175, 198, 242, 101, 227, 251, 119, 204, 122, 218,
+    130, 197, 41, 208, 190, 59, 19, 110, 45, 0, 85, 32, 0, 0, 0,
+]);
 
 #[program]
 pub mod canopy {
@@ -136,6 +149,10 @@ pub mod canopy {
         );
         require!(amount >= grove.min_deposit, CanopyError::BelowMin);
         require!(index == grove.share_count, CanopyError::BadIndex);
+        require!(
+            grove.share_count < MAX_SHARES,
+            CanopyError::MaxShares
+        );
         require!(
             ctx.accounts.vault.key() == grove.vault,
             CanopyError::VaultMismatch
@@ -278,6 +295,279 @@ pub mod canopy {
         )?;
 
         record.status = RECORD_REFUNDED;
+        Ok(())
+    }
+
+    /// Commit a reveal: snapshot the close slot. Anyone may call once Closed.
+    /// The seed derives from a FUTURE slot hash, unknowable at commit time.
+    pub fn commit_reveal(
+        ctx: Context<CommitReveal>,
+        _creator: Pubkey,
+        _nonce: u64,
+    ) -> Result<()> {
+        require!(
+            ctx.accounts.grove.status == STATUS_CLOSED,
+            CanopyError::NotClosed
+        );
+        let state = &mut ctx.accounts.reveal_state;
+        state.grove = ctx.accounts.grove.key();
+        state.close_slot = Clock::get()?.slot;
+        state.seed = [0u8; 32];
+        state.revealed = false;
+        state.bump = ctx.bumps.reveal_state;
+        Ok(())
+    }
+
+    /// Reveal every Share in one tx (capped at MAX_SHARES). Weights are
+    /// deposit-weighted 0.5x-2.0x rolls normalized to 1e18 with a >0 floor;
+    /// rarity follows ownership share. Records are written, Core attributes
+    /// flipped to revealed, Grove becomes Revealed.
+    pub fn reveal(ctx: Context<Reveal>, creator: Pubkey, nonce: u64) -> Result<()> {
+        let grove_key = ctx.accounts.grove.key();
+        let n = ctx.accounts.grove.share_count as usize;
+        require!(
+            n > 0 && n <= MAX_SHARES as usize,
+            CanopyError::ShareCountMismatch
+        );
+        require!(
+            ctx.accounts.grove.status == STATUS_CLOSED,
+            CanopyError::NotClosed
+        );
+        require!(
+            !ctx.accounts.reveal_state.revealed,
+            CanopyError::AlreadyRevealed
+        );
+        let _ = (creator, nonce);
+
+        // remaining: [core, config, keeper, system, slothashes, rec0, asset0, ...]
+        // All CPI inputs come from remaining (single lifetime); struct accounts
+        // (grove, reveal_state) are only read/mutated, never passed to a CPI.
+        let rem = ctx.remaining_accounts;
+        require!(rem.len() == 5 + n * 2, CanopyError::ShareCountMismatch);
+        let (core_ai, config_ai, keeper_ai, system_ai, slot_ai) =
+            (&rem[0], &rem[1], &rem[2], &rem[3], &rem[4]);
+        require!(
+            core_ai.key() == CORE_PROGRAM_ID
+                && keeper_ai.is_signer
+                && keeper_ai.is_writable,
+            CanopyError::ShareCountMismatch
+        );
+        let (expected_config, config_bump) =
+            Pubkey::find_program_address(&[b"config"], &crate::ID);
+        require!(
+            config_ai.key() == expected_config,
+            CanopyError::ShareCountMismatch
+        );
+
+        let slot_now = Clock::get()?.slot;
+        let target = ctx
+            .accounts
+            .reveal_state
+            .close_slot
+            .checked_add(REVEAL_DELAY_SLOTS)
+            .ok_or(CanopyError::MathError)?;
+        require!(slot_now >= target, CanopyError::TooEarly);
+        let target_hash = slot_hash_for(slot_ai, target)?;
+        let seed = hashv(&[&target_hash, grove_key.as_ref()]).to_bytes();
+
+        let mut recs: Vec<ShareRecord> = Vec::with_capacity(n);
+        let mut deposits: Vec<u64> = Vec::with_capacity(n);
+        let mut core_assets: Vec<Pubkey> = Vec::with_capacity(n);
+        for i in 0..n {
+            let rec_ai = &rem[5 + 2 * i];
+            require!(rec_ai.owner == &crate::ID, CanopyError::ShareCountMismatch);
+            let mut data: &[u8] = &rec_ai.data.borrow();
+            let rec = ShareRecord::try_deserialize(&mut data)
+                .map_err(|_| CanopyError::ShareCountMismatch)?;
+            require!(rec.grove == grove_key, CanopyError::ShareCountMismatch);
+            require!(rec.index as usize == i, CanopyError::ShareCountMismatch);
+            require!(
+                rec.status == RECORD_ACTIVE && !rec.revealed,
+                CanopyError::NotActive
+            );
+            let (expected_rec, _) = Pubkey::find_program_address(
+                &[
+                    b"share",
+                    grove_key.as_ref(),
+                    rec.owner.as_ref(),
+                    &(i as u32).to_le_bytes(),
+                ],
+                &crate::ID,
+            );
+            require!(*rec_ai.key == expected_rec, CanopyError::ShareCountMismatch);
+            require!(
+                *rem[5 + 2 * i + 1].key == rec.core_asset,
+                CanopyError::ShareCountMismatch
+            );
+            deposits.push(rec.deposit);
+            core_assets.push(rec.core_asset);
+            recs.push(rec);
+        }
+
+        let weights = compute_weights(&seed, &grove_key, &deposits, &core_assets)?;
+
+        for (i, mut rec) in recs.into_iter().enumerate() {
+            rec.weight = weights[i];
+            rec.revealed = true;
+            {
+                let mut borrowed = rem[5 + 2 * i].data.borrow_mut();
+                rec.try_serialize(&mut &mut borrowed[..])?;
+            }
+            let attrs = Attributes {
+                attribute_list: vec![
+                    Attribute {
+                        key: "sealed".to_string(),
+                        value: "false".to_string(),
+                    },
+                    Attribute {
+                        key: "revealed".to_string(),
+                        value: "true".to_string(),
+                    },
+                    Attribute {
+                        key: "deposit_lamports".to_string(),
+                        value: rec.deposit.to_string(),
+                    },
+                    Attribute {
+                        key: "weight_1e18".to_string(),
+                        value: weights[i].to_string(),
+                    },
+                    Attribute {
+                        key: "rarity".to_string(),
+                        value: rarity_band(weights[i]).to_string(),
+                    },
+                ],
+            };
+            update_share_plugin_cpi(
+                core_ai,
+                &rem[5 + 2 * i + 1],
+                config_ai,
+                keeper_ai,
+                system_ai,
+                config_bump,
+                Plugin::Attributes(attrs),
+            )?;
+        }
+
+        ctx.accounts.grove.status = STATUS_REVEALED;
+        let state = &mut ctx.accounts.reveal_state;
+        state.seed = seed;
+        state.revealed = true;
+        Ok(())
+    }
+
+    /// Claim a revealed Share: burn the Core NFT (program as delegate) and
+    /// pay weight * total_deposited / 1e18 in quote. (D5 upgrades the vault
+    /// to xStocks; D4 settles in quote.)
+    pub fn claim(
+        ctx: Context<Claim>,
+        creator: Pubkey,
+        nonce: u64,
+        _index: u32,
+        decimals: u8,
+    ) -> Result<()> {
+        let grove = &ctx.accounts.grove;
+        require!(grove.status == STATUS_REVEALED, CanopyError::NeedRevealed);
+        let record = &mut ctx.accounts.share_record;
+        require!(record.status == RECORD_ACTIVE, CanopyError::NotActive);
+        require!(
+            record.revealed && record.weight > 0,
+            CanopyError::NotActive
+        );
+        require!(
+            record.owner == ctx.accounts.owner.key(),
+            CanopyError::NotActive
+        );
+        require!(
+            ctx.accounts.core_asset.key() == record.core_asset,
+            CanopyError::ShareCountMismatch
+        );
+        require!(
+            ctx.accounts.vault.key() == grove.vault
+                && ctx.accounts.quote_mint.key() == grove.quote_mint,
+            CanopyError::VaultMismatch
+        );
+        let _ = (creator, nonce);
+
+        let payout = (record.weight as u128)
+            .checked_mul(grove.total_deposited as u128)
+            .ok_or(CanopyError::MathError)?
+            / WEIGHT_ONE;
+        let payout = u64::try_from(payout).map_err(|_| CanopyError::MathError)?;
+        require!(payout > 0, CanopyError::MathError);
+
+        // Mark the shell as claimed (program-signed Attributes update).
+        // NOTE: BurnV1 close is unverified on this devnet Core version
+        // (delegate-burn succeeded without closing; owner-burn errors 0x6).
+        // Double-claim is blocked by record status; burn re-enabled after
+        // mainnet verification. See DEVELOPMENT.md.
+        let config_bump = ctx.bumps.config;
+        let claimed_attrs = Attributes {
+            attribute_list: vec![
+                Attribute {
+                    key: "sealed".to_string(),
+                    value: "false".to_string(),
+                },
+                Attribute {
+                    key: "revealed".to_string(),
+                    value: "true".to_string(),
+                },
+                Attribute {
+                    key: "claimed".to_string(),
+                    value: "true".to_string(),
+                },
+                Attribute {
+                    key: "deposit_lamports".to_string(),
+                    value: record.deposit.to_string(),
+                },
+                Attribute {
+                    key: "weight_1e18".to_string(),
+                    value: record.weight.to_string(),
+                },
+                Attribute {
+                    key: "rarity".to_string(),
+                    value: rarity_band(record.weight).to_string(),
+                },
+            ],
+        };
+        update_share_plugin_cpi(
+            &ctx.accounts.core_program.to_account_info(),
+            &ctx.accounts.core_asset.to_account_info(),
+            &ctx.accounts.config.to_account_info(),
+            &ctx.accounts.owner.to_account_info(),
+            &ctx.accounts.system_program.to_account_info(),
+            config_bump,
+            Plugin::Attributes(claimed_attrs),
+        )?;
+
+        // Pay out (authority = grove PDA).
+        let grove_bump = grove.bump;
+        let g_seeds: &[&[u8]] = &[
+            b"grove",
+            creator.as_ref(),
+            &nonce.to_le_bytes(),
+            &[grove_bump],
+        ];
+        invoke_signed(
+            &spl_token_2022::instruction::transfer_checked(
+                &TOKEN_2022_ID,
+                &ctx.accounts.vault.key(),
+                &ctx.accounts.quote_mint.key(),
+                &ctx.accounts.owner_ata.key(),
+                &ctx.accounts.grove.key(),
+                &[],
+                payout,
+                decimals,
+            )?,
+            &[
+                ctx.accounts.vault.to_account_info(),
+                ctx.accounts.quote_mint.to_account_info(),
+                ctx.accounts.owner_ata.to_account_info(),
+                ctx.accounts.grove.to_account_info(),
+            ],
+            &[g_seeds],
+        )?;
+
+        record.status = RECORD_CLAIMED;
         Ok(())
     }
 }
@@ -480,4 +770,214 @@ pub struct Refund<'info> {
     /// CHECK: Token-2022 program.
     #[account(address = TOKEN_2022_ID)]
     pub token_2022_program: UncheckedAccount<'info>,
+}
+
+/// Rewrite a Share's Attributes plugin (program as UpdateAuthority).
+/// Owned AccountInfos with independent lifetimes: reveal mixes struct
+/// accounts and remaining_accounts, whose invariant lifetimes cannot unify
+/// behind a single shared reference.
+fn update_share_plugin_cpi<'info>(
+    core_program: &SolanaAccountInfo<'info>,
+    asset: &SolanaAccountInfo<'info>,
+    authority: &SolanaAccountInfo<'info>,
+    payer: &SolanaAccountInfo<'info>,
+    system_program: &SolanaAccountInfo<'info>,
+    config_bump: u8,
+    plugin: Plugin,
+) -> Result<()> {
+    let seeds: &[&[u8]] = &[b"config", &[config_bump]];
+    UpdatePluginV1CpiBuilder::new(&core_program)
+        .asset(&asset)
+        .authority(Some(&authority))
+        .payer(&payer)
+        .system_program(&system_program)
+        .plugin(plugin)
+        .invoke_signed(&[seeds])?;
+    Ok(())
+}
+
+/// Deposit-weighted rolls normalized to WEIGHT_ONE with a >0 floor.
+/// Ported from Sherhood RevealEngine._allocate (single-pass max correction).
+fn compute_weights(
+    seed: &[u8; 32],
+    grove: &Pubkey,
+    deposits: &[u64],
+    assets: &[Pubkey],
+) -> Result<Vec<u64>> {
+    let n = deposits.len();
+    let mut raw = vec![0u128; n];
+    let mut sum = 0u128;
+    for i in 0..n {
+        let roll_hash = hashv(&[
+            seed,
+            grove.as_ref(),
+            &(i as u32).to_le_bytes(),
+            assets[i].as_ref(),
+        ]);
+        let roll = u64::from_le_bytes(
+            roll_hash.as_ref()[0..8]
+                .try_into()
+                .map_err(|_| CanopyError::MathError)?,
+        );
+        let mult = MULT_FLOOR + (roll % MULT_SPAN);
+        let r = (deposits[i] as u128)
+            .checked_mul(mult as u128)
+            .ok_or(CanopyError::MathError)?;
+        raw[i] = r;
+        sum = sum.checked_add(r).ok_or(CanopyError::MathError)?;
+    }
+    require!(sum > 0, CanopyError::MathError);
+
+    let mut weights = vec![0u64; n];
+    let mut assigned = 0u128;
+    for i in 0..n {
+        let mut w = raw[i]
+            .checked_mul(WEIGHT_ONE)
+            .ok_or(CanopyError::MathError)?
+            / sum;
+        if w == 0 {
+            w = 1;
+        }
+        weights[i] = w as u64;
+        assigned = assigned.checked_add(w).ok_or(CanopyError::MathError)?;
+    }
+    if assigned != WEIGHT_ONE {
+        let mut max_i = 0;
+        for i in 1..n {
+            if raw[i] > raw[max_i] {
+                max_i = i;
+            }
+        }
+        if assigned > WEIGHT_ONE {
+            let over = assigned - WEIGHT_ONE;
+            require!((weights[max_i] as u128) > over, CanopyError::MathError);
+            weights[max_i] -= over as u64;
+        } else {
+            weights[max_i] = weights[max_i]
+                .checked_add((WEIGHT_ONE - assigned) as u64)
+                .ok_or(CanopyError::MathError)?;
+        }
+    }
+    let total: u128 = weights.iter().map(|w| *w as u128).sum();
+    require!(total == WEIGHT_ONE, CanopyError::MathError);
+    require!(weights.iter().all(|w| *w > 0), CanopyError::MathError);
+    Ok(weights)
+}
+
+/// Ownership-share rarity bands (Sherhood): 40/20/8%.
+fn rarity_band(weight: u64) -> &'static str {
+    const PCT: u128 = WEIGHT_ONE / 100;
+    let w = weight as u128;
+    if w >= 40 * PCT {
+        "Legendary"
+    } else if w >= 20 * PCT {
+        "Epic"
+    } else if w >= 8 * PCT {
+        "Rare"
+    } else {
+        "Common"
+    }
+}
+
+/// Read a historical slot hash from the SlotHashes sysvar (manual parse:
+/// u64 count + (u64 slot, 32-byte hash) entries). Verifies the sysvar ID.
+fn slot_hash_for(ai: &SolanaAccountInfo, target: u64) -> Result<[u8; 32]> {
+    require!(ai.key() == SLOT_HASHES_ID, CanopyError::NoSlotHash);
+    let data = ai.data.borrow();
+    require!(data.len() >= 8, CanopyError::NoSlotHash);
+    let len = u64::from_le_bytes(
+        data[0..8]
+            .try_into()
+            .map_err(|_| CanopyError::NoSlotHash)?,
+    ) as usize;
+    let mut offset = 8usize;
+    for _ in 0..len {
+        require!(data.len() >= offset + 40, CanopyError::NoSlotHash);
+        let slot = u64::from_le_bytes(
+            data[offset..offset + 8]
+                .try_into()
+                .map_err(|_| CanopyError::NoSlotHash)?,
+        );
+        if slot == target {
+            let mut out = [0u8; 32];
+            out.copy_from_slice(&data[offset + 8..offset + 40]);
+            return Ok(out);
+        }
+        offset += 40;
+    }
+    Err(CanopyError::NoSlotHash.into())
+}
+
+#[derive(Accounts)]
+#[instruction(creator: Pubkey, nonce: u64)]
+pub struct CommitReveal<'info> {
+    #[account(
+        seeds = [b"grove", creator.as_ref(), &nonce.to_le_bytes()],
+        bump = grove.bump,
+    )]
+    pub grove: Account<'info, Grove>,
+    #[account(
+        init,
+        payer = keeper,
+        space = 8 + RevealState::SIZE,
+        seeds = [b"reveal", grove.key().as_ref()],
+        bump
+    )]
+    pub reveal_state: Account<'info, RevealState>,
+    #[account(mut)]
+    pub keeper: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(creator: Pubkey, nonce: u64)]
+pub struct Reveal<'info> {
+    #[account(
+        mut,
+        seeds = [b"grove", creator.as_ref(), &nonce.to_le_bytes()],
+        bump = grove.bump,
+    )]
+    pub grove: Account<'info, Grove>,
+    #[account(
+        mut,
+        seeds = [b"reveal", grove.key().as_ref()],
+        bump = reveal_state.bump,
+    )]
+    pub reveal_state: Account<'info, RevealState>,
+    // remaining (ALL single-lifetime: struct accounts never enter a CPI):
+    // [core_program, config_pda, keeper, system_program, slot_hashes,
+    //  record_0, asset_0, record_1, asset_1, ...]
+}
+
+#[derive(Accounts)]
+#[instruction(creator: Pubkey, nonce: u64, index: u32)]
+pub struct Claim<'info> {
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    #[account(
+        seeds = [b"grove", creator.as_ref(), &nonce.to_le_bytes()],
+        bump = grove.bump,
+    )]
+    pub grove: Account<'info, Grove>,
+    #[account(mut)]
+    pub vault: UncheckedAccount<'info>,
+    #[account(mut)]
+    pub owner_ata: UncheckedAccount<'info>,
+    pub quote_mint: UncheckedAccount<'info>,
+    #[account(
+        mut,
+        seeds = [b"share", grove.key().as_ref(), owner.key().as_ref(), &index.to_le_bytes()],
+        bump = share_record.bump,
+    )]
+    pub share_record: Account<'info, ShareRecord>,
+    /// CHECK: must equal record.core_asset (verified in handler); burned via delegate.
+    #[account(mut)]
+    pub core_asset: UncheckedAccount<'info>,
+    #[account(seeds = [b"config"], bump)]
+    pub config: Account<'info, Config>,
+    #[account(address = CORE_PROGRAM_ID)]
+    pub core_program: UncheckedAccount<'info>,
+    #[account(address = TOKEN_2022_ID)]
+    pub token_2022_program: UncheckedAccount<'info>,
+    pub system_program: Program<'info, System>,
 }

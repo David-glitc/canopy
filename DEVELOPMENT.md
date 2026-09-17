@@ -52,3 +52,23 @@
   exactly 730,236 (500k split + ~230k CPMM buy, as predicted); Market 2
   silent → FAILED. CPMM + TWAP math confirmed on-chain.
 - Program: `canopy_futarchy` `BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k`.
+
+## 2026-09-17 — D4: reveal + claim proven (devnet, 13/13 PASS)
+
+- `commit_reveal` snapshots close slot; `reveal` consumes a future slot hash
+  (SlotHashes sysvar, manual parse, ID hardcoded from solana-sdk-ids) +
+  grove + index + asset via keccak into deposit-weighted 0.5x-2.0x rolls,
+  normalized to exactly 1e18 (single-pass max correction, >0 floor), rarity
+  from share bands. Records written, Core Attributes flipped to
+  revealed/weight/rarity (program-signed UpdatePlugin), Grove → Revealed.
+- `claim` pays weight × total / 1e18 in quote, marks shell claimed
+  (UpdatePlugin) + record Claimed. Double-claim blocked by status.
+- Proven: weights 74/26 → Legendary/Epic, Σ=1e18; payouts exact to the
+  lamport (1 lamport dust on 2.5M); shells marked; no regressions.
+- **Burn anomaly (devnet Core version skew suspected):** program-as-delegate
+  BurnV1 succeeded without closing; direct owner burn errors 0x6 (Incorrect
+  account). Create/UpdatePlugin/Attributes/Royalties/Freeze all fine, so
+  close-path likely version-related. Claim ships as mark+pay (sound:
+  status blocks re-claim); burn re-enabled after mainnet verification.
+- No Grove/Record migrations (additive logic only); groves capped at 20
+  Shares (single-tx reveal fits 64-account limit).

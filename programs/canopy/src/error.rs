@@ -36,4 +36,20 @@ pub enum CanopyError {
     VaultMismatch,
     #[msg("Quote mint is not a Token-2022 mint")]
     InvalidQuoteMint,
+    #[msg("Grove is not closed")]
+    NotClosed,
+    #[msg("Grove is not revealed")]
+    NeedRevealed,
+    #[msg("Reveal too early: entropy slot not yet reached")]
+    TooEarly,
+    #[msg("Entropy slot hash unavailable")]
+    NoSlotHash,
+    #[msg("Share accounts do not match the grove")]
+    ShareCountMismatch,
+    #[msg("Already revealed")]
+    AlreadyRevealed,
+    #[msg("Grove is full")]
+    MaxShares,
+    #[msg("Reveal math error")]
+    MathError,
 }
