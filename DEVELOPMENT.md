@@ -138,6 +138,19 @@
 - Noble fix: app pins `@noble/hashes@^1.8.0` (mpl-core needs `./sha3`,
   removed in v2) + `serverExternalPackages` for mpl-core/umi/sharp.
 
+## 2026-09-17 — Sectors surface + faucet (build green, live-proven)
+
+- `/sectors`: on-chain Grove discovery (size-filtered), status/raise/vault/
+  deadline cards, inline create form. `/sectors/[address]`: stats, Shares
+  gallery (live card images for revealed, sealed pods otherwise), Fund +
+  Advance (seal/cancel/commit/reveal/claim/refund paths), My Shares, and a
+  read-only Governance tab (proposal markets, PASS price, book, countdown).
+- `/api/faucet` (server key, 10 mUSDC + 0.05 SOL, 10-min cooldown):
+  proven live (drip confirmed + cooldown enforced). Makes the demo
+  self-serve for judges. Needs `FAUCET_KEY_JSON` on deploy.
+- `lib/canopy-ix.ts` now covers the full grove lifecycle (builders +
+  parsers); `lib/futarchy-read.ts` for market views.
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald
