@@ -101,6 +101,18 @@
   (gems, rays, sigil, holo trim all live). Metadata HTTP route lands with
   the D7 app.
 
+## 2026-09-17 — Brand: black + Solana gradient, cipher mark, cypherpunk lore
+
+- Colors: black `#050505` + Solana green `#14F195` / purple `#9945FF` /
+  cyan accent; gradient CTAs, glass panels, mono data type (`brand/tokens.css`).
+- Logo: hexagonal seal + canopy chevron + cipher diamond + terminal nodes
+  (`brand/mark.svg`, `logo.svg`, `favicon.svg` + PNG exports). Verified render.
+- Lore pivot (plants → technocratic cipher-society), zero on-chain changes:
+  Grove/Share/Canopy kept as proper nouns; fiction rewritten (Operators,
+  Sectors, grown-chrome Series 1 → full-machine Series 2); 20 operative
+  roles; 8 sectors; Diamond Roots → Cold Storage. Charter:
+  `/home/david/canopy-charter.md`.
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald

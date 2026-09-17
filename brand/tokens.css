@@ -1,0 +1,16 @@
+/* Canopy brand tokens — black + Solana gradient, cypherpunk technocracy. */
+:root {
+  --canopy-black: #050505;
+  --canopy-ink: #0b0b0f;
+  --canopy-panel: #101016;
+  --canopy-line: #1e1e26;
+  --canopy-text: #f5f5f5;
+  --canopy-muted: #8a8a93;
+  --canopy-green: #14f195;
+  --canopy-purple: #9945ff;
+  --canopy-cyan: #00e5ff;
+  --canopy-gradient: linear-gradient(135deg, #14f195 0%, #9945ff 100%);
+  --canopy-font-display: "Space Grotesk", "Arial Black", sans-serif;
+  --canopy-font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --canopy-font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+}
