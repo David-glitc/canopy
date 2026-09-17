@@ -151,6 +151,19 @@
 - `lib/canopy-ix.ts` now covers the full grove lifecycle (builders +
   parsers); `lib/futarchy-read.ts` for market views.
 
+## 2026-09-17 — Ship prep: README, LICENSE, mainnet registry
+
+- Submission README (demo, programs, run, tracks, video shots, risks) +
+  MIT LICENSE.
+- Mainnet registry filled: 14 xStocks verified on mainnet-beta
+  (Token-2022, 8 dec, live supplies: AAPL/NVDA/TSLA/MSFT/SPY/QQQ/GOOGL/
+  AMZN/META/COIN/HOOD/PLTR/MSTR/CRCL). Full 877 via fetch-xstocks
+  (paginated, case-fixed). Jupiter v6 retired — routability proven at demo
+  via Ultra/swap API with small size.
+- Faucet topped to ~14 SOL from deployer (280+ drips).
+- Vercel: CLI authed but no portable token found; deploy via dashboard
+  (import repo → Root Directory `app` → env `FAUCET_KEY_JSON` → deploy).
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald
