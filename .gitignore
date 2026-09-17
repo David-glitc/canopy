@@ -10,3 +10,8 @@ dist/
 *.keypair.json
 *-keypair.json
 !target/deploy/placeholder
+# 33MB AI concept-art source (reference only, lives outside git)
+download.zip
+art/source/
+art/contact-sheet/*.png
+!art/contact-sheet/.gitkeep

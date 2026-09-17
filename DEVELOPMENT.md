@@ -72,3 +72,17 @@
   status blocks re-claim); burn re-enabled after mainnet verification.
 - No Grove/Record migrations (additive logic only); groves capped at 20
   Shares (single-tx reveal fits 64-account limit).
+
+## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
+
+- 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald
+  frames, auras, trait overlays, card back) reviewed; kept as local reference
+  only (`download.zip` gitignored, 33MB stays out of the repo).
+- `art/generator/pixelate.mjs`: JPEG → 72×108 grid → median → 5-level
+  posterize → RLE rect SVG (in-memory) → 800×1200 PNG via resvg + palette
+  JSON. `contact-sheet.mjs` tiles for QA.
+- First layers: `guardian.png`, `aura.png`, `cardback.png` (~3k rects each).
+  Contact sheet confirms authentic chunky pixel-art with palette intact.
+- Learnings: use pure renders (no TCG text) for bodies — card chrome
+  pixelates to mud; frames go vector (crisp over pixels); aura/back work
+  full-bleed. Grid tunable per layer (bodies finer, auras coarser).
