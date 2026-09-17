@@ -124,6 +124,20 @@
 - Surfaces (pools, shop, people, leaderboard, rip ritual, metadata route)
   land incrementally on this shell.
 
+## 2026-09-17 — D7 instant UI + live card routes (8/8 route tests)
+
+- `/instant`: amount → fee preview → wallet signs `instant_mint` (real
+  metadata URI at mint) → Rip ritual (sealed → tear → revealed) → claim.
+  `lib/canopy-ix.ts` ports the proven ix builders (hardcoded discriminators,
+  isomorphic encoders). Rip is CSS ritual v1 (tap-to-tear, flash, stats,
+  share, replay).
+- `/api/cards/[mint]/{image,metadata}`: UMI Core read + RevealState seed
+  (pool) or dna attr (instant) → card-engine → sharp PNG (800×1200) +
+  Metaplex JSON. Proven live on devnet for both paths (219KB pool card
+  visually verified). Sealed cards 404 image (UI shows CSS seal).
+- Noble fix: app pins `@noble/hashes@^1.8.0` (mpl-core needs `./sha3`,
+  removed in v2) + `serverExternalPackages` for mpl-core/umi/sharp.
+
 ## 2026-09-17 — Art pipeline proof (download.zip → pixel layers)
 
 - 41 AI concept JPEGs (tree-spirit guardian, obsidian/gold + bronze + emerald

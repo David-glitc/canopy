@@ -1,7 +1,7 @@
 // Compose a finished Share PNG from a card-engine spec:
 // base pixel art + rarity wash + vignette + grain + rays/spores + frame + sigil.
 import sharp from "sharp";
-import { readFileSync, mkdirSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { composeCard } from "../../packages/card-engine/compose.mjs";
@@ -51,8 +51,7 @@ function sporesSVG(seed, color) {
   return svgBuf(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">${c}</svg>`);
 }
 
-export async function renderCard(seedStr, economicRarity, outPng) {
-  const spec = composeCard(seedStr, economicRarity);
+export async function buildLayers(spec) {
   const layers = [
     { input: join(LAYERS, spec.base) },
     { input: washSVG(spec.wash), blend: "multiply" },
@@ -69,8 +68,20 @@ export async function renderCard(seedStr, economicRarity, outPng) {
       top: 30,
     });
   }
+  return layers;
+}
+
+export async function renderCardBuffer(seedStr, economicRarity) {
+  const spec = composeCard(seedStr, economicRarity);
+  const layers = await buildLayers(spec);
+  const png = await sharp(layers[0].input).composite(layers.slice(1)).png().toBuffer();
+  return { png, spec };
+}
+
+export async function renderCard(seedStr, economicRarity, outPng) {
+  const { png, spec } = await renderCardBuffer(seedStr, economicRarity);
   mkdirSync(dirname(outPng), { recursive: true });
-  await sharp(layers[0].input).composite(layers.slice(1)).png().toFile(outPng);
+  writeFileSync(outPng, png);
   console.log(`${seedStr} [${economicRarity}/${spec.cosmetic}] -> ${outPng}`);
   return spec;
 }

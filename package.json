@@ -6,5 +6,6 @@
   "scripts": {
     "build": "anchor build",
     "test": "cargo test"
-  }
+  },
+  "pnpm": {}
 }
