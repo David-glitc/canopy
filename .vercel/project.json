@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_9B1Fq8A3xkIgbhk059W1rwUESPKD",
+  "orgId": "team_fO5soicODUGWkAoE5jesjEFK",
+  "projectName": "davidglitcs-projects",
+  "settings": {
+    "createdAt": 1789658072848,
+    "framework": "nextjs",
+    "devCommand": null,
+    "installCommand": "pnpm install --no-frozen-lockfile",
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": ".",
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}
