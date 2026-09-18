@@ -12,7 +12,7 @@ export default async function SectorPage({
   const { address } = await params;
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <a href="/sectors" className="font-mono2 text-xs text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]">
+      <a href="/sectors" className="font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]">
         ← all sectors
       </a>
       <div className="mt-4">

@@ -31,6 +31,7 @@ import {
   type RecordData,
 } from "@/lib/canopy-ix";
 import { FUTARCHY_ID, parseMarket, marketPrice, type MarketData } from "@/lib/futarchy-read";
+import { cn } from "@/lib/utils";
 
 type RecRow = RecordData & { address: string };
 
@@ -58,9 +59,6 @@ export default function SectorDetail({ address }: { address: string }) {
       const g = await connection.getAccountInfo(grovePk);
       if (!g) return;
       const gd = parseGrove(new Uint8Array(g.data));
-      // nonce/creator are instruction args, not stored plainly; recover creator + nonce
-      // by matching seeds is infeasible — store from known groves is skipped.
-      // Instead we read creator/nonce from the account (creator stored, nonce stored).
       setGrove({ ...gd, nonce: gd.nonce, creator: gd.creator } as never);
       const recs = await connection.getProgramAccounts(CANOPY_ID, {
         filters: [{ dataSize: 8 + 119 }, { memcmp: { offset: 8, bytes: address } }],
@@ -112,7 +110,6 @@ export default function SectorDetail({ address }: { address: string }) {
     } catch {
       /* keep skeleton */
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connection, address, publicKey]);
 
   useEffect(() => {
@@ -320,10 +317,10 @@ export default function SectorDetail({ address }: { address: string }) {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3">
-        <span className="rounded-full bg-[var(--canopy-purple)]/15 px-3 py-1 font-mono2 text-xs text-[var(--canopy-purple)]">
+        <span className="rounded-full bg-[rgba(153,69,255,0.15)] px-3 py-1 font-mono2 text-sm text-[var(--canopy-purple)]">
           {STATUS[grove.status]}
         </span>
-        <span className="font-mono2 text-xs text-[var(--canopy-muted)]">
+        <span className="font-mono2 text-sm text-[var(--canopy-muted)]">
           {address.slice(0, 6)}…{address.slice(-4)} · by {grove.creator.slice(0, 6)}…{grove.creator.slice(-4)}
         </span>
       </div>
@@ -335,13 +332,13 @@ export default function SectorDetail({ address }: { address: string }) {
           ["Min", `$${(Number(grove.minDeposit) / 1e6).toFixed(2)}`],
         ].map(([k, v]) => (
           <div key={k} className="glass rounded-2xl p-4">
-            <p className="font-mono2 text-[11px] tracking-[0.2em] text-[var(--canopy-muted)]">{k.toUpperCase()}</p>
+            <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">{k.toUpperCase()}</p>
             <p className="font-display mt-1 text-xl font-extrabold">{v}</p>
           </div>
         ))}
       </div>
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "var(--canopy-gradient)" }} />
+        <div className="h-full rounded-full bg-[var(--canopy-green)]" style={{ width: `${pct}%` }} />
       </div>
 
       <div className="mt-6 flex gap-2 border-b border-[var(--canopy-line)]">
@@ -349,11 +346,12 @@ export default function SectorDetail({ address }: { address: string }) {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2.5 font-mono2 text-xs tracking-[0.2em] ${
+            className={cn(
+              "px-4 py-2.5 font-mono2 text-sm tracking-[0.2em] no-underline transition-colors",
               tab === t
                 ? "border-b-2 border-[var(--canopy-green)] text-[var(--canopy-text)]"
                 : "text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]"
-            }`}
+            )}
           >
             {t === "overview" ? "SHARES" : t === "advance" ? "FUND + ADVANCE" : "GOVERNANCE"}
           </button>
@@ -374,20 +372,20 @@ export default function SectorDetail({ address }: { address: string }) {
                   loading="lazy"
                 />
               ) : (
-                <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(ellipse_at_50%_40%,#12261c_0%,#050505_70%)]">
+                <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-3 bg-[#0d0d10]">
                   <img src="/mark.svg" alt="" width={54} height={54} className="opacity-70" />
-                  <span className="font-mono2 text-[11px] tracking-[0.35em] text-[var(--canopy-green)]">SEALED</span>
+                  <span className="font-mono2 text-sm tracking-[0.35em] text-[var(--canopy-green)]">SEALED</span>
                 </div>
               )}
               <div className="flex items-center justify-between p-4">
                 <div>
-                  <p className="font-mono2 text-xs">#{r.index} · {(Number(r.deposit) / 1e6).toFixed(2)}</p>
-                  <p className="font-mono2 text-[11px] text-[var(--canopy-muted)]">
+                  <p className="font-mono2 text-sm">#\u00a0{r.index} · {(Number(r.deposit) / 1e6).toFixed(2)}</p>
+                  <p className="font-mono2 text-sm text-[var(--canopy-muted)]">
                     {r.owner.slice(0, 6)}…{r.owner.slice(-4)} · {r.status === 0 ? (r.revealed ? `${(Number(r.weight) / 1e16).toFixed(2)}%` : "sealed") : r.status === 1 ? "refunded" : "claimed"}
                   </p>
                 </div>
                 {publicKey && r.owner === publicKey.toBase58() && r.status === 0 && r.revealed && grove.status === 3 && (
-                  <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-2 text-xs disabled:opacity-40">
+                  <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-2 text-sm disabled:opacity-40">
                     Claim
                   </button>
                 )}
@@ -414,10 +412,10 @@ export default function SectorDetail({ address }: { address: string }) {
                 placeholder="5.00"
               />
             </div>
-            <p className="mt-2 font-mono2 text-xs text-[var(--canopy-muted)]">
+            <p className="mt-2 font-mono2 text-sm text-[var(--canopy-muted)]">
               Balance: {myBal === null ? "…" : `$${(Number(myBal) / 1e6).toFixed(2)} mUSDC`}
               {myBal !== null && myBal < 1_000_000n && (
-                <button onClick={faucet} disabled={busy !== null} className="ml-2 text-[var(--canopy-green)] hover:underline disabled:opacity-40">
+                <button onClick={faucet} disabled={busy !== null} className="ml-2 text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)] disabled:opacity-40">
                   get test funds
                 </button>
               )}
@@ -428,36 +426,36 @@ export default function SectorDetail({ address }: { address: string }) {
           </div>
           <div className="glass rounded-2xl p-6">
             <h3 className="font-display font-bold">Advance the lifecycle</h3>
-            <p className="mt-1 font-mono2 text-xs text-[var(--canopy-muted)]">
+            <p className="mt-1 font-mono2 text-sm text-[var(--canopy-muted)]">
               Permissionless cranks. Anyone may push a ready sector forward.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2.5">
-              <button onClick={() => advance("close")} disabled={busy !== null || !canClose} className="btn-ghost px-4 py-2.5 text-xs disabled:opacity-40">
+              <button onClick={() => advance("close")} disabled={busy !== null || !canClose} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
                 Seal (goal met)
               </button>
-              <button onClick={() => advance("cancel")} disabled={busy !== null || !canCancel} className="btn-ghost px-4 py-2.5 text-xs disabled:opacity-40">
+              <button onClick={() => advance("cancel")} disabled={busy !== null || !canCancel} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
                 Cancel (expired)
               </button>
-              <button onClick={() => advance("commit")} disabled={busy !== null || !(grove.status === 1 && !revealOn)} className="btn-ghost px-4 py-2.5 text-xs disabled:opacity-40">
+              <button onClick={() => advance("commit")} disabled={busy !== null || !(grove.status === 1 && !revealOn)} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
                 Commit reveal
               </button>
-              <button onClick={() => advance("reveal")} disabled={busy !== null || !revealReady} className="btn-ghost px-4 py-2.5 text-xs disabled:opacity-40" title={revealReady ? "Ready" : "Needs commit + 10 slots"}>
+              <button onClick={() => advance("reveal")} disabled={busy !== null || !revealReady} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40" title={revealReady ? "Ready" : "Needs commit + 10 slots"}>
                 Reveal
               </button>
             </div>
             {myRecs.length > 0 && (
               <div className="mt-4 border-t border-[var(--canopy-line)] pt-4">
-                <p className="font-mono2 text-xs text-[var(--canopy-muted)]">MY SHARES ({myRecs.length})</p>
+                <p className="font-mono2 text-sm text-[var(--canopy-muted)]">MY SHARES ({myRecs.length})</p>
                 {myRecs.map((r) => (
                   <div key={r.address} className="mt-2 flex items-center justify-between text-sm">
-                    <span className="font-mono2 text-xs">#{r.index} · {(Number(r.deposit) / 1e6).toFixed(2)}</span>
+                    <span className="font-mono2 text-sm tabular">#{r.index} · {(Number(r.deposit) / 1e6).toFixed(2)}</span>
                     {grove.status === 3 && r.status === 0 && r.revealed && (
-                      <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-1.5 text-xs disabled:opacity-40">
+                      <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-1.5 text-sm disabled:opacity-40">
                         Claim {(Number(r.weight) * Number(grove.total) / 1e18 / 1e6).toFixed(4)}
                       </button>
                     )}
                     {grove.status === 2 && r.status === 0 && (
-                      <button onClick={() => refundRec(r)} disabled={busy !== null} className="btn-ghost px-4 py-1.5 text-xs disabled:opacity-40">
+                      <button onClick={() => refundRec(r)} disabled={busy !== null} className="btn-ghost px-4 py-1.5 text-sm disabled:opacity-40">
                         Refund
                       </button>
                     )}
@@ -479,17 +477,20 @@ export default function SectorDetail({ address }: { address: string }) {
               <div key={m.address} className="glass rounded-2xl p-5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-mono2 text-sm font-bold">Proposal #{m.proposalId.toString()}</p>
-                  <span className={`rounded-full px-3 py-1 font-mono2 text-[11px] ${m.decided ? (m.passed ? "bg-[var(--canopy-green)]/15 text-[var(--canopy-green)]" : "bg-white/10 text-[var(--canopy-muted)]") : "bg-[var(--canopy-purple)]/15 text-[var(--canopy-purple)]"}`}>
+                  <span className={cn(
+                    "rounded-full px-3 py-1 font-mono2 text-sm",
+                    m.decided ? (m.passed ? "bg-[rgba(20,241,149,0.15)] text-[var(--canopy-green)]" : "bg-white/10 text-[var(--canopy-muted)]") : "bg-[rgba(153,69,255,0.15)] text-[var(--canopy-purple)]"
+                  )}>
                     {m.decided ? (m.passed ? "PASSED" : "REJECTED") : closesIn > 0 ? `open · ${Math.floor(closesIn / 60)}m left` : "closing…"}
                   </span>
                 </div>
-                <div className="mt-3 flex items-center gap-4 font-mono2 text-xs text-[var(--canopy-muted)]">
+                <div className="mt-3 flex items-center gap-4 font-mono2 text-sm text-[var(--canopy-muted)]">
                   <span>PASS price <span className="text-[var(--canopy-text)]">{price.toFixed(3)}</span></span>
                   <span>trades <span className="text-[var(--canopy-text)]">{m.tradeCount.toString()}</span></span>
                   <span>book <span className="text-[var(--canopy-text)]">{(Number(m.passReserve) / 1e6).toFixed(2)} / {(Number(m.failReserve) / 1e6).toFixed(2)}</span></span>
                 </div>
                 <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full" style={{ width: `${Math.min(100, (price / 2) * 100)}%`, background: "var(--canopy-gradient)" }} />
+                  <div className="h-full rounded-full bg-[var(--canopy-green)]" style={{ width: `${Math.min(100, (price / 2) * 100)}%` }} />
                 </div>
               </div>
             );
@@ -502,9 +503,9 @@ export default function SectorDetail({ address }: { address: string }) {
         </div>
       )}
 
-      {busy && <p className="mt-4 font-mono2 text-xs text-[var(--canopy-green)]">{busy}</p>}
+      {busy && <p className="mt-4 font-mono2 text-sm text-[var(--canopy-green)]">{busy}</p>}
       {error && (
-        <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-xs text-red-300">
+        <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300">
           {error}
         </p>
       )}

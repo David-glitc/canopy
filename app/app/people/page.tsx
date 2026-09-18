@@ -8,7 +8,7 @@ export const metadata = {
 export default function PeoplePage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <p className="font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-purple)]">
+      <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
         04 / PEOPLE
       </p>
       <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
@@ -33,13 +33,13 @@ export default function PeoplePage() {
             <Link
               key={p.addr}
               href={`/people/${p.addr}`}
-              className="rounded-xl border border-[var(--canopy-line)] bg-black/40 p-4 hover:border-[var(--canopy-green)] transition-colors"
+              className="rounded-xl border border-[var(--canopy-line)] bg-black/40 p-4 no-underline transition-colors hover:border-[var(--canopy-green)]"
             >
-              <p className="font-mono2 text-xs text-[var(--canopy-green)]">{p.trait}</p>
-              <p className="mt-2 font-display text-lg font-bold text-[var(--canopy-text)]">
+              <p className="font-mono2 text-sm text-[var(--canopy-green)]">{p.trait}</p>
+              <p className="mt-2 font-display text-base font-bold text-[var(--canopy-text)]">
                 {p.addr}
               </p>
-              <p className="mt-1 font-mono2 text-[11px] text-[var(--canopy-muted)]">
+              <p className="mt-1 font-mono2 text-sm tabular text-[var(--canopy-muted)]">
                 {p.survived} markets survived
               </p>
             </Link>

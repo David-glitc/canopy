@@ -20,6 +20,7 @@ import {
   recordPda,
 } from "@/lib/canopy-ix";
 import Rip from "./Rip";
+import { cn } from "@/lib/utils";
 
 type Minted = {
   asset: string;
@@ -84,7 +85,6 @@ export default function InstantMint() {
       const sig = await sendTransaction(tx, connection, { signers: [asset] });
       await connection.confirmTransaction(sig, "confirmed");
 
-      // Read back weight for the reveal stats.
       const info = await connection.getAccountInfo(record);
       const weight = info ? info.data.readBigUInt64LE(117).toString() : "1000000000000000000";
       setMinted({
@@ -136,7 +136,7 @@ export default function InstantMint() {
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="glass rounded-2xl p-6 sm:p-8">
-        <label className="font-mono2 text-xs tracking-[0.25em] text-[var(--canopy-muted)]">
+        <label className="font-mono2 text-sm tracking-[0.25em] text-[var(--canopy-muted)]">
           AMOUNT (mUSDC · devnet)
         </label>
         <div className="mt-3 flex items-center gap-3">
@@ -149,14 +149,14 @@ export default function InstantMint() {
             placeholder="2.00"
           />
         </div>
-        <div className="mt-6 space-y-2 font-mono2 text-xs text-[var(--canopy-muted)]">
+        <div className="mt-6 space-y-2 font-mono2 text-sm text-[var(--canopy-muted)]">
           <div className="flex justify-between">
             <span>Treasury fee (1%)</span>
-            <span>${(fee / 1e6).toFixed(4)}</span>
+            <span className="tabular">${(fee / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between text-[var(--canopy-text)]">
             <span>Vault backing</span>
-            <span>${(net / 1e6).toFixed(4)}</span>
+            <span className="tabular">${(net / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between">
             <span>Reveal</span>
@@ -166,16 +166,19 @@ export default function InstantMint() {
         <button
           onClick={mint}
           disabled={busy !== null || !connected}
-          className="btn-primary mt-8 w-full px-8 py-4 text-sm disabled:opacity-40"
+          className={cn(
+            "btn-primary mt-8 w-full px-8 py-4 text-sm disabled:opacity-40",
+            "focus-visible:outline-none"
+          )}
         >
           {busy ?? (connected ? `Mint for $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to mint")}
         </button>
         {error && (
-          <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-xs text-red-300">
+          <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300">
             {error}
           </p>
         )}
-        <p className="mt-4 font-mono2 text-[11px] leading-relaxed text-[var(--canopy-muted)]">
+        <p className="mt-4 font-mono2 text-sm leading-relaxed text-[var(--canopy-muted)]">
           Settles in mock mUSDC on devnet. Solo weight is always 100%
           (Legendary band); the operative look still rolls unique per pull.
         </p>
@@ -207,5 +210,4 @@ export default function InstantMint() {
   );
 }
 
-// Re-export to keep tree-shaken wallet out of SSR (client-only file).
 export { Connection as _C };

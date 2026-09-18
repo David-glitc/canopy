@@ -28,11 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   CANOPY
                 </span>
               </div>
-              <p className="font-mono2 text-xs">
+              <p className="font-mono2 text-sm">
                 Devnet demo · Not investment advice · Capital at risk
               </p>
               <a
-                className="font-mono2 text-xs text-[var(--canopy-green)] hover:underline"
+                className="font-mono2 text-sm text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)]"
                 href="https://github.com/David-glitc/canopy"
                 target="_blank"
                 rel="noreferrer"

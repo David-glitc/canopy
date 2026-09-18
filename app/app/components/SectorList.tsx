@@ -12,6 +12,7 @@ import {
   parseGrove,
   type GroveData,
 } from "@/lib/canopy-ix";
+import { cn } from "@/lib/utils";
 
 type GroveRow = GroveData & { address: string };
 
@@ -92,15 +93,15 @@ export default function SectorList() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p className="font-mono2 text-xs text-[var(--canopy-muted)]">
+        <p className="font-mono2 text-sm text-[var(--canopy-muted)]">
           {groves === null ? "scanning overlayer…" : `${groves.length} sector${groves.length === 1 ? "" : "s"}`}
         </p>
         <div className="flex gap-2">
-          <button onClick={load} className="btn-ghost px-4 py-2 text-xs">
+          <button onClick={load} className="btn-ghost px-4 py-2 text-sm">
             Refresh
           </button>
           {connected && (
-            <button onClick={() => setShowCreate((s) => !s)} className="btn-primary px-4 py-2 text-xs">
+            <button onClick={() => setShowCreate((s) => !s)} className="btn-primary px-4 py-2 text-sm">
               {showCreate ? "Close" : "+ New Sector"}
             </button>
           )}
@@ -109,30 +110,30 @@ export default function SectorList() {
 
       {showCreate && (
         <div className="glass mt-4 grid gap-3 rounded-2xl p-5 sm:grid-cols-4">
-          <label className="text-xs">
+          <label className="text-sm">
             <span className="font-mono2 text-[var(--canopy-muted)]">GOAL $</span>
             <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
           </label>
-          <label className="text-xs">
+          <label className="text-sm">
             <span className="font-mono2 text-[var(--canopy-muted)]">MIN $</span>
             <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
           </label>
-          <label className="text-xs">
+          <label className="text-sm">
             <span className="font-mono2 text-[var(--canopy-muted)]">DAYS</span>
             <input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
           </label>
           <div className="flex items-end">
-            <button onClick={create} disabled={busy} className="btn-primary w-full px-4 py-2 text-xs disabled:opacity-40">
+            <button onClick={create} disabled={busy} className="btn-primary w-full px-4 py-2 text-sm disabled:opacity-40">
               {busy ? "Opening…" : "Open Sector"}
             </button>
           </div>
         </div>
       )}
       {error && (
-        <p className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-xs text-red-300">
+        <p className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300">
           {error}
         </p>
       )}
@@ -152,17 +153,18 @@ export default function SectorList() {
             >
               <div className="flex items-center justify-between">
                 <span
-                  className={`rounded-full px-3 py-1 font-mono2 text-[11px] ${
+                  className={cn(
+                    "rounded-full px-3 py-1 font-mono2 text-sm",
                     g.status === 0
-                      ? "bg-[var(--canopy-green)]/15 text-[var(--canopy-green)]"
+                      ? "bg-[rgba(20,241,149,0.15)] text-[var(--canopy-green)]"
                       : g.status === 3
-                        ? "bg-[var(--canopy-purple)]/15 text-[var(--canopy-purple)]"
+                        ? "bg-[rgba(153,69,255,0.15)] text-[var(--canopy-purple)]"
                         : "bg-white/10 text-[var(--canopy-muted)]"
-                  }`}
+                  )}
                 >
                   {STATUS[g.status] ?? "Unknown"}
                 </span>
-                <span className="font-mono2 text-[11px] text-[var(--canopy-muted)]">
+                <span className="font-mono2 text-sm tabular text-[var(--canopy-muted)]">
                   {g.status === 0 ? countdown(g.deadline) : `${g.shareCount} shares`}
                 </span>
               </div>
@@ -180,8 +182,8 @@ export default function SectorList() {
               </div>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                 <div
-                  className="h-full rounded-full"
-                  style={{ width: `${pct}%`, background: "var(--canopy-gradient)" }}
+                  className="h-full rounded-full bg-[var(--canopy-green)]"
+                  style={{ width: `${pct}%` }}
                 />
               </div>
             </a>

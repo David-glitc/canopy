@@ -21,7 +21,7 @@ export default async function ShopPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <p className="font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-purple)]">
+      <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
         03 / SHOP
       </p>
       <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
@@ -42,9 +42,9 @@ export default async function ShopPage() {
             <Link
               key={share.mint}
               href={`/share/${share.mint}`}
-              className="glass overflow-hidden rounded-2xl transition-hover hover:scale-[1.02]"
+              className="glass overflow-hidden rounded-2xl transition-colors hover:border-[var(--canopy-green)]"
             >
-              <div className="aspect-[2/3] relative overflow-hidden bg-[radial-gradient(ellipse_at_50%_40%,#12261c_0%,#050505_70%)]">
+              <div className="aspect-[2/3] relative overflow-hidden bg-[#0d0d10]">
                 {share.seedStr ? (
                   <img
                     src={`/api/cards/${share.mint}/image`}
@@ -56,7 +56,7 @@ export default async function ShopPage() {
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
-                    <p className="font-mono2 text-xs tracking-[0.4em] text-[var(--canopy-green)]">SEALED</p>
+                    <p className="font-mono2 text-sm tracking-[0.4em] text-[var(--canopy-green)]">SEALED</p>
                   </div>
                 )}
               </div>
@@ -64,7 +64,7 @@ export default async function ShopPage() {
                 <p className="font-display text-sm font-bold text-[var(--canopy-text)]">
                   {share.name}
                 </p>
-                <p className="mt-1 font-mono2 text-[11px] text-[var(--canopy-muted)]">
+                <p className="mt-1 font-mono2 text-sm tabular text-[var(--canopy-muted)]">
                   {share.economicRarity} · {share.mint.slice(0, 8)}…
                 </p>
               </div>

@@ -45,7 +45,7 @@ export default function ProgramStatus() {
         <h3 className="font-display text-sm font-bold tracking-[0.2em] text-[var(--canopy-muted)]">
           OVERLAYER STATUS
         </h3>
-        <span className="font-mono2 text-xs text-[var(--canopy-green)]">
+        <span className="font-mono2 text-sm tabular text-[var(--canopy-green)]">
           {slot === null ? "…" : `slot ${slot.toLocaleString()}`}
         </span>
       </div>
@@ -68,12 +68,12 @@ export default function ProgramStatus() {
                 />
                 <span className="font-mono2 text-sm font-bold">{name}</span>
               </div>
-              <p className="mt-1 font-mono2 text-[11px] text-[var(--canopy-muted)]">
+              <p className="mt-1 font-mono2 text-sm tabular text-[var(--canopy-muted)]">
                 {addr} · {desc}
               </p>
             </div>
             <a
-              className="font-mono2 text-xs text-[var(--canopy-cyan)] hover:underline"
+              className="font-mono2 text-sm text-[var(--canopy-cyan)] no-underline transition-colors hover:text-[var(--canopy-text)]"
               href={`https://explorer.solana.com/address/${addr}?cluster=devnet`}
               target="_blank"
               rel="noreferrer"
@@ -83,7 +83,7 @@ export default function ProgramStatus() {
           </div>
         ))}
       </div>
-      <p className="mt-4 font-mono2 text-[11px] text-[var(--canopy-muted)]">
+      <p className="mt-4 font-mono2 text-sm text-[var(--canopy-muted)]">
         devnet · mock mUSDC/xStocks · mainnet demo runs real xStocks via Jupiter
       </p>
     </div>

@@ -8,7 +8,7 @@ export const metadata = {
 export default function LeaderboardPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <p className="font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-purple)]">
+      <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
         05 / LEADERBOARD
       </p>
       <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
@@ -38,16 +38,16 @@ export default function LeaderboardPage() {
               { addr: "0x7g8h…", role: "Holder", markets: 2, pnl: "+12%" },
             ].map((r, i) => (
               <tr key={r.addr} className="border-b border-[var(--canopy-line)] last:border-0 hover:bg-[rgba(20,241,149,0.05)]">
-                <td className="px-4 py-3 font-mono2 text-[var(--canopy-muted)]">{i + 1}</td>
-                <td className="px-4 py-3 font-mono2 text-[var(--canopy-text)]">{r.addr}</td>
+                <td className="px-4 py-3 font-mono2 text-[var(--canopy-muted)] tabular">{i + 1}</td>
+                <td className="px-4 py-3 font-mono2 text-[var(--canopy-text)] tabular">{r.addr}</td>
                 <td className="px-4 py-3 font-mono2 text-[var(--canopy-green)]">{r.role}</td>
-                <td className="px-4 py-3 font-mono2 text-[var(--canopy-muted)]">{r.markets}</td>
-                <td className="px-4 py-3 font-mono2 text-[var(--canopy-green)]">{r.pnl}</td>
+                <td className="px-4 py-3 font-mono2 text-[var(--canopy-muted)] tabular">{r.markets}</td>
+                <td className="px-4 py-3 font-mono2 text-[var(--canopy-green)] tabular">{r.pnl}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="p-4 text-center font-mono2 text-xs text-[var(--canopy-muted)]">
+        <div className="p-4 text-center font-mono2 text-sm text-[var(--canopy-muted)]">
           Live rankings populate as futarchy markets activate on devnet.
         </div>
       </div>

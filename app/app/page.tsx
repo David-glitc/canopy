@@ -29,23 +29,23 @@ export default function Home() {
     <div id="top">
       {/* HERO */}
       <section className="grid-bg relative overflow-hidden pt-16">
-        <div className="orb left-1/2 top-[-180px] h-[420px] w-[720px] -translate-x-1/2 bg-[var(--canopy-purple)] opacity-25" />
-        <div className="orb left-[8%] top-[38%] h-[300px] w-[300px] bg-[var(--canopy-green)] opacity-15" />
+        <div className="orb left-1/2 top-[-180px] h-[420px] w-[720px] -translate-x-1/2 bg-[var(--canopy-green)] opacity-[0.08]" />
+        <div className="orb left-[8%] top-[38%] h-[300px] w-[300px] bg-[var(--canopy-green)] opacity-[0.06]" />
         <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-20 text-center sm:pt-28">
           <img
             src="/mark.svg"
             alt="Canopy cipher mark"
             width={120}
             height={120}
-            className="mx-auto drop-shadow-[0_0_45px_rgba(20,241,149,0.35)]"
+            className="mx-auto opacity-90"
           />
-          <p className="mt-8 font-mono2 text-xs tracking-[0.35em] text-[var(--canopy-green)]">
+          <p className="mt-8 font-mono2 text-sm tracking-[0.35em] text-[var(--canopy-green)]">
             A TECHNOCRATIC CIPHER-SOCIETY FOR TOKENIZED EQUITY
           </p>
-          <h1 className="font-display mx-auto mt-5 max-w-4xl text-5xl font-extrabold leading-[1.04] sm:text-7xl">
+          <h1 className="font-display mx-auto mt-5 max-w-4xl text-5xl font-extrabold leading-[1.1] sm:text-7xl">
             COLLECT STOCKS
             <br />
-            LIKE <span className="text-gradient">CIPHER-KEYS.</span>
+            LIKE CIPHER-KEYS.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-[var(--canopy-muted)] sm:text-lg">
             Fund a Sector. Mint a sealed Share. Reveal how much of the vault
@@ -70,7 +70,7 @@ export default function Home() {
       {TRACKS.map((t) => (
         <section key={t.id} id={t.id} className="border-t border-[var(--canopy-line)]">
           <div className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-            <p className="font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-purple)]">
+            <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
               {t.kicker}
             </p>
             <h2 className="font-display mt-3 max-w-2xl text-3xl font-extrabold sm:text-4xl">
@@ -80,11 +80,11 @@ export default function Home() {
               {t.body}
             </p>
             {typeof t.cta === "string" && t.cta.startsWith("/") ? (
-              <a href={t.cta} className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-xs text-[var(--canopy-muted)] hover:border-[var(--canopy-green)] hover:text-[var(--canopy-text)]">
+              <a href={t.cta} className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:border-[var(--canopy-green)] hover:text-[var(--canopy-text)]">
                 {t.cta === "/shop" ? "Enter Shop" : t.cta}
               </a>
             ) : (
-              <span className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-xs text-[var(--canopy-muted)]">
+              <span className="mt-6 inline-block rounded-full border border-[var(--canopy-line)] px-4 py-1.5 font-mono2 text-sm text-[var(--canopy-muted)]">
                 {t.cta}
               </span>
             )}
@@ -95,12 +95,12 @@ export default function Home() {
       {/* DOCTRINE */}
       <section id="doctrine" className="border-t border-[var(--canopy-line)] bg-[var(--canopy-ink)]">
         <div className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-          <p className="font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-green)]">
+          <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
             DOCTRINE
           </p>
           <blockquote className="font-display mt-4 max-w-3xl text-2xl font-bold leading-snug sm:text-3xl">
             “Every deposit mints a cipher. Every cipher stays backed.
-            The asset is liquid. <span className="text-gradient">The key is true.”</span>
+            The asset is liquid. The key is true.”
           </blockquote>
           <div className="mt-8 grid gap-4 text-sm text-[var(--canopy-muted)] sm:grid-cols-3">
             <div className="glass rounded-2xl p-5">

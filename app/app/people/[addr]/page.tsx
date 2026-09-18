@@ -8,7 +8,7 @@ export const metadata = {
 export default function PersonaPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <Link href="/people" className="font-mono2 text-xs text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]">
+      <Link href="/people" className="font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]">
         ← back to People
       </Link>
       <h1 className="font-display mt-8 text-4xl font-extrabold sm:text-5xl">

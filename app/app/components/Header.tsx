@@ -19,7 +19,7 @@ export default function Header() {
         </a>
         <nav className="hidden items-center gap-7 text-sm text-[var(--canopy-muted)] md:flex">
           {LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="transition-colors hover:text-[var(--canopy-text)]">
+            <a key={l.href} href={l.href} className="no-underline transition-colors hover:text-[var(--canopy-text)] focus-visible:outline-none">
               {l.label}
             </a>
           ))}

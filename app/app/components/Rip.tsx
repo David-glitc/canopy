@@ -47,13 +47,13 @@ export default function Rip({
           <img
             src={imageUrl}
             alt={title}
-            className="h-full w-full animate-[rip-in_0.7s_ease-out] object-cover"
+            className="h-full w-full object-cover"
             draggable={false}
           />
         ) : (
           <button
             onClick={rip}
-            className="group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-5 bg-[radial-gradient(ellipse_at_50%_40%,#12261c_0%,#050505_70%)]"
+            className="group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-5 bg-[#0d0d10]"
             aria-label="Rip the seal"
           >
             <img
@@ -63,20 +63,20 @@ export default function Rip({
               height={84}
               className={`transition-transform duration-500 ${
                 stage === "tearing" ? "scale-150 opacity-0" : "group-hover:scale-110"
-              } drop-shadow-[0_0_35px_rgba(20,241,149,0.45)]`}
+              }`}
               draggable={false}
             />
             <span
-              className={`font-mono2 text-xs tracking-[0.4em] text-[var(--canopy-green)] ${
+              className={`font-mono2 text-sm tracking-[0.4em] text-[var(--canopy-green)] ${
                 stage === "tearing" ? "opacity-0" : "animate-pulse"
               }`}
             >
               {stage === "tearing" ? "···" : "TAP TO RIP"}
             </span>
             {stage === "tearing" && (
-              <span className="animate-[rip-flash_0.9s_ease-out] absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(20,241,149,0.55),rgba(153,69,255,0.25)_55%,transparent_75%)]" />
+              <span className="animate-[rip-flash_0.9s_ease-out] absolute inset-0 bg-[rgba(20,241,149,0.15)]" />
             )}
-            <span className="absolute inset-x-8 bottom-6 h-px bg-gradient-to-r from-transparent via-[var(--canopy-green)] to-transparent opacity-60" />
+            <span className="absolute inset-x-8 bottom-6 h-px bg-[var(--canopy-green)] opacity-40" />
           </button>
         )}
       </div>
@@ -84,7 +84,7 @@ export default function Rip({
       {stage === "revealed" && (
         <div className="mt-6 text-center">
           <h3 className="font-display text-xl font-extrabold">{title}</h3>
-          <p className="mt-1 font-mono2 text-xs text-[var(--canopy-green)]">{subtitle}</p>
+          <p className="mt-1 font-mono2 text-sm text-[var(--canopy-green)]">{subtitle}</p>
           <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
             <button
               onClick={onClaim}
@@ -99,7 +99,7 @@ export default function Rip({
           </div>
           <button
             onClick={() => setStage("sealed")}
-            className="mt-3 font-mono2 text-xs text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]"
+            className="mt-3 font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]"
           >
             replay rip ↺
           </button>

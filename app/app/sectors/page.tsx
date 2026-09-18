@@ -8,11 +8,11 @@ export const metadata = {
 export default function SectorsPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <p className="font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-purple)]">
+      <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
         01 / SECTORS
       </p>
       <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
-        Funding <span className="text-gradient">cells.</span>
+        Funding cells.
       </h1>
       <p className="mt-4 max-w-2xl leading-relaxed text-[var(--canopy-muted)]">
         Every Sector pools capital into real backing. Fund one to mint a sealed

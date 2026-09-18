@@ -36,18 +36,18 @@ export default async function SharePage({ params, searchParams }: PageProps) {
             className="aspect-[2/3] w-full object-cover"
           />
         ) : (
-          <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_50%_40%,#12261c_0%,#050505_70%)]">
+          <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-4 bg-[#0d0d10]">
             <img src="/mark.svg" alt="" width={88} height={88} className="opacity-70" />
-            <p className="font-mono2 text-xs tracking-[0.4em] text-[var(--canopy-green)]">SEALED</p>
+            <p className="font-mono2 text-sm tracking-[0.4em] text-[var(--canopy-green)]">SEALED</p>
           </div>
         )}
       </div>
 
       <div className="max-w-2xl">
-        <Link href="/sectors" className="font-mono2 text-xs text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]">
+        <Link href="/sectors" className="font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]">
           ← back to Sectors
         </Link>
-        <p className="mt-8 font-mono2 text-xs tracking-[0.3em] text-[var(--canopy-green)]">
+        <p className="mt-8 font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
           CANOPY SHARE
         </p>
         <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
@@ -61,25 +61,25 @@ export default async function SharePage({ params, searchParams }: PageProps) {
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <div className="rounded-xl border border-[var(--canopy-line)] bg-black/40 p-4">
-            <p className="font-mono2 text-[11px] tracking-[0.2em] text-[var(--canopy-muted)]">ECONOMIC RARITY</p>
+            <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">ECONOMIC RARITY</p>
             <p className="mt-1 font-display text-lg font-extrabold text-[var(--canopy-text)]">{share.economicRarity}</p>
           </div>
           <div className="rounded-xl border border-[var(--canopy-line)] bg-black/40 p-4">
-            <p className="font-mono2 text-[11px] tracking-[0.2em] text-[var(--canopy-muted)]">STATUS</p>
+            <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">STATUS</p>
             <p className="mt-1 font-display text-lg font-extrabold text-[var(--canopy-green)]">{revealed ? "Revealed" : "Locked"}</p>
           </div>
         </div>
 
         {revealed && (
           <div className="mt-8">
-            <p className="font-mono2 text-xs tracking-[0.2em] text-[var(--canopy-muted)]">SIGNAL</p>
+            <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">SIGNAL</p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {Object.entries(share.attrs)
                 .filter(([key]) => !["sealed", "revealed", "claimed", "deposit_lamports", "weight_1e18", "rarity", "dna", "instant"].includes(key))
                 .slice(0, 8)
                 .map(([key, value]) => (
                   <div key={key} className="rounded-xl border border-[var(--canopy-line)] bg-black/30 p-3">
-                    <p className="font-mono2 text-[10px] uppercase text-[var(--canopy-muted)]">{key.replaceAll("_", " ")}</p>
+                    <p className="font-mono2 text-[11px] uppercase text-[var(--canopy-muted)]">{key.replaceAll("_", " ")}</p>
                     <p className="mt-1 text-sm text-[var(--canopy-text)]">{value}</p>
                   </div>
                 ))}
@@ -99,7 +99,7 @@ export default async function SharePage({ params, searchParams }: PageProps) {
           </Link>
         </div>
 
-        <p className="mt-6 break-all font-mono2 text-[11px] leading-relaxed text-[var(--canopy-muted)]">
+        <p className="mt-6 break-all font-mono2 text-sm leading-relaxed text-[var(--canopy-muted)]">
           {mint}
         </p>
       </div>
