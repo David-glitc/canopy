@@ -4,8 +4,8 @@ import sharp from "sharp";
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { composeCard } from "../../packages/card-engine/compose.mjs";
-import { mulberry32 } from "../../packages/card-engine/dna.mjs";
+import { composeCard } from "packages/card-engine/compose.mjs";
+import { mulberry32 } from "packages/card-engine/dna.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LAYERS = join(ROOT, "layers");

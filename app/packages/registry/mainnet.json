@@ -1,0 +1,26 @@
+{
+  "network": "mainnet-beta",
+  "tokenProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "quote": {
+    "symbol": "USDC",
+    "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "decimals": 6
+  },
+  "assets": [
+    { "symbol": "AAPLx", "underlying": "AAPL", "mint": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp", "decimals": 8 },
+    { "symbol": "NVDAx", "underlying": "NVDA", "mint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh", "decimals": 8 },
+    { "symbol": "TSLAx", "underlying": "TSLA", "mint": "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB", "decimals": 8 },
+    { "symbol": "MSFTx", "underlying": "MSFT", "mint": "XspzcW1PRtgf6Wj92HCiZdjzKCyFekVD8P5Ueh3dRMX", "decimals": 8 },
+    { "symbol": "SPYx", "underlying": "SPY", "mint": "XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W", "decimals": 8 },
+    { "symbol": "QQQx", "underlying": "QQQ", "mint": "Xs8S1uUs1zvS2p7iwtsG3b6fkhpvmwz4GYU3gWAmWHZ", "decimals": 8 },
+    { "symbol": "GOOGLx", "underlying": "GOOGL", "mint": "XsCPL9dNWBMvFtTmwcCA5v3xWPSMEBCszbQdiLLq6aN", "decimals": 8 },
+    { "symbol": "AMZNx", "underlying": "AMZN", "mint": "Xs3eBt7uRfJX8QUs4suhyU8p2M6DoUDrJyWBa8LLZsg", "decimals": 8 },
+    { "symbol": "METAx", "underlying": "META", "mint": "Xsa62P5mvPszXL1krVUnU5ar38bBSVcWAB6fmPCo5Zu", "decimals": 8 },
+    { "symbol": "COINx", "underlying": "COIN", "mint": "Xs7ZdzSHLU9ftNJsii5fCeJhoRWSC32SQGzGQtePxNu", "decimals": 8 },
+    { "symbol": "HOODx", "underlying": "HOOD", "mint": "XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg", "decimals": 8 },
+    { "symbol": "PLTRx", "underlying": "PLTR", "mint": "XsoBhf2ufR8fTyNSjqfU71DYGaE6Z3SUGAidpzriAA4", "decimals": 8 },
+    { "symbol": "MSTRx", "underlying": "MSTR", "mint": "XsP7xzNPvEHS1m6qfanPUGjNmdnmsLKEoNAnHjdxxyZ", "decimals": 8 },
+    { "symbol": "CRCLx", "underlying": "CRCL", "mint": "XsueG8BtpquVJX9LVLLEGuViXUungE6WmK5YZ3p3bd1", "decimals": 8 }
+  ],
+  "note": "Liquid universe verified on mainnet 2026-09-17 (Token-2022, 8 dec, live supplies). Full 877-asset list via scripts/fetch-xstocks.mjs. AAPLx has no Solana deployment. Jupiter routability proven at demo time via small-size quote+swap (v6 API retired; use Ultra/swap API)."
+}
