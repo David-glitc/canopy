@@ -3,7 +3,7 @@ import mainnet from "./mainnet.json" with { type: "json" };
 
 export type RegistryAsset = {
   symbol: string;
-  underlying: string;
+  underlying?: string;
   mint: string;
   decimals: number;
 };
@@ -18,7 +18,7 @@ export type Registry = {
 };
 
 export function getRegistry(network: "devnet" | "mainnet-beta" = "devnet"): Registry {
-  return (network === "mainnet-beta" ? mainnet : devnet) as Registry;
+  return (network === "mainnet-beta" ? mainnet : devnet) as unknown as Registry;
 }
 
 export function assetMint(registry: Registry, symbol: string): string {
