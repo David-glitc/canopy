@@ -3,6 +3,7 @@
   "tokenProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
   "quote": {
     "symbol": "USDC",
+    "underlying": "USDC",
     "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     "decimals": 6
   },
