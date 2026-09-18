@@ -4,7 +4,8 @@
   "quote": {
     "symbol": "mUSDC",
     "mint": "3PN7iGUrNyk6AgGkGRGx5mD9ftGRGWNJC3FRFkRRhLC5",
-    "decimals": 6
+    "decimals": 6,
+    "underlying": "mUSDC"
   },
   "assets": [
     {

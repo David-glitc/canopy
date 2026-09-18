@@ -8,10 +8,12 @@ export type RegistryAsset = {
   decimals: number;
 };
 
+export type RegistryQuote = RegistryAsset;
+
 export type Registry = {
   network: string;
   tokenProgram: string;
-  quote: RegistryAsset;
+  quote: RegistryQuote;
   assets: RegistryAsset[];
 };
 
