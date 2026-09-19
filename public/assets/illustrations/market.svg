@@ -1,0 +1,7 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="30" width="80" height="60" rx="12" fill="#101114" stroke="#1B2421"/>
+  <path d="M28 70L44 58L60 66L76 50L92 60" stroke="#14F195" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="44" cy="58" r="3" fill="#14F195"/><circle cx="76" cy="50" r="3" fill="#14F195"/>
+  <rect x="28" y="78" width="64" height="4" rx="2" fill="#1B2421"/><rect x="28" y="78" width="38" height="4" rx="2" fill="#14F195"/>
+  <text x="60" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#68716E">TWAP</text>
+</svg>
