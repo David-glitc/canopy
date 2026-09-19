@@ -16,29 +16,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-[#111]">
+        <div className="scanlines" aria-hidden />
+        <div className="noise" aria-hidden />
         <Providers>
           <Header />
-          <main>{children}</main>
-          <footer className="border-t border-[var(--canopy-line)]">
-            <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-10 text-sm text-[var(--canopy-muted)] sm:flex-row sm:items-center sm:justify-between">
+          <main className="lg:ml-0">{children}</main>
+          <footer className="border-t border-[var(--canopy-line)] bg-[#111]">
+            <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 sm:px-6 lg:px-8 py-8 text-sm text-[var(--canopy-muted)] sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
                 <img src="/mark.svg" alt="Canopy" width={28} height={28} />
-                <span className="font-display font-bold tracking-widest text-[var(--canopy-text)]">
-                  CANOPY
-                </span>
+                <span className="font-display font-bold tracking-widest text-[var(--canopy-text)]">CANOPY</span>
+                <span className="v2-pill !h-6">devnet</span>
               </div>
-              <p className="font-mono2 text-sm">
-                Devnet demo · Not investment advice · Capital at risk
-              </p>
-              <a
-                className="font-mono2 text-sm text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)]"
-                href="https://github.com/David-glitc/canopy"
-                target="_blank"
-                rel="noreferrer"
-              >
-                github.com/David-glitc/canopy
-              </a>
+              <p className="font-mono2 text-sm">Devnet demo · Not investment advice · Capital at risk</p>
+              <a className="font-mono2 text-sm text-[var(--canopy-lime)] no-underline hover:text-white" href="https://github.com/David-glitc/canopy" target="_blank" rel="noreferrer">github.com/David-glitc/canopy</a>
             </div>
           </footer>
         </Providers>
