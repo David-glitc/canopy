@@ -8,7 +8,8 @@ import {
   Transaction,
   ComputeBudgetProgram,
 } from "@solana/web3.js";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { useUnifiedWallet } from "@/lib/useUnifiedWallet";
 import {
   MUSDC,
   ata,
@@ -32,7 +33,7 @@ type Minted = {
 
 export default function InstantMint() {
   const { connection } = useConnection();
-  const { publicKey, sendTransaction, connected } = useWallet();
+  const { publicKey, sendTransaction, connected } = useUnifiedWallet();
   const [usd, setUsd] = useState("2.00");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

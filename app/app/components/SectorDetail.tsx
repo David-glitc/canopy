@@ -11,7 +11,8 @@ import {
   TOKEN_2022_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { useUnifiedWallet } from "@/lib/useUnifiedWallet";
 import {
   CANOPY_ID,
   MUSDC,
@@ -39,7 +40,7 @@ const STATUS = ["Funding", "Closed", "Cancelled", "Revealed"] as const;
 
 export default function SectorDetail({ address }: { address: string }) {
   const { connection } = useConnection();
-  const { publicKey, sendTransaction, connected } = useWallet();
+  const { publicKey, sendTransaction, connected } = useUnifiedWallet();
   const [grove, setGrove] = useState<(GroveData & { nonce: bigint; creator: string }) | null>(null);
   const [records, setRecords] = useState<RecRow[] | null>(null);
   const [vaultBal, setVaultBal] = useState<bigint | null>(null);

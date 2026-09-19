@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Transaction } from "@solana/web3.js";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { useUnifiedWallet } from "@/lib/useUnifiedWallet";
 import {
   CANOPY_ID,
   MUSDC,
@@ -31,7 +32,7 @@ function countdown(deadline: bigint): string {
 
 export default function SectorList() {
   const { connection } = useConnection();
-  const { publicKey, sendTransaction, connected } = useWallet();
+  const { publicKey, sendTransaction, connected } = useUnifiedWallet();
   const [groves, setGroves] = useState<GroveRow[] | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [goal, setGoal] = useState("100");
