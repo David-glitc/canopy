@@ -85,7 +85,10 @@ export default function SectorList() {
       setShowCreate(false);
       load();
     } catch (e) {
-      setError(e instanceof Error ? e.message.slice(0, 200) : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("GoalNotMet") || msg.includes("6009")) setError("Couldn't create sector — goal not met is for closing, not creating. Try a lower goal.");
+      else if (msg.includes("insufficient funds")) setError("Couldn't create sector — insufficient SOL for rent. Fund your wallet and try again.");
+      else setError(`Couldn't create sector — ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(false);
     }
@@ -95,7 +98,7 @@ export default function SectorList() {
     <div>
       <div className="flex items-center justify-between">
         <p className="font-mono2 text-sm text-[var(--canopy-muted)]">
-          {groves === null ? "scanning overlayer…" : `${groves.length} sector${groves.length === 1 ? "" : "s"}`}
+          {groves === null ? "Loading sectors…" : `${groves.length} sector${groves.length === 1 ? "" : "s"}`}
         </p>
         <div className="flex gap-2">
           <button onClick={load} className="btn-ghost px-4 py-2 text-sm">
@@ -103,7 +106,7 @@ export default function SectorList() {
           </button>
           {connected && (
             <button onClick={() => setShowCreate((s) => !s)} className="btn-primary px-4 py-2 text-sm">
-              {showCreate ? "Close" : "+ New Sector"}
+              {showCreate ? "Close" : "Create sector"}
             </button>
           )}
         </div>
@@ -112,23 +115,26 @@ export default function SectorList() {
       {showCreate && (
         <div className="glass mt-4 grid gap-3 rounded-2xl p-5 sm:grid-cols-4">
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">GOAL $</span>
-            <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal"
+            <span className="font-mono2 text-[var(--canopy-muted)]">Goal</span>
+            <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100.00"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD, minimum 1.00</span>
           </label>
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">MIN $</span>
-            <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal"
+            <span className="font-mono2 text-[var(--canopy-muted)]">Minimum deposit</span>
+            <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2.00"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD per share</span>
           </label>
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">DAYS</span>
-            <input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal"
+            <span className="font-mono2 text-[var(--canopy-muted)]">Duration</span>
+            <input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Days until close</span>
           </label>
           <div className="flex items-end">
             <button onClick={create} disabled={busy} className="btn-primary w-full px-4 py-2 text-sm disabled:opacity-40">
-              {busy ? "Opening…" : "Open Sector"}
+              {busy ? "Creating…" : "Create sector"}
             </button>
           </div>
         </div>
@@ -192,9 +198,11 @@ export default function SectorList() {
         })}
       </div>
       {groves?.length === 0 && (
-        <p className="mt-8 text-center text-sm text-[var(--canopy-muted)]">
-          No sectors yet. Open the first one.
-        </p>
+        <div className="mt-8 rounded-2xl border border-[var(--canopy-line)] bg-[var(--color-surface)] p-8 text-center">
+          <p className="font-semibold">No sectors yet</p>
+          <p className="mt-1 text-sm text-[var(--canopy-muted)]">Sectors pool deposits and mint Shares. Create the first sector to start funding.</p>
+          {connected && <p className="mt-3 text-sm text-[var(--canopy-muted)]">Set a goal, minimum, and duration above then Create sector.</p>}
+        </div>
       )}
     </div>
   );
