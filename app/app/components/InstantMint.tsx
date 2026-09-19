@@ -10,8 +10,6 @@ import {
 } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
-  CANOPY_ID,
-  CONFIG_PDA,
   MUSDC,
   ata,
   buildClaim,
@@ -86,7 +84,9 @@ export default function InstantMint() {
       await connection.confirmTransaction(sig, "confirmed");
 
       const info = await connection.getAccountInfo(record);
-      const weight = info ? info.data.readBigUInt64LE(117).toString() : "1000000000000000000";
+      const weight = info
+        ? new DataView(info.data.buffer, info.data.byteOffset + 117, 8).getBigUint64(0, true).toString()
+        : "1000000000000000000";
       setMinted({
         asset: asset.publicKey.toBase58(),
         grove: grove.toBase58(),
