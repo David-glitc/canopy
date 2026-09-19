@@ -1,5 +1,8 @@
 import Link from "next/link"
 import ProgramStatus from "./components/ProgramStatus"
+import { AnimatedHero, HeroTerminal } from "./components/animations/AnimatedHero"
+import { AnimatedCard, AnimatedMetric } from "./components/animations/AnimatedCard"
+import { assets } from "@/assets"
 
 const why = [
   { kicker: "01", title: "Ownership for everyone", body: "Every Share is a claim on the vault. Chance sets share size (~0.5×–2× deposit weight, normalized to 1e18) — never zero." },
@@ -28,100 +31,52 @@ const faqs = [
 export default function Home() {
   return (
     <div>
-      {/* HERO - Dark Web3 Terminal */}
-      <section className="hero">
-        <div>
-          <p className="mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)]">The Web3 Terminal · Canopy</p>
-          <h1 className="heading-xl mt-4 max-w-[640px]">Collectible claims<br />on tokenized equity.</h1>
-          <p className="body mt-5 max-w-[520px]">Fund a Sector. Get a sealed Share. When it seals, your Share reveals real vault backing and your ownership % — or Instant Mint a solo vault for $1.50.</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/instant" className="btn-primary">Launch App</Link>
-            <Link href="/sectors" className="btn-secondary">Explore Sectors</Link>
-          </div>
-          <div className="mt-6 flex items-center gap-2 text-[11px] font-mono text-[var(--color-text-muted)]">
-            <span className="status">Live on devnet</span>
-            <span>mock mUSDC · slot-hash entropy · Core Shares</span>
-          </div>
-        </div>
-        <div className="relative hidden lg:block">
-          <div className="card relative overflow-hidden p-8">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/30 to-transparent" />
-            <div className="mx-auto max-w-[320px]">
-              <div className="aspect-[2/3] rounded-[18px] border border-[var(--color-border)] bg-[#080909] grid place-items-center relative overflow-hidden">
-                <img src="/mark.svg" alt="" width={64} height={64} className="opacity-20" />
-                <span className="absolute bottom-3 left-3 rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[10px] font-bold tracking-widest text-black">SEALED</span>
-                <span className="absolute top-3 right-3 status">PDA vault</span>
-              </div>
-              <div className="mt-6 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-3"><div className="mono text-[10px] text-[var(--color-text-muted)]">TYPE</div><div className="text-sm font-bold mt-1">Share</div></div>
-                <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-3"><div className="mono text-[10px] text-[var(--color-text-muted)]">BACKING</div><div className="text-sm font-bold mt-1">mUSDC</div></div>
-                <div className="rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary-muted)] p-3"><div className="mono text-[10px] text-[var(--color-text-muted)]">STATUS</div><div className="text-sm font-bold text-[var(--color-primary)] mt-1">Reveal</div></div>
-              </div>
-              <div className="mt-4 flex items-center justify-between mono text-[11px] text-[var(--color-text-muted)]"><span>Metaplex Core · PDA vault</span><span className="text-[var(--color-primary)]">● slot-hash</span></div>
+      {/* HERO - Dark Web3 Terminal with massive assets + animations */}
+      <AnimatedHero>
+        <section className="hero grid-move">
+          <div>
+            <p className="mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-primary)]">The Web3 Terminal · Canopy</p>
+            <h1 className="heading-xl mt-4 max-w-[640px]">Collectible claims<br />on tokenized equity.</h1>
+            <p className="body mt-5 max-w-[520px]">Fund a Sector. Get a sealed Share. When it seals, your Share reveals real vault backing and your ownership % — or Instant Mint a solo vault for $1.50.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/instant" className="btn-primary">Launch App</Link>
+              <Link href="/sectors" className="btn-secondary">Explore Sectors</Link>
+            </div>
+            <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-mono text-[var(--color-text-muted)]">
+              <span className="status live-indicator">Live on devnet</span>
+              <span>mock mUSDC · slot-hash entropy · Core Shares</span>
+              <img src={assets.icons.solana} alt="" width={16} height={16} className="ml-1 opacity-60" />
             </div>
           </div>
-        </div>
-      </section>
+          <div className="relative hidden lg:block hero-float">
+            <HeroTerminal />
+          </div>
+        </section>
+      </AnimatedHero>
 
-      {/* MARKET OVERVIEW */}
+      {/* MARKET OVERVIEW - animated metrics with massive assets */}
       <section className="container mt-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="heading-lg">Market overview</h2>
           <span className="status live-indicator">Live</span>
         </div>
         <div className="dashboard-grid">
-          <div className="metric-card grid-span-3">
-            <div className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">TOTAL DEPOSITED</div>
-            <div className="text-2xl font-bold">$—</div>
-            <div className="mono text-xs text-[var(--color-primary)]">↗ devnet</div>
-            <div className="text-xs text-[var(--color-text-muted)]">Across all Sectors</div>
-          </div>
-          <div className="metric-card grid-span-3">
-            <div className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">ACTIVE SECTORS</div>
-            <div className="text-2xl font-bold">—</div>
-            <div className="mono text-xs text-[var(--color-text-muted)]">Funding / Closed / Revealed</div>
-            <div className="text-xs text-[var(--color-text-muted)]">Max 20 shares / Sector</div>
-          </div>
-          <div className="metric-card grid-span-3">
-            <div className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">INSTANT MINTS</div>
-            <div className="text-2xl font-bold">$1.50</div>
-            <div className="mono text-xs text-[var(--color-primary)]">1% treasury</div>
-            <div className="text-xs text-[var(--color-text-muted)]">Solo vaults, instant reveal</div>
-          </div>
-          <div className="metric-card grid-span-3">
-            <div className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">PROTOCOL</div>
-            <div className="text-2xl font-bold">Devnet</div>
-            <div className="mono text-xs text-[var(--color-text-muted)]">9xmni…Jrnf · BP4h…68k</div>
-            <div className="text-xs text-[var(--color-text-muted)]">Jupiter + Pyth ready</div>
-          </div>
+          <AnimatedMetric index={0}><div className="flex items-center gap-2"><img src={assets.illustrations.vault} alt="" width={32} height={32} /><span className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">TOTAL DEPOSITED</span></div><div className="text-2xl font-bold mt-2">$—</div><div className="mono text-xs text-[var(--color-primary)]">↗ devnet</div><div className="text-xs text-[var(--color-text-muted)]">Across all Sectors</div></AnimatedMetric>
+          <AnimatedMetric index={1}><div className="flex items-center gap-2"><img src={assets.icons.fund} alt="" width={24} height={24} /><span className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">ACTIVE SECTORS</span></div><div className="text-2xl font-bold mt-2">—</div><div className="mono text-xs text-[var(--color-text-muted)]">Funding / Closed / Revealed</div><div className="text-xs text-[var(--color-text-muted)]">Max 20 shares / Sector</div></AnimatedMetric>
+          <AnimatedMetric index={2}><div className="flex items-center gap-2"><img src={assets.illustrations.entropy} alt="" width={24} height={24} className="entropy-spin" /><span className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">INSTANT MINTS</span></div><div className="text-2xl font-bold mt-2">$1.50</div><div className="mono text-xs text-[var(--color-primary)]">1% treasury</div><div className="text-xs text-[var(--color-text-muted)]">Solo vaults, instant reveal</div></AnimatedMetric>
+          <AnimatedMetric index={3}><div className="flex items-center gap-2"><img src={assets.illustrations.market} alt="" width={24} height={24} /><span className="mono text-[11px] tracking-widest text-[var(--color-text-muted)]">PROTOCOL</span></div><div className="text-2xl font-bold mt-2">Devnet</div><div className="mono text-xs text-[var(--color-text-muted)]">9xmni…Jrnf · BP4h…68k</div><div className="text-xs text-[var(--color-text-muted)]">Jupiter + Pyth ready</div></AnimatedMetric>
         </div>
       </section>
 
-      {/* FEATURE GRID */}
+      {/* FEATURE GRID - with icons and massive animations */}
       <section className="container mt-12">
         <h2 className="heading-lg">Fund. Reveal. Claim. Govern.</h2>
         <p className="body mt-2 max-w-xl">Sectors pool mUSDC (later xStocks) into PDA vaults. Every deposit mints a Share that later reveals a weight. Weights sum to 1e18.</p>
         <div className="dashboard-grid mt-6">
-          <div className="card grid-span-3">
-            <div className="mono text-[11px] text-[var(--color-primary)]">01</div>
-            <h3 className="mt-2 text-lg font-semibold">Fund</h3>
-            <p className="body mt-2 text-sm">Deposit mUSDC to the Sector vault. Mint a sealed Core Share. Max 20 per Sector, one tx per Share.</p>
-          </div>
-          <div className="card grid-span-3">
-            <div className="mono text-[11px] text-[var(--color-primary)]">02</div>
-            <h3 className="mt-2 text-lg font-semibold">Reveal</h3>
-            <p className="body mt-2 text-sm">Close on goal. Commit slot, wait 10, reveal with future slot hash. 0.5–2.0× rolls normalized to 1e18.</p>
-          </div>
-          <div className="card grid-span-3">
-            <div className="mono text-[11px] text-[var(--color-primary)]">03</div>
-            <h3 className="mt-2 text-lg font-semibold">Claim</h3>
-            <p className="body mt-2 text-sm">Revealed Shares claim pro-rata <span className="mono">weight * total / 1e18</span> from vault. Burn delegate, no custody.</p>
-          </div>
-          <div className="card grid-span-3">
-            <div className="mono text-[11px] text-[var(--color-primary)]">04</div>
-            <h3 className="mt-2 text-lg font-semibold">Govern</h3>
-            <p className="body mt-2 text-sm">Revealed Sectors govern via futarchy: bonded PASS/FAIL markets, TWAP decides. Silence keeps status quo.</p>
-          </div>
+          <AnimatedCard index={0} className="card grid-span-3 card-idle-float"><div className="flex items-center gap-2"><img src={assets.icons.fund} alt="" width={28} height={28} /><span className="mono text-[11px] text-[var(--color-primary)]">01</span></div><h3 className="mt-3 text-lg font-semibold">Fund</h3><p className="body mt-2 text-sm">Deposit mUSDC to the Sector vault. Mint a sealed Core Share. Max 20 per Sector, one tx per Share.</p></AnimatedCard>
+          <AnimatedCard index={1} className="card grid-span-3 card-idle-float" style={{ animationDelay: "0.2s" } as any}><div className="flex items-center gap-2"><img src={assets.icons.reveal} alt="" width={28} height={28} /><span className="mono text-[11px] text-[var(--color-primary)]">02</span></div><h3 className="mt-3 text-lg font-semibold">Reveal</h3><p className="body mt-2 text-sm">Close on goal. Commit slot, wait 10, reveal with future slot hash. 0.5–2.0× rolls normalized to 1e18.</p></AnimatedCard>
+          <AnimatedCard index={2} className="card grid-span-3"><div className="flex items-center gap-2"><img src={assets.icons.claim} alt="" width={28} height={28} /><span className="mono text-[11px] text-[var(--color-primary)]">03</span></div><h3 className="mt-3 text-lg font-semibold">Claim</h3><p className="body mt-2 text-sm">Revealed Shares claim pro-rata <span className="mono">weight * total / 1e18</span> from vault. Burn delegate, no custody.</p></AnimatedCard>
+          <AnimatedCard index={3} className="card grid-span-3"><div className="flex items-center gap-2"><img src={assets.icons.govern} alt="" width={28} height={28} /><span className="mono text-[11px] text-[var(--color-primary)]">04</span></div><h3 className="mt-3 text-lg font-semibold">Govern</h3><p className="body mt-2 text-sm">Revealed Sectors govern via futarchy: bonded PASS/FAIL markets, TWAP decides. Silence keeps status quo.</p></AnimatedCard>
         </div>
       </section>
 
@@ -166,17 +121,17 @@ export default function Home() {
         <p className="mono text-xs text-[var(--color-text-muted)] mt-3">Mock mUSDC on devnet. Mainnet USDC + xStocks via Jupiter. <Link href="/sectors" className="text-[var(--color-primary)]">Create a Sector</Link> or <Link href="/instant" className="text-[var(--color-primary)]">Instant Mint</Link>.</p>
       </section>
 
-      {/* WHY CANOPY - keep Sherwood style but with terminal cards */}
+      {/* WHY CANOPY - animated with massive assets */}
       <section className="container mt-12">
         <h2 className="heading-lg">Why Canopy</h2>
         <p className="body mt-2 max-w-xl">Collectible finance, not a raffle. Weights always sum to 100%. Backing is real, on-chain, and pro-rata.</p>
         <div className="dashboard-grid mt-6">
-          {why.map((u) => (
-            <div key={u.kicker} className="card grid-span-4">
+          {why.map((u, i) => (
+            <AnimatedCard key={u.kicker} index={i} className="card grid-span-4">
               <div className="mono text-[11px] text-[var(--color-primary)]">{u.kicker}</div>
               <h3 className="mt-2 text-lg font-semibold">{u.title}</h3>
               <p className="body mt-2 text-sm">{u.body}</p>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </section>

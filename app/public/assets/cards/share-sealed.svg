@@ -1,0 +1,10 @@
+<svg width="200" height="300" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0.5" y="0.5" width="199" height="299" rx="18" fill="#101114" stroke="#1B2421"/>
+  <rect x="1" y="1" width="198" height="40" rx="17" fill="#0B0B0D" stroke="#1B2421"/>
+  <circle cx="20" cy="21" r="3" fill="#68716E"/><circle cx="28" cy="21" r="3" fill="#68716E" opacity="0.5"/><circle cx="36" cy="21" r="3" fill="#68716E" opacity="0.3"/>
+  <text x="52" y="25" font-family="JetBrains Mono" font-size="8" fill="#68716E">SEALED • PDA vault</text>
+  <g opacity="0.15"><rect x="20" y="60" width="160" height="160" rx="12" fill="#14F195"/><circle cx="100" cy="140" r="40" fill="none" stroke="#14F195" stroke-width="1"/></g>
+  <text x="100" y="145" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#F5F7F7" letter-spacing="3">CIPHER</text>
+  <text x="100" y="260" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#68716E">Share #— • —% • Sealed</text>
+  <rect x="20" y="275" width="160" height="6" rx="3" fill="#1B2421"/><rect x="20" y="275" width="0" height="6" rx="3" fill="#14F195"/>
+</svg>
