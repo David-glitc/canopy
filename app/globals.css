@@ -1,0 +1,103 @@
+@import "tailwindcss";
+@import "../brand/tokens.css";
+
+html {
+  background: var(--canopy-black);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--canopy-black);
+  color: var(--canopy-text);
+  font-family: var(--canopy-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--canopy-font-display);
+  letter-spacing: 0.02em;
+}
+
+.font-mono2 {
+  font-family: var(--canopy-font-mono);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.glass {
+  background: rgba(16, 16, 22, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--canopy-line);
+}
+
+.btn-primary {
+  background: var(--canopy-green);
+  color: #050505;
+  font-weight: 800;
+  border-radius: 12px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 24px rgba(20, 241, 149, 0.2);
+  transform: translateY(-1px);
+}
+.btn-primary:focus-visible {
+  outline: 2px solid var(--canopy-green);
+  outline-offset: 2px;
+}
+
+.btn-ghost {
+  border: 1px solid var(--canopy-line);
+  border-radius: 12px;
+  color: var(--canopy-text);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--canopy-green);
+  background: rgba(20, 241, 149, 0.06);
+}
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--canopy-green);
+  outline-offset: 2px;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    filter: none;
+    opacity: 0.1;
+  }
+}
+
+*:focus-visible {
+  outline: 2px solid var(--canopy-green);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
