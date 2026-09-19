@@ -1,28 +1,34 @@
-/* Dark Web3 Terminal Design System — Canopy */
+/* Dark Web3 Terminal — Filled Solana */
 :root {
   --color-bg: #050505;
-  --color-bg-secondary: #0b0b0d;
-  --color-surface: #101114;
-  --color-surface-raised: #15171a;
+  --color-bg-secondary: #0a0f0e;
+  --color-surface: #0f1412;
+  --color-surface-raised: #121a17;
+  --color-surface-filled: #0f1e16;
 
   --color-primary: #14f195;
   --color-primary-hover: #32ffa8;
   --color-primary-dark: #0bbd73;
-  --color-primary-muted: rgba(20, 241, 149, 0.16);
+  --color-primary-muted: rgba(20, 241, 149, 0.14);
+  --color-primary-glow: rgba(20, 241, 149, 0.22);
+  --color-secondary: #9945FF;
+  --color-secondary-muted: rgba(153, 69, 255, 0.14);
+  --color-secondary-glow: rgba(153, 69, 255, 0.2);
 
   --color-text: #f5f7f7;
   --color-text-secondary: #a2aaa8;
   --color-text-muted: #68716e;
   --color-text-dark: #050505;
 
-  --color-border: #1b2421;
-  --color-border-accent: rgba(20, 241, 149, 0.45);
+  --color-border: #1e2e28;
+  --color-border-accent: rgba(20, 241, 149, 0.38);
+  --color-border-strong: #1e3a2d;
 
   --color-success: #14f195;
   --color-warning: #f5c451;
   --color-danger: #ff5c7a;
   --color-info: #7dd3fc;
-  --color-overlay: rgba(5, 5, 5, 0.78);
+  --color-overlay: rgba(5, 5, 5, 0.82);
 
   --brand-bg: #050505;
   --brand-accent: #14f195;
