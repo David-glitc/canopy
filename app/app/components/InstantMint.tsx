@@ -50,11 +50,11 @@ export default function InstantMint() {
 
   async function mint() {
     if (!publicKey) {
-      setError("Connect a wallet first.");
+      setError("No wallet connected — connect Phantom or Backpack to mint.");
       return;
     }
     if (!valid) {
-      setError("Minimum is $1.50.");
+      setError("Amount must be at least $1.50.");
       return;
     }
     setError(null);
@@ -99,7 +99,10 @@ export default function InstantMint() {
       });
       setClaimed(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message.slice(0, 220) : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("insufficient funds")) setError("Couldn't mint — insufficient mUSDC. Get test funds and try again.");
+      else if (msg.includes("0x1")) setError("Couldn't mint — transaction failed. Check balance and try again.");
+      else setError(`Couldn't mint — ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
     }
@@ -128,7 +131,8 @@ export default function InstantMint() {
       await connection.confirmTransaction(sig, "confirmed");
       setClaimed(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message.slice(0, 220) : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(`Couldn't claim — ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
     }
@@ -138,8 +142,9 @@ export default function InstantMint() {
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="glass rounded-2xl p-6 sm:p-8">
         <label className="font-mono2 text-sm tracking-[0.25em] text-[var(--canopy-muted)]">
-          AMOUNT (mUSDC · devnet)
+          Amount
         </label>
+        <p className="mono text-xs text-[var(--canopy-muted)]">mUSDC on devnet · 6 decimals</p>
         <div className="mt-3 flex items-center gap-3">
           <span className="font-display text-4xl font-extrabold text-[var(--canopy-muted)]">$</span>
           <input

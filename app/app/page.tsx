@@ -39,8 +39,8 @@ export default function Home() {
             <h1 className="heading-xl mt-4 max-w-[640px]">Collectible claims<br />on tokenized equity.</h1>
             <p className="body mt-5 max-w-[520px]">Fund a Sector. Get a sealed Share. When it seals, your Share reveals real vault backing and your ownership % — or Instant Mint a solo vault for $1.50.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/instant" className="btn-primary">Launch App</Link>
-              <Link href="/sectors" className="btn-secondary">Explore Sectors</Link>
+              <Link href="/instant" className="btn-primary">Launch app</Link>
+              <Link href="/sectors" className="btn-secondary">Explore sectors</Link>
             </div>
             <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-mono text-[var(--color-text-muted)]">
               <span className="status live-indicator">Live on devnet</span>
@@ -84,7 +84,7 @@ export default function Home() {
       <section className="container mt-12">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <h2 className="heading-lg">Open Sectors</h2>
-          <Link href="/sectors" className="mono text-sm text-[var(--color-primary)] no-underline hover:underline">View all →</Link>
+          <Link href="/sectors" className="mono text-sm text-[var(--color-primary)] no-underline hover:underline">View all sectors →</Link>
         </div>
         <div className="card p-0 overflow-hidden">
           <div className="overflow-x-auto">
@@ -208,8 +208,8 @@ export default function Home() {
               <h2 className="mt-4 max-w-4xl text-4xl font-bold leading-[0.95] tracking-[-0.05em] sm:text-5xl">Choose the Sector. Set the amount. See what your Share reveals.</h2>
             </div>
             <div className="flex flex-col gap-3 min-[420px]:flex-row lg:flex-col">
-              <Link href="/sectors" className="inline-flex h-12 min-w-44 items-center justify-center rounded-full bg-black px-5 text-sm font-bold text-white hover:bg-black/90">Explore Sectors →</Link>
-              <Link href="/instant" className="inline-flex h-12 min-w-44 items-center justify-center rounded-full border border-black/25 bg-transparent px-5 text-sm font-bold text-black hover:bg-black/10">Instant Mint</Link>
+              <Link href="/sectors" className="inline-flex h-12 min-w-44 items-center justify-center rounded-full bg-black px-5 text-sm font-bold text-white hover:bg-black/90">Explore sectors →</Link>
+              <Link href="/instant" className="inline-flex h-12 min-w-44 items-center justify-center rounded-full border border-black/25 bg-transparent px-5 text-sm font-bold text-black hover:bg-black/10">Instant mint</Link>
             </div>
           </div>
         </div>

@@ -124,7 +124,11 @@ export default function SectorDetail({ address }: { address: string }) {
       await fn();
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message.slice(0, 240) : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("GoalNotMet")) setError("Couldn't seal — goal not met. Fund more and try again.");
+      else if (msg.includes("NotExpired")) setError("Couldn't cancel — deadline not reached yet.");
+      else if (msg.includes("insufficient funds")) setError("Couldn't submit — insufficient funds. Get test funds and try again.");
+      else setError(`Couldn't complete — ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
     }
@@ -387,7 +391,7 @@ export default function SectorDetail({ address }: { address: string }) {
                 </div>
                 {publicKey && r.owner === publicKey.toBase58() && r.status === 0 && r.revealed && grove.status === 3 && (
                   <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-2 text-sm disabled:opacity-40">
-                    Claim
+                    Claim share
                   </button>
                 )}
               </div>
@@ -417,12 +421,12 @@ export default function SectorDetail({ address }: { address: string }) {
               Balance: {myBal === null ? "…" : `$${(Number(myBal) / 1e6).toFixed(2)} mUSDC`}
               {myBal !== null && myBal < 1_000_000n && (
                 <button onClick={faucet} disabled={busy !== null} className="ml-2 text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)] disabled:opacity-40">
-                  get test funds
+                  Get test funds
                 </button>
               )}
             </p>
             <button onClick={fund} disabled={busy !== null || !connected || grove.status !== 0} className="btn-primary mt-5 w-full px-6 py-3 text-sm disabled:opacity-40">
-              {busy ?? "Mint Share"}
+              {busy ?? "Mint share"}
             </button>
           </div>
           <div className="glass rounded-2xl p-6">
@@ -432,16 +436,16 @@ export default function SectorDetail({ address }: { address: string }) {
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <button onClick={() => advance("close")} disabled={busy !== null || !canClose} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
-                Seal (goal met)
+                Seal sector
               </button>
               <button onClick={() => advance("cancel")} disabled={busy !== null || !canCancel} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
-                Cancel (expired)
+                Cancel sector
               </button>
               <button onClick={() => advance("commit")} disabled={busy !== null || !(grove.status === 1 && !revealOn)} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
                 Commit reveal
               </button>
               <button onClick={() => advance("reveal")} disabled={busy !== null || !revealReady} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40" title={revealReady ? "Ready" : "Needs commit + 10 slots"}>
-                Reveal
+                Reveal shares
               </button>
             </div>
             {myRecs.length > 0 && (
@@ -457,7 +461,7 @@ export default function SectorDetail({ address }: { address: string }) {
                     )}
                     {grove.status === 2 && r.status === 0 && (
                       <button onClick={() => refundRec(r)} disabled={busy !== null} className="btn-ghost px-4 py-1.5 text-sm disabled:opacity-40">
-                        Refund
+                        Refund deposit
                       </button>
                     )}
                   </div>
