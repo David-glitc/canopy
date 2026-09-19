@@ -1,16 +1,109 @@
-/* Canopy brand tokens — black + Solana gradient, cypherpunk technocracy. */
+/* Dark Web3 Terminal Design System — Canopy */
 :root {
+  --color-bg: #050505;
+  --color-bg-secondary: #0b0b0d;
+  --color-surface: #101114;
+  --color-surface-raised: #15171a;
+
+  --color-primary: #14f195;
+  --color-primary-hover: #32ffa8;
+  --color-primary-dark: #0bbd73;
+  --color-primary-muted: rgba(20, 241, 149, 0.16);
+
+  --color-text: #f5f7f7;
+  --color-text-secondary: #a2aaa8;
+  --color-text-muted: #68716e;
+  --color-text-dark: #050505;
+
+  --color-border: #1b2421;
+  --color-border-accent: rgba(20, 241, 149, 0.45);
+
+  --color-success: #14f195;
+  --color-warning: #f5c451;
+  --color-danger: #ff5c7a;
+  --color-info: #7dd3fc;
+  --color-overlay: rgba(5, 5, 5, 0.78);
+
+  --brand-bg: #050505;
+  --brand-accent: #14f195;
+  --brand-text: #f5f7f7;
+  --surface-1: #0b0b0d;
+  --surface-2: #101114;
+  --surface-3: #15171a;
+  --border-default: #1b2421;
+  --border-active: rgba(20, 241, 149, 0.45);
+  --space-unit: 4px;
+  --radius-card: 18px;
+  --radius-control: 12px;
+  --radius-pill: 999px;
+  --shadow-card: 0 18px 50px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 24px rgba(20, 241, 149, 0.2);
+  --transition-fast: 160ms ease;
+  --transition-normal: 240ms ease;
+
+  /* Legacy canopy aliases */
   --canopy-black: #050505;
-  --canopy-ink: #0b0b0f;
-  --canopy-panel: #101016;
-  --canopy-line: #1e1e26;
-  --canopy-text: #f5f5f5;
-  --canopy-muted: #8a8a93;
+  --canopy-bg: #050505;
+  --canopy-ink: #0b0b0d;
+  --canopy-panel: #101114;
+  --canopy-card: #101114;
+  --canopy-line: #1b2421;
+  --canopy-line-strong: rgba(20, 241, 149, 0.12);
+  --canopy-text: #f5f7f7;
+  --canopy-muted: #a2aaa8;
   --canopy-green: #14f195;
-  --canopy-purple: #9945ff;
-  --canopy-cyan: #00e5ff;
-  --canopy-gradient: linear-gradient(135deg, #14f195 0%, #9945ff 100%);
-  --canopy-font-display: "Space Grotesk", "Arial Black", sans-serif;
-  --canopy-font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
-  --canopy-font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  --canopy-volt: #14f195;
+  --canopy-lime: #14f195;
+  --canopy-lime-dim: rgba(20, 241, 149, 0.16);
+  --canopy-green-live: #14f195;
+  --canopy-cyan: #7dd3fc;
+  --canopy-accent: #14f195;
+  --canopy-gradient: linear-gradient(135deg, #14f195 0%, #0bbd73 100%);
+  --canopy-font-display: "Inter", "SF Pro Display", Arial, sans-serif;
+  --canopy-font-body: "Inter", "SF Pro Display", Arial, sans-serif;
+  --canopy-font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  --font-heading: "Inter", "SF Pro Display", Arial, sans-serif;
+  --font-body: "Inter", "SF Pro Display", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  --text-display: 56px;
+  --text-h1: 44px;
+  --text-h2: 32px;
+  --text-h3: 22px;
+  --text-h4: 16px;
+  --text-body-lg: 18px;
+  --text-body: 15px;
+  --text-small: 13px;
+  --text-caption: 11px;
+  --line-display: 1.05;
+  --line-heading: 1.15;
+  --line-body: 1.55;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Sherwood compat */
+  --sb-bg: #050505;
+  --sb-surface: #101114;
+  --sb-card: #101114;
+  --sb-line: #1b2421;
+  --v2-muted: #68716e;
+  --v2-accent: #14f195;
 }
