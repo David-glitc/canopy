@@ -5,31 +5,28 @@ import { assets } from "@/assets"
 export default function Home() {
   return (
     <div>
-      {/* HERO - aggressive built, bento + terminal */}
+      {/* HERO - aggressive built, grid + terminal + metrics */}
       <section className="hero">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/20 bg-[var(--color-primary-muted)] px-3 py-1">
-            <span className="h-2 w-2 rounded-full bg-[var(--color-primary)] live-indicator" />
+            <span className="size-2 rounded-full bg-[var(--color-primary)] live-indicator" />
             <span className="mono text-[11px] font-semibold tracking-[0.08em] text-[var(--color-primary)]">LIVE ON DEVNET</span>
-            <span className="mono text-[11px] text-[var(--color-text-muted)]">· Solana · 9xmni…Jrnf</span>
+            <span className="mono text-[11px] text-[var(--color-text-muted)]">· Solana</span>
           </div>
           <h1 className="heading-xl mt-6 text-balance">Collectible claims<br /><span className="text-[var(--color-primary)]">on tokenized</span><br />equity.</h1>
-          <p className="body mt-5 max-w-[480px] text-pretty">Fund a Sector. Mint a sealed Share. Reveal how much of the vault you own — then govern it by market. One vault, 20 shares max, slot-hash entropy.</p>
+          <p className="body mt-5 max-w-[520px] text-pretty">Fund a Sector. Mint a sealed Share. When it seals, your Share reveals real vault backing and your ownership % — or Instant Mint a solo vault for $1.50. One vault, 20 shares max, slot-hash entropy.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/instant" className="btn-primary">Launch app</Link>
             <Link href="/sectors" className="btn-secondary">Explore sectors</Link>
-            <a href="https://explorer.solana.com/address/9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf?cluster=devnet" target="_blank" className="mono text-xs text-[var(--color-text-muted)] no-underline hover:text-[var(--color-primary)] flex items-center gap-1">explorer ↗</a>
           </div>
-          <div className="mt-8 flex gap-6">
-            <div><div className="text-2xl font-bold tabular-nums">$1.50</div><div className="mono text-xs text-[var(--color-text-muted)]">Instant mint</div></div>
-            <div className="w-px bg-[var(--color-border)]" />
-            <div><div className="text-2xl font-bold tabular-nums">20</div><div className="mono text-xs text-[var(--color-text-muted)]">max shares</div></div>
-            <div className="w-px bg-[var(--color-border)]" />
-            <div><div className="text-2xl font-bold tabular-nums">1e18</div><div className="mono text-xs text-[var(--color-text-muted)]">weight sum</div></div>
+          <div className="mt-8 grid grid-cols-3 gap-3 max-w-[420px]">
+            <div className="metric-card !min-h-0 !p-4"><div className="mono text-[10px] text-[var(--color-text-muted)]">INSTANT</div><div className="text-lg font-bold tabular-nums">$1.50</div><div className="mono text-xs text-[var(--color-primary)]">1% fee</div></div>
+            <div className="metric-card !min-h-0 !p-4"><div className="mono text-[10px] text-[var(--color-text-muted)]">MAX</div><div className="text-lg font-bold tabular-nums">20</div><div className="mono text-xs text-[var(--color-text-muted)]">shares / grove</div></div>
+            <div className="metric-card !min-h-0 !p-4"><div className="mono text-[10px] text-[var(--color-text-muted)]">ENTROPY</div><div className="text-lg font-bold">Slot</div><div className="mono text-xs text-[var(--color-primary)]">hash</div></div>
           </div>
         </div>
-        <div className="relative">
-          <div className="card p-0 overflow-hidden hero-float">
+        <div className="relative hero-float hidden lg:block">
+          <div className="card p-0 overflow-hidden">
             <div className="h-8 flex items-center gap-2 px-4 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
               <span className="size-3 rounded-full bg-[#ff5c7a]" /><span className="size-3 rounded-full bg-[#f5c451]" /><span className="size-3 rounded-full bg-[var(--color-primary)]" />
               <span className="mono text-xs text-[var(--color-text-muted)] ml-2">canopy — devnet • PDA vault</span>
@@ -37,9 +34,9 @@ export default function Home() {
             </div>
             <img src={assets.hero.terminal} alt="" width={480} height={320} className="w-full h-auto" />
             <div className="grid grid-cols-3 gap-2 p-4 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border)]">
-              <div className="rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] p-3 text-center"><div className="mono text-[10px] text-[var(--color-text-muted)]">TYPE</div><div className="text-xs font-bold mt-1">Core Share</div></div>
-              <div className="rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)] p-3 text-center"><div className="mono text-[10px] text-[var(--color-text-muted)]">BACKING</div><div className="text-xs font-bold mt-1">mUSDC</div></div>
-              <div className="rounded-lg bg-[var(--color-primary-muted)] border border-[var(--color-primary)]/30 p-3 text-center"><div className="mono text-[10px] text-[var(--color-text-muted)]">STATUS</div><div className="text-xs font-bold text-[var(--color-primary)]">Reveal →</div></div>
+              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center"><div className="mono text-[10px] text-[var(--color-text-muted)]">TYPE</div><div className="text-xs font-bold mt-1">Core Share</div></div>
+              <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-center"><div className="mono text-[10px] text-[var(--color-text-muted)]">BACKING</div><div className="text-xs font-bold mt-1">mUSDC</div></div>
+              <div className="rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary-muted)] p-3 text-center"><div className="mono text-[10px] text-[var(--color-text-muted)]">STATUS</div><div className="text-xs font-bold text-[var(--color-primary)]">Reveal →</div></div>
             </div>
           </div>
           <div className="absolute -bottom-6 -right-2 card p-3 flex items-center gap-3 shadow-xl hidden lg:flex vault-pulse">
@@ -60,13 +57,13 @@ export default function Home() {
         <div className="dashboard-grid">
           <div className="metric-card grid-span-3">
             <div className="flex items-center justify-between"><span className="mono text-[11px] text-[var(--color-text-muted)]">TOTAL DEPOSITED</span><img src={assets.illustrations.vault} alt="" width={20} height={20} /></div>
-            <div className="text-3xl font-bold tracking-[-0.02em]">$—</div>
+            <div className="text-3xl font-bold tracking-[-0.02em] tabular-nums">$—</div>
             <div className="h-6 w-full mt-1"><svg viewBox="0 0 100 24" className="w-full h-full"><path d="M0 18 L20 14 L40 16 L60 8 L80 12 L100 4" className="chart-line" fill="none"/><path d="M0 18 L20 14 L40 16 L60 8 L80 12 L100 4 L100 24 L0 24 Z" className="chart-area"/></svg></div>
             <div className="mono text-xs text-[var(--color-primary)]">↗ devnet</div>
           </div>
           <div className="metric-card grid-span-3">
             <div className="flex items-center justify-between"><span className="mono text-[11px] text-[var(--color-text-muted)]">ACTIVE SECTORS</span><img src={assets.icons.fund} alt="" width={20} height={20} /></div>
-            <div className="text-3xl font-bold">—</div>
+            <div className="text-3xl font-bold tabular-nums">—</div>
             <div className="flex gap-1 mt-1"><span className="status">Funding</span><span className="status-warning status">Closed</span></div>
             <div className="mono text-xs text-[var(--color-text-muted)]">Max 20 shares / grove</div>
           </div>
@@ -85,7 +82,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURE GRID - bento, not uniform */}
+      {/* FEATURE GRID - bento, built */}
       <section className="container mt-12">
         <h2 className="heading-lg text-balance">Fund. Reveal. Claim. Govern.</h2>
         <p className="body mt-2 max-w-[560px] text-pretty">Sectors pool mUSDC into PDA vaults. Every deposit mints a Share that later reveals a weight. Weights sum to 1e18 — no zero.</p>
@@ -104,7 +101,7 @@ export default function Home() {
           <div className="card grid-span-4">
             <div className="flex items-center gap-2"><img src={assets.icons.claim} alt="" width={28} height={28} /><span className="mono text-xs text-[var(--color-primary)]">03 — Claim</span></div>
             <h3 className="mt-3 text-lg font-semibold">Claim pro-rata</h3>
-            <p className="body mt-2 text-sm"><span className="mono">weight * total / 1e18</span> — burn delegate, no custody.</p>
+            <p className="body mt-2 text-sm"><span className="mono">weight * total / 1e18</span> — burn delegate.</p>
           </div>
           <div className="card grid-span-8 flex gap-4 items-center">
             <img src={assets.icons.govern} alt="" width={40} height={40} />
@@ -114,7 +111,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LIVE SECTORS TABLE - built with avatars + progress */}
+      {/* LIVE SECTORS TABLE - built */}
       <section className="container mt-12">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <h2 className="heading-lg">Open Sectors</h2>
@@ -143,16 +140,15 @@ export default function Home() {
             </table>
           </div>
         </div>
-        <p className="mono text-xs text-[var(--color-text-muted)] mt-3">Mock mUSDC on devnet. <Link href="/sectors" className="text-[var(--color-primary)]">Create a Sector</Link> or <Link href="/instant" className="text-[var(--color-primary)]">Instant mint</Link> — PDA vault, Core Shares.</p>
       </section>
 
-      {/* WHY + HOW - bento */}
+      {/* WHY + HOW */}
       <section className="container mt-12">
         <div className="dashboard-grid">
           <div className="card grid-span-4">
             <div className="mono text-xs text-[var(--color-primary)]">WHY</div>
             <h3 className="mt-2 text-lg font-semibold text-balance">Collectible finance,<br /><span className="text-[var(--color-text-secondary)]">not a raffle.</span></h3>
-            <p className="body mt-2 text-sm text-pretty">Weights sum to 1e18. Backing is real, on-chain, pro-rata. 6 reasons to fund.</p>
+            <p className="body mt-2 text-sm text-pretty">Weights sum to 1e18. Backing is real, on-chain, pro-rata.</p>
             <div className="mt-4 grid gap-2">
               {["Ownership for everyone","Real xStocks","Instant Mint"].map(t => (
                 <div key={t} className="flex items-center gap-2 mono text-xs"><span className="size-1.5 rounded-full bg-[var(--color-primary)]" />{t}</div>
@@ -171,7 +167,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AFTER REVEAL - built */}
+      {/* AFTER REVEAL */}
       <section className="container mt-12">
         <div className="card">
           <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
@@ -197,7 +193,7 @@ export default function Home() {
         <ProgramStatus />
       </section>
 
-      {/* CTA - aggressive */}
+      {/* CTA */}
       <section className="container mt-12 mb-12">
         <div className="relative overflow-hidden rounded-2xl border border-[var(--color-primary)]/35 bg-[var(--color-primary)] p-6 text-black sm:p-10">
           <div className="absolute inset-0 hero-grid opacity-20" />
