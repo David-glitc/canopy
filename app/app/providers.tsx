@@ -10,7 +10,7 @@ import { FlagContext } from "@/lib/providerFlag";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 const RPC = "https://api.devnet.solana.com";
-const ENV_ID = process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID ?? "7b5a2731-f71e-40c0-ae56-f77e54e96232";
+const ENV_ID = process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID ?? "1e1de74b-6a38-4a3c-82af-8f6369df62bb";
 
 function Inner({ children }: { children: React.ReactNode }) {
   const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter()], []);
