@@ -1,10 +1,10 @@
 import Link from "next/link";
 import CompanyLogo from "@/components/CompanyLogo";
-import { compactUsd, getPreStocks, getPythParity, premium } from "@/lib/markets";
+import { compactUsd, getPreStocks, getPythParity, getTokenizedStocks, premium } from "@/lib/markets";
 
 export const metadata = {
-  title: "PreStocks",
-  description: "Compare official PreStocks prices and mint a devnet collectible.",
+  title: "Tokenized Stocks",
+  description: "Explore tokenized public stocks and PreStocks, then turn a market position into Digital Matter.",
 };
 
 export const revalidate = 60;
@@ -19,7 +19,7 @@ function publishedLabel(timestamp: number | null) {
 }
 
 export default async function MarketsPage() {
-  const [prestocks, pyth] = await Promise.all([getPreStocks(), getPythParity()]);
+  const [prestocks, xstocks, pyth] = await Promise.all([getPreStocks(), getTokenizedStocks(), getPythParity()]);
   const isPreStocksSnapshot = prestocks.some((stock) => stock.isFallback);
   const hasParity =
     pyth.underlying?.price != null &&
@@ -34,22 +34,79 @@ export default async function MarketsPage() {
     <div className="shell pb-20 pt-16 sm:pt-24">
       <header className="market-page-head">
         <div>
-          <p className="page-kicker">Official PreStocks data</p>
-          <h1 className="page-title">Choose your company.</h1>
+          <p className="page-kicker">Public + private markets</p>
+          <h1 className="page-title">The stock market, collected.</h1>
           <p className="page-lede">
-            Compare each token with its company mark. When one stands out, mint it as a Canopy collectible.
+            Explore tokenized public stocks and pre-IPO companies on Solana. Turn any market signal into evolving Digital Matter.
           </p>
         </div>
         <aside className="market-context">
           <strong className="block text-[var(--ink)]">This is a devnet experience.</strong>
-          Minting uses mock mUSDC. A Canopy collectible references a PreStocks token and does not represent stock ownership.
+          Minting uses mock mUSDC. Canopy records the selected market as collectible metadata and does not execute a stock purchase.
         </aside>
       </header>
 
-      <section className="mt-16" aria-labelledby="prestocks-title">
+      <section className="mt-16" aria-labelledby="stocks-title">
+        <div className="market-lane-head">
+          <div>
+            <span className="market-lane-number">01</span>
+            <div>
+              <p className="page-kicker">Tokenized public stocks</p>
+              <h2 id="stocks-title">US equities, alive on Solana.</h2>
+              <p>Official xStocks assets with Solana mint addresses and matching Pyth market feeds.</p>
+            </div>
+          </div>
+          <span className="status">xStocks · Pyth</span>
+        </div>
+
+        <div className="market-card-grid mt-7">
+          {xstocks.map((stock) => {
+            const query = new URLSearchParams({
+              asset: stock.symbol,
+              contract: stock.contractAddress,
+              source: "xStocks",
+            });
+            if (stock.tokenPrice != null) query.set("price", stock.tokenPrice.toFixed(6));
+            return (
+              <article key={stock.contractAddress} className="market-card stock-card">
+                <div className="market-card-top">
+                  <CompanyLogo symbol={stock.underlyingSymbol} name={stock.name} className="market-card-logo" />
+                  <span className="stock-market-state"><i />{stock.tradingOpen ? "Market open" : "24/5 token"}</span>
+                </div>
+                <div className="stock-source-row">
+                  <span>{stock.symbol}</span>
+                  <span>{stock.exchange} underlying</span>
+                </div>
+                <h3 className="market-card-name">{stock.name}</h3>
+                <p className="market-card-symbol">{stock.underlyingSymbol} equity · {stock.symbol} token</p>
+                <p className="market-card-price">{stock.tokenPrice == null ? "—" : `$${stock.tokenPrice.toFixed(2)}`}</p>
+                <div className="stock-feed-pair">
+                  <div><span>PYTH STOCK</span><strong>{stock.pythUnderlyingId.slice(0, 8)}··{stock.pythUnderlyingId.slice(-5)}</strong></div>
+                  <div><span>PYTH TOKEN</span><strong>{stock.pythTokenId.slice(0, 8)}··{stock.pythTokenId.slice(-5)}</strong></div>
+                </div>
+                <div className="market-card-meta">
+                  <span>Token-2022 on Solana</span>
+                  <a href={`https://solscan.io/token/${stock.contractAddress}`} target="_blank" rel="noreferrer">Verify mint ↗</a>
+                </div>
+                <Link className="btn-primary market-card-action" href={`/instant?${query}`}>
+                  Create {stock.symbol} matter
+                </Link>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="section-block" aria-labelledby="prestocks-title">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 id="prestocks-title" className="text-2xl font-bold tracking-[-.035em]">Available companies</h2>
+            <div className="flex items-start gap-4">
+              <span className="market-lane-number">02</span>
+              <div>
+                <p className="page-kicker">Pre-IPO markets</p>
+                <h2 id="prestocks-title" className="text-2xl font-bold tracking-[-.035em]">Companies before the ticker.</h2>
+              </div>
+            </div>
             <p className="mt-2 text-sm text-[var(--muted)]">
               {isPreStocksSnapshot ? "Latest official snapshot · Sep 25, 16:15 UTC" : "Live from the PreStocks API"}
             </p>
@@ -65,6 +122,7 @@ export default async function MarketsPage() {
                 asset: stock.symbol,
                 contract: stock.contract_address,
                 price: stock.tokenPrice.toFixed(6),
+                source: "PreStocks",
               });
               return (
                 <article key={stock.contract_address} className="market-card">
@@ -106,7 +164,7 @@ export default async function MarketsPage() {
         )}
       </section>
 
-      <section className="section-block" aria-labelledby="pyth-title">
+      <section className="section-block border-t border-[var(--line)]" aria-labelledby="pyth-title">
         <div className="grid gap-10 lg:grid-cols-[.65fr_1.35fr] lg:items-start">
           <div>
             <p className="page-kicker">Pyth price check</p>

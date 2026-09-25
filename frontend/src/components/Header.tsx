@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import WalletButton from "./WalletButton";
 
 const LINKS = [
-  { href: "/markets", label: "PreStocks" },
+  { href: "/markets", label: "Markets" },
   { href: "/instant", label: "Mint" },
   { href: "/sectors", label: "Group Vaults" },
   { href: "/matter", label: "DNA" },

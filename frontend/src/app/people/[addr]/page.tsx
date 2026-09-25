@@ -19,7 +19,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ addr: 
       <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-[var(--canopy-muted)]">
         No Canopy activity has been indexed for this devnet wallet yet.
       </p>
-      <Link href="/markets" className="btn-primary mt-6">Choose a PreStock</Link>
+      <Link href="/markets" className="btn-primary mt-6">Choose a market</Link>
     </div>
   );
 }

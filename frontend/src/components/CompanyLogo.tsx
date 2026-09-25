@@ -3,6 +3,10 @@ import { cn } from "@/lib/utils";
 
 const LOGOS: Record<string, string> = {
   AAPL: "/company-logos/AAPL.png",
+  AMZN: "/company-logos/AMZN.png",
+  MSFT: "/company-logos/MSFT.png",
+  NVDA: "/company-logos/NVDA.png",
+  TSLA: "/company-logos/TSLA.png",
   ANDURIL: "/company-logos/ANDURIL.png",
   ANTHROPIC: "/company-logos/ANTHROPIC.png",
   FIGUREAI: "/company-logos/FIGUREAI.png",
@@ -22,7 +26,8 @@ export default function CompanyLogo({
   name: string;
   className?: string;
 }) {
-  const key = symbol.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+  const rawKey = symbol.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+  const key = LOGOS[rawKey] ? rawKey : rawKey.endsWith("X") ? rawKey.slice(0, -1) : rawKey;
   const src = LOGOS[key];
 
   if (!src) {

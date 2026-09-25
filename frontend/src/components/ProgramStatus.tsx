@@ -85,7 +85,7 @@ export default function ProgramStatus() {
         ))}
       </div>
       <p className="mt-4 text-xs leading-5 text-[var(--canopy-muted)]">
-        Solana devnet · mock mUSDC · official PreStocks data · verified Pyth updates
+        Solana devnet · mock mUSDC · public and pre-IPO markets · verified Pyth feeds
       </p>
     </div>
   );

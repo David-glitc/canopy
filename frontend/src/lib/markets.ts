@@ -13,6 +13,37 @@ export type PreStock = {
   isFallback?: boolean;
 };
 
+export type TokenizedStock = {
+  name: string;
+  symbol: string;
+  underlyingSymbol: string;
+  contractAddress: string;
+  tokenPrice: number | null;
+  tradingOpen: boolean;
+  exchange: string;
+  pythUnderlyingId: string;
+  pythTokenId: string;
+  isFallback?: boolean;
+};
+
+const XSTOCKS: Array<Omit<TokenizedStock, "tokenPrice" | "tradingOpen" | "exchange">> = [
+  { name: "Apple", symbol: "AAPLx", underlyingSymbol: "AAPL", contractAddress: "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp", pythUnderlyingId: "49f6b65cb1de6b10eaf75e7c03ca029c306d0357e91b5311b175084a5ad55688", pythTokenId: "978e6cc68a119ce066aa830017318563a9ed04ec3a0a6439010fc11296a58675" },
+  { name: "Tesla", symbol: "TSLAx", underlyingSymbol: "TSLA", contractAddress: "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB", pythUnderlyingId: "16dad506d7db8da01c87581c87ca897a012a153557d4d578c3b9c9e1bc0632f1", pythTokenId: "47a156470288850a440df3a6ce85a55917b813a19bb5b31128a33a986566a362" },
+  { name: "NVIDIA", symbol: "NVDAx", underlyingSymbol: "NVDA", contractAddress: "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh", pythUnderlyingId: "b1073854ed24cbc755dc527418f52b7d271f6cc967bbf8d8129112b18860a593", pythTokenId: "4244d07890e4610f46bbde67de8f43a4bf8b569eebe904f136b469f148503b7f" },
+  { name: "Amazon", symbol: "AMZNx", underlyingSymbol: "AMZN", contractAddress: "Xs3eBt7uRfJX8QUs4suhyU8p2M6DoUDrJyWBa8LLZsg", pythUnderlyingId: "b5d0e0fa58a1f8b81498ae670ce93c872d14434b72c364885d4fa1b257cbb07a", pythTokenId: "7148fbe6e493ff2580305c92a8d7f8628c9943b11b9b253aebc24863fec290e8" },
+  { name: "Microsoft", symbol: "MSFTx", underlyingSymbol: "MSFT", contractAddress: "XspzcW1PRtgf6Wj92HCiZdjzKCyFekVD8P5Ueh3dRMX", pythUnderlyingId: "d0ca23c1cc005e004ccf1db5bf76aeb6a49218f43dac3d4b275e92de12ded4d1", pythTokenId: "bb723a70af731ab56b9a650eb7e8ac22b7bc07ea77f8670bd1fa9a37bf6df3f5" },
+];
+
+type XStockAssetResponse = {
+  name?: string;
+  symbol?: string;
+  underlyingSymbol?: string;
+  trading?: { openNow?: boolean; exchange?: { abbreviation?: string } };
+  deployments?: Array<{ network?: string; address?: string }>;
+};
+
+type XStockPriceResponse = { quote?: number };
+
 const PRESTOCKS_SNAPSHOT: PreStock[] = [
   { name: "Anduril", symbol: "ANDURIL", description: "", image: "", external_url: "", contract_address: "PresTj4Yc2bAR197Er7wz4UUKSfqt6FryBEdAriBoQB", markPrice: 156.53, markValuation: 0, tokenPrice: 162.82, impliedValuation: 144e9, supply: 0, isFallback: true },
   { name: "Anthropic", symbol: "ANTHROPIC", description: "", image: "", external_url: "", contract_address: "Pren1FvFX6J3E4kXhJuCiAD5aDmGEb7qJRncwA8Lkhw", markPrice: 1056.59, markValuation: 0, tokenPrice: 1081.92, impliedValuation: 1.8e12, supply: 0, isFallback: true },
@@ -65,6 +96,46 @@ export async function getPreStocks(): Promise<PreStock[]> {
   } catch {
     return PRESTOCKS_SNAPSHOT;
   }
+}
+
+export async function getTokenizedStocks(): Promise<TokenizedStock[]> {
+  return Promise.all(XSTOCKS.map(async (fallback) => {
+    try {
+      const [assetResponse, priceResponse] = await Promise.all([
+        fetch(`https://api.xstocks.fi/api/v2/public/assets/${fallback.symbol}`, {
+          next: { revalidate: 300 },
+          headers: { Accept: "application/json" },
+        }),
+        fetch(`https://api.xstocks.fi/api/v2/public/assets/${fallback.symbol}/price-data`, {
+          next: { revalidate: 30 },
+          headers: { Accept: "application/json" },
+        }),
+      ]);
+      if (!assetResponse.ok || !priceResponse.ok) throw new Error("xStocks unavailable");
+      const asset = (await assetResponse.json()) as XStockAssetResponse;
+      const price = (await priceResponse.json()) as XStockPriceResponse;
+      const solana = asset.deployments?.find((deployment) => deployment.network === "Solana")?.address;
+      return {
+        ...fallback,
+        name: asset.name?.replace(" xStock", "") ?? fallback.name,
+        symbol: asset.symbol ?? fallback.symbol,
+        underlyingSymbol: asset.underlyingSymbol ?? fallback.underlyingSymbol,
+        contractAddress: solana ?? fallback.contractAddress,
+        tokenPrice: typeof price.quote === "number" && Number.isFinite(price.quote) ? price.quote : null,
+        tradingOpen: asset.trading?.openNow ?? false,
+        exchange: asset.trading?.exchange?.abbreviation ?? "US market",
+        isFallback: false,
+      };
+    } catch {
+      return {
+        ...fallback,
+        tokenPrice: null,
+        tradingOpen: false,
+        exchange: "US market",
+        isFallback: true,
+      };
+    }
+  }));
 }
 
 type HermesFeed = {

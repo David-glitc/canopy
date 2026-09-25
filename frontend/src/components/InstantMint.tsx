@@ -33,7 +33,7 @@ type Minted = {
   weight: string;
 };
 
-type SelectedAsset = { symbol: string; contract: string; tokenPrice?: number };
+type SelectedAsset = { symbol: string; contract: string; source: "PreStocks" | "xStocks"; tokenPrice?: number };
 
 export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
   const { connection } = useConnection();
@@ -73,6 +73,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
       if (asset) {
         metadataQuery.set("asset", asset.symbol);
         metadataQuery.set("contract", asset.contract);
+        metadataQuery.set("source", asset.source);
         if (asset.tokenPrice != null) metadataQuery.set("price", asset.tokenPrice.toFixed(6));
       }
       const suffix = metadataQuery.size ? `?${metadataQuery}` : "";
@@ -203,7 +204,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           </p>
         )}
         <p className="mt-4 text-pretty text-xs leading-relaxed text-[var(--canopy-muted)]">
-          This collectible is a devnet demo. It references a PreStocks token and does not represent stock ownership.
+          This devnet collectible records a {asset?.source ?? "market"} reference. It does not execute a stock purchase or grant shareholder rights.
         </p>
       </div>
 

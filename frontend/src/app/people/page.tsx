@@ -22,7 +22,7 @@ export default function PeoplePage() {
         <p className="mt-2 text-pretty text-sm text-[var(--canopy-muted)]">
           Mint a collectible to create the first activity record.
         </p>
-        <Link href="/markets" className="btn-primary mt-5">Choose a PreStock</Link>
+        <Link href="/markets" className="btn-primary mt-5">Choose a market</Link>
       </div>
     </div>
   );

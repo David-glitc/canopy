@@ -11,14 +11,14 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://xcanopy.vercel.app"),
   title: {
-    default: "Canopy: PreStocks collectibles on Solana",
+    default: "Canopy: Tokenized stock collectibles on Solana",
     template: "%s · Canopy",
   },
-  description: "Compare official PreStocks prices and mint a company-linked collectible with mock funds on Solana devnet.",
+  description: "Explore tokenized public stocks and PreStocks, then create company-linked Digital Matter on Solana.",
   icons: { icon: "/favicon.svg" },
   openGraph: {
-    title: "Canopy: PreStocks collectibles on Solana",
-    description: "Choose a PreStock and mint a verifiable devnet collectible in about a minute.",
+    title: "Canopy: Tokenized stock collectibles on Solana",
+    description: "Choose a public stock or PreStock and assemble verifiable Digital Matter from on-chain DNA.",
     type: "website",
   },
 };
@@ -35,12 +35,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="shell footer-row">
               <div>
                 <strong>Canopy</strong>
-                <p>PreStocks-linked collectibles on Solana devnet.</p>
+                <p>Public and pre-IPO stock collectibles on Solana devnet.</p>
               </div>
               <div className="footer-links" aria-label="Protocol links">
                 <a href="https://explorer.solana.com/address/9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf?cluster=devnet">Canopy program</a>
                 <a href="https://explorer.solana.com/address/BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k?cluster=devnet">Decision markets program</a>
-                <Link href="/markets">PreStocks and Pyth data</Link>
+                <Link href="/markets">Stocks, PreStocks, and Pyth</Link>
               </div>
             </div>
           </footer>

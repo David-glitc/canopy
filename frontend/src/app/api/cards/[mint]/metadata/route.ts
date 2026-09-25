@@ -13,6 +13,7 @@ export async function GET(
   const marketAsset = req.nextUrl.searchParams.get("asset")?.slice(0, 24).toUpperCase();
   const marketContract = req.nextUrl.searchParams.get("contract")?.slice(0, 64);
   const marketPrice = Number(req.nextUrl.searchParams.get("price"));
+  const marketSource = req.nextUrl.searchParams.get("source") === "xStocks" ? "xStocks" : "PreStocks";
   const share = await fetchShare(mint, grove ?? undefined, index ?? undefined);
   if (!share) {
     return NextResponse.json({ error: "unknown" }, { status: 404 });
@@ -25,9 +26,9 @@ export async function GET(
     ...(share.matterDna ? [{ trait_type: "Digital Matter DNA", value: share.matterDna }] : []),
     ...share.matterTraits.filter((trait) => trait.trait_type !== "Economic Rarity"),
     ...(marketAsset ? [{ trait_type: "Market", value: marketAsset }] : []),
-    ...(marketContract ? [{ trait_type: "PreStocks Mint", value: marketContract }] : []),
-    ...(Number.isFinite(marketPrice) ? [{ trait_type: "PreStocks Reference Price", value: `$${marketPrice.toFixed(2)}` }] : []),
-    ...(marketAsset ? [{ trait_type: "Market Source", value: "PreStocks" }] : []),
+    ...(marketContract ? [{ trait_type: `${marketSource} Mint`, value: marketContract }] : []),
+    ...(Number.isFinite(marketPrice) ? [{ trait_type: `${marketSource} Reference Price`, value: `$${marketPrice.toFixed(2)}` }] : []),
+    ...(marketAsset ? [{ trait_type: "Market Source", value: marketSource }] : []),
     ...Object.entries(share.attrs).map(([trait_type, value]) => ({
       trait_type,
       value,
@@ -39,10 +40,10 @@ export async function GET(
       symbol: "CANOPY",
       description:
         marketAsset
-          ? `Runtime-assembled Digital Matter linked to the ${marketAsset} PreStocks token. Its form is deterministically generated from on-chain DNA. This devnet demo uses mock mUSDC.`
+          ? `Runtime-assembled Digital Matter linked to the ${marketAsset} ${marketSource} token. Its form is deterministically generated from on-chain DNA. This devnet demo uses mock mUSDC.`
           : "Runtime-assembled Digital Matter whose form is deterministically generated from a Canopy vault record and reveal DNA on Solana devnet.",
       image: share.seedStr ? `${origin}/api/cards/${mint}/image${qs}` : undefined,
-      external_url: `${origin}/share/${mint}${qs}`,
+      external_url: `${origin}/share/${mint}${req.nextUrl.search}`,
       attributes,
       properties: { category: "image" },
     },

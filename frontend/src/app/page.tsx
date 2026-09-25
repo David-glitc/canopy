@@ -2,7 +2,7 @@ import Link from "next/link";
 import ProgramStatus from "@/components/ProgramStatus";
 import CompanyLogo from "@/components/CompanyLogo";
 import DigitalMatterLab from "@/components/DigitalMatterLab";
-import { getPreStocks, premium } from "@/lib/markets";
+import { getPreStocks, getTokenizedStocks, premium } from "@/lib/markets";
 
 export const revalidate = 60;
 
@@ -11,12 +11,13 @@ function mintHref(stock: { symbol: string; contract_address: string; tokenPrice:
     asset: stock.symbol,
     contract: stock.contract_address,
     price: stock.tokenPrice.toFixed(6),
+    source: "PreStocks",
   });
   return `/instant?${query}`;
 }
 
 export default async function Home() {
-  const allPreStocks = await getPreStocks();
+  const [allPreStocks, tokenizedStocks] = await Promise.all([getPreStocks(), getTokenizedStocks()]);
   const isPreStocksSnapshot = allPreStocks.some((stock) => stock.isFallback);
   const prestocks = [...allPreStocks]
     .sort((a, b) => Math.abs(premium(b.markPrice, b.tokenPrice)) - Math.abs(premium(a.markPrice, a.tokenPrice)))
@@ -29,13 +30,13 @@ export default async function Home() {
       <section className="hero">
         <div className="shell hero-grid">
           <div className="hero-copy-block">
-            <p className="page-kicker">PreStocks collectibles on Solana</p>
+            <p className="page-kicker">Tokenized stocks become Digital Matter</p>
             <h1 className="hero-title">
               Collect the companies <span>you&apos;re watching.</span>
             </h1>
             <p className="hero-copy">
-              Explore official PreStocks data, choose a pre-IPO company, and mint a verifiable
-              collectible with mock funds on Solana devnet.
+              Explore tokenized public stocks and pre-IPO companies, then turn your market position
+              into a verifiable being assembled from on-chain DNA.
             </p>
             <div className="hero-actions">
               <Link href="/markets" className="btn-primary">Choose a company <span aria-hidden="true">↗</span></Link>
@@ -60,7 +61,7 @@ export default async function Home() {
                 <span className="specimen-symbol">{featured?.symbol.replace("PRE", "") ?? "OPENAI"}</span>
               </div>
               <div className="specimen-foot">
-                <span className="specimen-name">PreStocks pick<br />on Solana devnet</span>
+                <span className="specimen-name">Market position<br />on Solana devnet</span>
                 <span className="specimen-price">
                   <strong>${featured?.tokenPrice.toFixed(2) ?? "—"}</strong>
                   <span>{featuredSpread > 0 ? "+" : ""}{featuredSpread.toFixed(1)}% vs mark</span>
@@ -97,8 +98,44 @@ export default async function Home() {
       <section className="shell section-block">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
+            <p className="page-kicker">Public stocks onchain</p>
+            <h2 className="section-heading">Tesla, Apple, Nvidia. In your wallet.</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-[var(--muted)] sm:text-right">
+            Official Solana xStocks assets paired with Pyth equity and token feeds.
+          </p>
+        </div>
+        <div className="market-card-grid mt-10">
+          {tokenizedStocks.slice(0, 3).map((stock) => {
+            const query = new URLSearchParams({
+              asset: stock.symbol,
+              contract: stock.contractAddress,
+              source: "xStocks",
+            });
+            if (stock.tokenPrice != null) query.set("price", stock.tokenPrice.toFixed(6));
+            return (
+              <article key={stock.contractAddress} className="market-card stock-card">
+                <div className="market-card-top">
+                  <CompanyLogo symbol={stock.underlyingSymbol} name={stock.name} className="market-card-logo" />
+                  <span className="stock-market-state"><i />{stock.tradingOpen ? "Market open" : "Tokenized"}</span>
+                </div>
+                <h3 className="market-card-name">{stock.name}</h3>
+                <p className="market-card-symbol">{stock.symbol} · xStocks on Solana</p>
+                <p className="market-card-price">{stock.tokenPrice == null ? "—" : `$${stock.tokenPrice.toFixed(2)}`}</p>
+                <div className="market-card-meta"><span>Pyth paired feeds</span><strong>{stock.underlyingSymbol} / {stock.symbol}</strong></div>
+                <Link href={`/instant?${query}`} className="btn-secondary market-card-action">Create {stock.symbol} matter</Link>
+              </article>
+            );
+          })}
+        </div>
+        <Link href="/markets" className="mt-6 inline-flex text-sm font-bold text-[var(--leaf)]">See every public and private market ↗</Link>
+      </section>
+
+      <section className="shell section-block">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
             <p className="page-kicker">Pick from the market</p>
-            <h2 className="section-heading">Three companies. One mint away.</h2>
+            <h2 className="section-heading">Private companies, before the ticker.</h2>
           </div>
           <div className="max-w-sm sm:text-right">
             <p className="text-sm leading-6 text-[var(--muted)]">
