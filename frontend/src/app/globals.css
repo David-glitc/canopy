@@ -333,6 +333,20 @@ button:disabled { cursor: not-allowed; }
 .vault-create-identity { grid-column: 1 / -1; display: grid; grid-template-columns: .8fr 1.4fr 1fr; gap: 1rem; }
 .vault-create-identity input, .vault-create-identity textarea { width: 100%; min-height: 3rem; padding: .72rem .8rem; resize: none; border: 1px solid var(--line); border-radius: .7rem; background: #100e13; color: var(--ink); font-size: .78rem; outline: none; }
 .vault-create-identity textarea { min-height: 4.3rem; line-height: 1.45; }
+.vault-asset-picker { grid-column: 1 / -1; display: grid; grid-template-columns: 10rem 1fr; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.vault-asset-picker > div:first-child { display: flex; flex-direction: column; gap: .4rem; }
+.vault-asset-picker > div:first-child > span { color: var(--leaf); font: 650 .67rem/1 var(--font-mono); letter-spacing: .05em; }
+.vault-asset-picker > div:first-child > strong { font-size: .85rem; }
+.vault-asset-picker > div:first-child > small { color: var(--quiet); font-size: .65rem; }
+.vault-asset-options { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: .45rem; }
+.vault-asset-option { min-width: 0; display: flex; align-items: center; gap: .5rem; padding: .55rem; border: 1px solid var(--line); border-radius: .65rem; background: #100e13; color: var(--muted); text-align: left; cursor: pointer; }
+.vault-asset-option:hover { border-color: var(--line-strong); }
+.vault-asset-option.is-selected { border-color: rgba(215,255,114,.35); background: rgba(215,255,114,.075); color: var(--ink); }
+.vault-asset-option .company-logo { width: 1.8rem; height: 1.8rem; border-radius: .48rem; }
+.vault-asset-option > span { min-width: 0; display: grid; flex: 1; gap: .15rem; }
+.vault-asset-option strong { overflow: hidden; font-size: .68rem; text-overflow: ellipsis; }
+.vault-asset-option small { color: var(--quiet); font-size: .58rem; }
+.vault-asset-option i { color: var(--lime); font-size: .72rem; font-style: normal; }
 .vault-input { min-height: 2.65rem; display: flex; align-items: center; gap: .35rem; padding-inline: .75rem; border: 1px solid var(--line); border-radius: .7rem; background: var(--paper); }
 .vault-input:focus-within { border-color: var(--leaf); box-shadow: 0 0 0 3px rgba(184,154,244,.1); }
 .vault-input i { color: var(--quiet); font-size: .7rem; font-style: normal; }
@@ -354,6 +368,10 @@ button:disabled { cursor: not-allowed; }
 .vault-card-identity h2 { overflow: hidden; font-size: 1.2rem; line-height: 1.15; letter-spacing: -.035em; text-overflow: ellipsis; white-space: nowrap; }
 .vault-card-identity p { display: -webkit-box; overflow: hidden; margin-top: .48rem; color: var(--muted); font-size: .75rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .vault-card-identity span { display: inline-block; overflow: hidden; max-width: 100%; margin-top: .55rem; color: var(--leaf); font: 620 .66rem/1 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
+.vault-card-assets { display: flex; min-width: 0; align-items: center; gap: .7rem; margin-top: .2rem; padding: .65rem .75rem; border: 1px solid var(--line); border-radius: .75rem; background: rgba(9,8,11,.45); }
+.vault-asset-stack { display: flex; flex: 0 0 auto; padding-left: .3rem; }
+.vault-asset-stack .company-logo { width: 1.75rem; height: 1.75rem; margin-left: -.3rem; border: 2px solid #121016; border-radius: .55rem; }
+.vault-card-assets p { overflow: hidden; color: var(--muted); font: 600 .62rem/1.4 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
 .vault-card-value-row { margin-top: 1.2rem; align-items: flex-end; }
 .vault-card-value-row small { display: block; color: var(--quiet); font: 620 .68rem/1 var(--font-mono); letter-spacing: .04em; }
 .vault-card-value-row strong { display: block; margin-top: .6rem; font-size: clamp(2.5rem,5vw,4rem); line-height: .85; letter-spacing: -.07em; font-variant-numeric: tabular-nums; }
@@ -389,6 +407,13 @@ button:disabled { cursor: not-allowed; }
 .vault-detail-identity h1 { max-width: 18ch; font-size: clamp(1.8rem,4vw,3.2rem); line-height: .95; letter-spacing: -.05em; }
 .vault-detail-identity p { max-width: 38rem; margin-top: .7rem; color: var(--muted); font-size: .82rem; line-height: 1.55; }
 .vault-detail-identity a { display: inline-block; margin-top: .7rem; color: var(--leaf); font: 650 .7rem/1 var(--font-mono); }
+.vault-detail-assets { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: 1.2rem; }
+.vault-detail-assets > a { min-width: 8.5rem; display: flex; align-items: center; gap: .55rem; padding: .55rem; border: 1px solid var(--line); border-radius: .7rem; background: rgba(9,8,11,.45); }
+.vault-detail-assets .company-logo { width: 2rem; height: 2rem; border-radius: .55rem; }
+.vault-detail-assets span { display: grid; flex: 1; gap: .15rem; }
+.vault-detail-assets strong { font-size: .72rem; }
+.vault-detail-assets small { color: var(--quiet); font-size: .6rem; }
+.vault-detail-assets i { color: var(--leaf); font-size: .68rem; font-style: normal; }
 .vault-detail-label { margin-top: 2rem; color: var(--quiet); font: 620 .68rem/1 var(--font-mono); letter-spacing: .05em; }
 .vault-detail-value { display: flex; align-items: flex-end; gap: 1rem; margin-top: .75rem; }
 .vault-detail-value strong { font-size: clamp(3.4rem,7vw,6.4rem); line-height: .82; letter-spacing: -.08em; font-variant-numeric: tabular-nums; }
@@ -612,12 +637,16 @@ button:disabled { cursor: not-allowed; }
 .position-record-head h2 { margin-top: .35rem; font-size: 1.1rem; font-weight: 760; letter-spacing: -.025em; }
 .position-weight { padding: .35rem .55rem; border-radius: 999px; background: rgba(217,255,114,.1); color: var(--lime); font: 700 .7rem/1 var(--font-mono); white-space: nowrap; }
 .position-token { display: flex; align-items: center; gap: .8rem; margin-top: 1rem; padding: .85rem; border-radius: .8rem; background: color-mix(in srgb, var(--paper) 84%, transparent); }
+.position-token-set { display: grid; gap: .45rem; margin-top: 1rem; }
+.position-token-set .position-token { margin-top: 0; }
 .position-token-logo { width: 2.7rem; height: 2.7rem; border: 1px solid rgba(255,255,255,.14); border-radius: .7rem; }
 .position-token strong { display: block; font-size: 1.05rem; }
 .position-token span { display: block; margin-top: .18rem; color: var(--quiet); font-size: .74rem; }
 .position-token a { color: var(--lime); font-size: .74rem; font-weight: 750; text-decoration: none; }
+.position-token b { color: var(--ink); font: 700 .72rem/1 var(--font-mono); }
 .position-allocation { height: .38rem; margin-top: .8rem; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.08); }
-.position-allocation span { display: block; height: 100%; border-radius: inherit; background: var(--lime); box-shadow: 0 0 18px rgba(217,255,114,.32); }
+.position-allocation { display: flex; gap: 2px; }
+.position-allocation span { display: block; height: 100%; background: var(--lime); box-shadow: 0 0 18px rgba(217,255,114,.32); }
 .position-ledger { display: flex; justify-content: space-between; gap: 1rem; margin-top: .8rem; color: var(--quiet); font: 600 .7rem/1.4 var(--font-mono); }
 .position-ledger strong { color: var(--ink); }
 .position-truth { margin-top: .75rem; color: var(--quiet); font-size: .72rem; line-height: 1.55; }
@@ -681,6 +710,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { border-color
   .vault-create-intro { grid-column: 1 / -1; }
   .vault-create-identity { grid-template-columns: 1fr 1.3fr; }
   .vault-create-identity label:last-child { grid-column: 1 / -1; }
+  .vault-asset-picker { grid-template-columns: 1fr; }
+  .vault-asset-options { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .vault-detail-hero { grid-template-columns: 1fr; }
   .vault-detail-aside { border-top: 1px solid var(--line); border-left: 0; grid-template-columns: .75fr 1fr 1.25fr; grid-template-rows: 1fr; }
   .vault-detail-metrics { border-block: 0; border-inline: 1px solid var(--line); }
@@ -740,6 +771,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { border-color
   .vault-create-intro { grid-column: auto; }
   .vault-create-identity { grid-column: auto; grid-template-columns: 1fr; }
   .vault-create-identity label:last-child { grid-column: auto; }
+  .vault-asset-picker { grid-column: auto; }
+  .vault-asset-options { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .vault-card { padding: 1.1rem; }
   .vault-card-value-row strong { font-size: 3rem; }
   .vault-detail-main { padding: 1.1rem 1.1rem 0; }

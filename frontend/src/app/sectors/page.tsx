@@ -14,7 +14,7 @@ export default function SectorsPage() {
           <h1 className="page-title">Build the position together.</h1>
         </div>
         <p className="page-lede">
-          Join a funding cycle. Every deposit creates a live vault share and a collectible assembled at reveal.
+          Fund a 2–5 token stock set. Mint sealed. Reveal a non-zero claim on the vault.
         </p>
       </div>
       <div className="mt-10">

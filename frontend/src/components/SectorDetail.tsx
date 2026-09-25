@@ -34,6 +34,7 @@ import { FUTARCHY_ID, parseMarket, marketPrice, type MarketData } from "@/lib/fu
 import { cn } from "@/lib/utils";
 import { FundingCurve, VaultCycle } from "@/components/VaultVisuals";
 import { fallbackVaultMetadata, loadVaultMetadata, type VaultMetadata } from "@/lib/vault-metadata";
+import CompanyLogo from "@/components/CompanyLogo";
 
 type RecRow = RecordData & { address: string };
 
@@ -353,6 +354,13 @@ export default function SectorDetail({ address }: { address: string }) {
             <p>{metadata.description}</p>
             {metadata.link && <a href={metadata.link} target="_blank" rel="noreferrer">Visit project ↗</a>}
           </div>
+          {metadata.tokens.length > 0 && <div className="vault-detail-assets">
+            {metadata.tokens.map((token) => <a key={token.mint} href={`https://solscan.io/token/${token.mint}`} target="_blank" rel="noreferrer">
+              <CompanyLogo symbol={token.symbol} name={token.symbol} />
+              <span><strong>{token.symbol}</strong><small>{(token.weightBps / 100).toFixed(0)}% · {token.source}</small></span>
+              <i>↗</i>
+            </a>)}
+          </div>}
           <p className="vault-detail-label">TOTAL VAULT VALUE</p>
           <div className="vault-detail-value">
             <strong>${(Number(balance) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>

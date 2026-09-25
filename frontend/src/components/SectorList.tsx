@@ -23,6 +23,8 @@ import {
   normalizeVaultLink,
   type VaultMetadata,
 } from "@/lib/vault-metadata";
+import { VAULT_ASSETS } from "@/lib/vault-assets";
+import CompanyLogo from "@/components/CompanyLogo";
 
 type GroveRow = GroveData & { address: string; metadata: VaultMetadata };
 
@@ -48,6 +50,7 @@ export default function SectorList() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
+  const [selectedAssets, setSelectedAssets] = useState(["NVDAx", "AAPLx", "TSLAx"]);
   const [goal, setGoal] = useState("100");
   const [minDep, setMinDep] = useState("2");
   const [days, setDays] = useState("5");
@@ -99,6 +102,10 @@ export default function SectorList() {
       setError("Add a short description of the vault strategy.");
       return;
     }
+    if (selectedAssets.length < 2 || selectedAssets.length > 5) {
+      setError("Choose between 2 and 5 stock tokens for the vault.");
+      return;
+    }
     const normalizedLink = normalizeVaultLink(link);
     if (link.trim() && !normalizedLink) {
       setError("Enter a valid project link.");
@@ -118,10 +125,22 @@ export default function SectorList() {
         grove,
         vault: ata(MUSDC, grove),
       });
+      const baseWeight = Math.floor(10_000 / selectedAssets.length);
+      const remainder = 10_000 - baseWeight * selectedAssets.length;
+      const tokens = selectedAssets.flatMap((symbol, index) => {
+        const asset = VAULT_ASSETS.find((candidate) => candidate.symbol === symbol);
+        return asset ? [{
+          symbol: asset.symbol,
+          mint: asset.mint,
+          source: asset.source,
+          weightBps: baseWeight + (index < remainder ? 1 : 0),
+        }] : [];
+      });
       const metadata: VaultMetadata = {
-        name: name.trim().slice(0, 48),
-        description: description.trim().slice(0, 140),
+        name: name.trim().slice(0, 36),
+        description: description.trim().slice(0, 96),
         link: normalizedLink,
+        tokens,
       };
       const sig = await sendTransaction(
         new Transaction().add(ix, buildVaultMemo(publicKey, grove, metadata)),
@@ -132,6 +151,7 @@ export default function SectorList() {
       setName("");
       setDescription("");
       setLink("");
+      setSelectedAssets(["NVDAx", "AAPLx", "TSLAx"]);
       await load();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -178,9 +198,22 @@ export default function SectorList() {
         <div className="vault-create-panel">
           <div className="vault-create-intro"><span>NEW CYCLE</span><strong>Set the rules, then invite the group.</strong></div>
           <div className="vault-create-identity">
-            <label><span>Vault name</span><input value={name} onChange={(e) => setName(e.target.value)} maxLength={48} placeholder="AI Frontier Fund" /></label>
-            <label><span>Description</span><textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={140} rows={2} placeholder="A concentrated token set spanning public AI infrastructure and private frontier companies." /></label>
-            <label><span>Project link</span><input value={link} onChange={(e) => setLink(e.target.value)} maxLength={120} inputMode="url" placeholder="yourproject.xyz" /><small>Optional · recorded with the vault</small></label>
+            <label><span>Vault name</span><input value={name} onChange={(e) => setName(e.target.value)} maxLength={36} placeholder="AI Frontier Fund" /></label>
+            <label><span>Description</span><textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={96} rows={2} placeholder="A concentrated set spanning public AI infrastructure and private frontier companies." /></label>
+            <label><span>Project link</span><input value={link} onChange={(e) => setLink(e.target.value)} maxLength={80} inputMode="url" placeholder="yourproject.xyz" /><small>Optional · recorded with the vault</small></label>
+          </div>
+          <div className="vault-asset-picker">
+            <div><span>STOCK TOKEN SET</span><strong>Choose 2–5 mints</strong><small>Equal-weight target · {selectedAssets.length}/5 selected</small></div>
+            <div className="vault-asset-options">
+              {VAULT_ASSETS.map((asset) => {
+                const selected = selectedAssets.includes(asset.symbol);
+                return <button key={asset.mint} type="button" className={cn("vault-asset-option", selected && "is-selected")} onClick={() => setSelectedAssets((current) => selected ? current.filter((symbol) => symbol !== asset.symbol) : current.length < 5 ? [...current, asset.symbol] : current)}>
+                  <CompanyLogo symbol={asset.logoSymbol} name={asset.name} />
+                  <span><strong>{asset.symbol}</strong><small>{asset.source}</small></span>
+                  <i>{selected ? "✓" : "+"}</i>
+                </button>;
+              })}
+            </div>
           </div>
           <label><span>Funding goal</span><div className="vault-input"><i>$</i><input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100" /></div><small>Minimum $1.00</small></label>
           <label><span>Minimum position</span><div className="vault-input"><i>$</i><input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2" /></div><small>Per collectible</small></label>
@@ -206,6 +239,10 @@ export default function SectorList() {
                 <p>{grove.metadata.description}</p>
                 {grove.metadata.link && <span>{new URL(grove.metadata.link).hostname.replace(/^www\./, "")} ↗</span>}
               </div>
+              {grove.metadata.tokens.length > 0 && <div className="vault-card-assets">
+                <div className="vault-asset-stack">{grove.metadata.tokens.map((token) => <CompanyLogo key={token.mint} symbol={token.symbol} name={token.symbol} />)}</div>
+                <p>{grove.metadata.tokens.map((token) => `${token.symbol} ${(token.weightBps / 100).toFixed(0)}%`).join(" · ")}</p>
+              </div>}
               <div className="vault-card-value-row">
                 <div><small>VAULT VALUE</small><strong>{fmtUSD(grove.total)}</strong></div>
                 <span className="vault-open-arrow">↗</span>

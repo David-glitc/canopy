@@ -36,6 +36,7 @@ export default async function SharePage({ params, searchParams }: PageProps) {
     referencePrice: Number.isFinite(queryPrice) && queryPrice > 0 ? queryPrice : null,
     weight: 100,
   } : null);
+  const tokenSet = share.tokenSet.length > 0 ? share.tokenSet : position ? [position] : [];
 
   return (
     <div className="mx-auto grid min-h-screen max-w-6xl items-start gap-10 px-6 pb-28 pt-28 lg:grid-cols-[minmax(0,420px)_1fr] lg:pt-36">
@@ -80,31 +81,34 @@ export default async function SharePage({ params, searchParams }: PageProps) {
           </div>
         </div>
 
-        {position && (
+        {tokenSet.length > 0 && (
           <section className="position-record" aria-labelledby="position-record-title">
             <div className="position-record-head">
               <div>
                 <p className="font-mono2 text-sm tracking-[0.04em] text-[var(--canopy-muted)]">TOKEN SET</p>
                 <h2 id="position-record-title">What this Share points to</h2>
               </div>
-              <span className="position-weight">{position.weight}% target</span>
+              <span className="position-weight">{tokenSet.length === 1 ? `${tokenSet[0].weight}% target` : `${tokenSet.length} tokens`}</span>
             </div>
-            <div className="position-token">
-              <CompanyLogo symbol={position.symbol} name={position.symbol} className="position-token-logo" />
-              <div className="min-w-0 flex-1">
-                <strong>{position.symbol}</strong>
-                <span>{position.source}{position.referencePrice ? ` · $${position.referencePrice.toFixed(2)} reference` : ""}</span>
-              </div>
-              <a href={`https://solscan.io/token/${position.mint}`} target="_blank" rel="noreferrer">Verify ↗</a>
+            <div className="position-token-set">
+              {tokenSet.map((token) => <div className="position-token" key={token.mint}>
+                <CompanyLogo symbol={token.symbol} name={token.symbol} className="position-token-logo" />
+                <div className="min-w-0 flex-1">
+                  <strong>{token.symbol}</strong>
+                  <span>{token.source}{token.referencePrice ? ` · $${token.referencePrice.toFixed(2)} reference` : ""}</span>
+                </div>
+                <b>{token.weight.toFixed(token.weight % 1 ? 2 : 0)}%</b>
+                <a href={`https://solscan.io/token/${token.mint}`} target="_blank" rel="noreferrer">Verify ↗</a>
+              </div>)}
             </div>
-            <div className="position-allocation" aria-label={`${position.symbol} target allocation ${position.weight}%`}>
-              <span style={{ width: `${position.weight}%` }} />
+            <div className="position-allocation" aria-label="Target token allocation">
+              {tokenSet.map((token, tokenIndex) => <span key={token.mint} style={{ width: `${token.weight}%`, opacity: 1 - tokenIndex * 0.11 }} />)}
             </div>
             <div className="position-ledger">
-              <span>Market target <strong>{position.symbol}</strong></span>
+              <span>Token target <strong>{tokenSet.map((token) => token.symbol).join(" · ")}</strong></span>
               <span>Held in vault <strong>mUSDC</strong></span>
             </div>
-            <p className="position-truth">This mint can reclaim its mUSDC position value. The stock token is recorded as its allocation target; no stock swap was executed by this transaction.</p>
+            <p className="position-truth">This Share records a claim on the vault. The token set above is its signed allocation target; the current vault still holds mUSDC until basket execution is added to the program.</p>
           </section>
         )}
 

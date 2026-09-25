@@ -5,6 +5,7 @@ import { fetchAsset } from "@metaplex-foundation/mpl-core";
 import { publicKey as umiPk } from "@metaplex-foundation/umi";
 import { CANOPY_ID } from "./canopy-ix";
 import { composeCard } from "../../packages/card-engine/compose.mjs";
+import { loadVaultMetadata, type VaultMetadata } from "./vault-metadata";
 
 const RPC = "https://api.devnet.solana.com";
 
@@ -21,6 +22,8 @@ export type ShareData = {
   matterDna: string | null;
   matterTraits: Array<{ trait_type: string; value: string }>;
   position: MarketPosition | null;
+  tokenSet: MarketPosition[];
+  vaultMetadata: VaultMetadata | null;
 };
 
 export type MarketPosition = {
@@ -77,6 +80,7 @@ export async function fetchShare(
   const economicRarity = weight !== null ? bandForWeight(weight) : "Common";
 
   let seedStr: string | null = null;
+  let vaultMetadata: VaultMetadata | null = null;
   if (attrs.dna) {
     seedStr = `instant:${attrs.dna}`;
   } else if (grove !== undefined && index !== undefined) {
@@ -87,6 +91,7 @@ export async function fetchShare(
       CANOPY_ID
     );
     const connection = new Connection(RPC, "confirmed");
+    vaultMetadata = await loadVaultMetadata(connection, grove);
     const info = await connection.getAccountInfo(revealPda);
     if (info && info.data.length >= 82 && info.data[80] === 1) {
       const seedHex = Buffer.from(info.data.subarray(48, 80)).toString("hex");
@@ -94,6 +99,14 @@ export async function fetchShare(
     }
   }
   const matterSpec = seedStr ? composeCard(seedStr, economicRarity) : null;
+  const position = positionFromUri(asset.uri);
+  const tokenSet = vaultMetadata?.tokens.map((token) => ({
+    symbol: token.symbol,
+    mint: token.mint,
+    source: token.source,
+    referencePrice: null,
+    weight: token.weightBps / 100,
+  })) ?? (position ? [position] : []);
 
   return {
     mint,
@@ -107,6 +120,8 @@ export async function fetchShare(
     dna: attrs.dna ?? null,
     matterDna: matterSpec?.dna ?? null,
     matterTraits: matterSpec?.traits ?? [],
-    position: positionFromUri(asset.uri),
+    position,
+    tokenSet,
+    vaultMetadata,
   };
 }

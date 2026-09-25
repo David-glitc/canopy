@@ -7,6 +7,14 @@ export type VaultMetadata = {
   name: string;
   description: string;
   link: string | null;
+  tokens: VaultToken[];
+};
+
+export type VaultToken = {
+  symbol: string;
+  mint: string;
+  source: "PreStocks" | "xStocks";
+  weightBps: number;
 };
 
 export function fallbackVaultMetadata(address: string): VaultMetadata {
@@ -14,6 +22,7 @@ export function fallbackVaultMetadata(address: string): VaultMetadata {
     name: `Vault ${address.slice(0, 5)}·${address.slice(-4)}`,
     description: "A collective token-set funding cycle on Canopy.",
     link: null,
+    tokens: [],
   };
 }
 
@@ -34,11 +43,17 @@ export function buildVaultMemo(
   metadata: VaultMetadata
 ): TransactionInstruction {
   const data = `${PREFIX}${JSON.stringify({
-    v: 1,
+    v: 2,
     g: grove.toBase58(),
-    n: metadata.name.trim().slice(0, 48),
-    d: metadata.description.trim().slice(0, 140),
-    l: metadata.link?.slice(0, 120) ?? "",
+    n: metadata.name.trim().slice(0, 36),
+    d: metadata.description.trim().slice(0, 96),
+    l: metadata.link?.slice(0, 80) ?? "",
+    a: metadata.tokens.slice(0, 5).map((token) => [
+      token.symbol.slice(0, 16),
+      token.mint,
+      token.source === "xStocks" ? "x" : "p",
+      token.weightBps,
+    ]),
   })}`;
   return new TransactionInstruction({
     programId: MEMO_PROGRAM,
@@ -57,12 +72,22 @@ export function parseVaultMemo(memo: string | null, address: string): VaultMetad
       n?: string;
       d?: string;
       l?: string;
+      a?: Array<[string, string, "x" | "p", number]>;
     };
     if (payload.g !== address || !payload.n || !payload.d) return null;
     return {
       name: payload.n.slice(0, 48),
       description: payload.d.slice(0, 140),
       link: normalizeVaultLink(payload.l ?? ""),
+      tokens: (payload.a ?? []).slice(0, 5).flatMap(([symbol, mint, source, weightBps]) => {
+        if (!symbol || !mint || !Number.isInteger(weightBps) || weightBps <= 0) return [];
+        return [{
+          symbol: symbol.slice(0, 16),
+          mint: mint.slice(0, 64),
+          source: source === "x" ? "xStocks" as const : "PreStocks" as const,
+          weightBps,
+        }];
+      }),
     };
   } catch {
     return null;

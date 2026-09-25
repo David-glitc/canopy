@@ -31,6 +31,10 @@ export async function GET(
     ...(typeof marketPrice === "number" && Number.isFinite(marketPrice) ? [{ trait_type: `${marketSource} Reference Price`, value: `$${marketPrice.toFixed(2)}` }] : []),
     ...(marketAsset ? [{ trait_type: "Market Source", value: marketSource }] : []),
     ...(marketAsset ? [{ trait_type: "Target Allocation", value: `${marketAsset} 100%` }] : []),
+    ...(marketAsset && share.tokenSet.length === 1 ? [] : share.tokenSet).flatMap((token, tokenIndex) => [
+      { trait_type: `Basket ${tokenIndex + 1}`, value: `${token.symbol} ${token.weight.toFixed(2)}%` },
+      { trait_type: `${token.symbol} Mint`, value: token.mint },
+    ]),
     { trait_type: "Vault Asset", value: "mUSDC" },
     { trait_type: "Swap Status", value: "Not executed" },
     ...Object.entries(share.attrs).map(([trait_type, value]) => ({
@@ -40,12 +44,14 @@ export async function GET(
   ];
   return NextResponse.json(
     {
-      name: marketAsset ? `Canopy ${marketAsset} Claim` : `Canopy ${share.economicRarity} Share`,
+      name: marketAsset ? `Canopy ${marketAsset} Claim` : share.vaultMetadata ? `${share.vaultMetadata.name} Share` : `Canopy ${share.economicRarity} Share`,
       symbol: "CANOPY",
       description:
         marketAsset
           ? `Runtime-assembled Digital Matter with ${marketAsset} encoded as its market target and mUSDC held in its vault. Its form is generated from verifiable position DNA.`
-          : "Runtime-assembled Digital Matter generated from a Canopy vault position and reveal DNA.",
+          : share.vaultMetadata
+            ? `${share.vaultMetadata.name}: ${share.vaultMetadata.description} This Share records a claim weight against its vault.`
+            : "Runtime-assembled Digital Matter generated from a Canopy vault position and reveal DNA.",
       image: share.seedStr ? `${origin}/api/cards/${mint}/image${qs}` : undefined,
       external_url: `${origin}/share/${mint}${req.nextUrl.search}`,
       attributes,
