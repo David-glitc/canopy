@@ -44,7 +44,7 @@ export default function ProgramStatus() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold tracking-[-.025em]">Deployed programs</h3>
-          <p className="mt-1 text-sm text-[var(--canopy-muted)]">Live checks from Solana devnet</p>
+          <p className="mt-1 text-sm text-[var(--canopy-muted)]">Live onchain checks</p>
         </div>
         <span className="status">
           {slot === null ? "Checking" : `Slot ${slot.toLocaleString()}`}
@@ -85,7 +85,7 @@ export default function ProgramStatus() {
         ))}
       </div>
       <p className="mt-4 text-xs leading-5 text-[var(--canopy-muted)]">
-        Solana devnet · mock mUSDC · public and pre-IPO markets · verified Pyth feeds
+        Canopy programs · market feeds · asset engine
       </p>
     </div>
   );

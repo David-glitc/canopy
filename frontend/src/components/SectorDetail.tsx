@@ -131,7 +131,7 @@ export default function SectorDetail({ address }: { address: string }) {
       const msg = e instanceof Error ? e.message : String(e);
       if (msg.includes("GoalNotMet")) setError("The vault has not reached its goal yet.");
       else if (msg.includes("NotExpired")) setError("The deadline has not passed yet.");
-      else if (msg.includes("insufficient funds")) setError("Not enough test funds. Use the faucet and try again.");
+      else if (msg.includes("insufficient funds")) setError("Not enough funds. Add mUSDC and try again.");
       else setError(`Transaction failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
@@ -309,7 +309,7 @@ export default function SectorDetail({ address }: { address: string }) {
 
   async function faucet() {
     if (!publicKey) return;
-    await run("Requesting test funds…", async () => {
+    await run("Adding funds…", async () => {
       const res = await fetch("/api/faucet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -435,7 +435,7 @@ export default function SectorDetail({ address }: { address: string }) {
       {tab === "advance" && (
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <div className="glass rounded-2xl p-6">
-            <h3 className="font-display font-bold">Deposit mock mUSDC</h3>
+            <h3 className="font-display font-bold">Add to your position</h3>
             <div className="mt-3 flex items-center gap-3">
               <span className="text-2xl text-[var(--canopy-muted)]">$</span>
               <input
@@ -450,7 +450,7 @@ export default function SectorDetail({ address }: { address: string }) {
               Balance: {myBal === null ? "…" : `$${(Number(myBal) / 1e6).toFixed(2)} mUSDC`}
               {myBal !== null && myBal < 1_000_000n && (
                 <button onClick={faucet} disabled={busy !== null} className="ml-2 text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)] disabled:opacity-40">
-                  Get test funds
+                  Add mUSDC
                 </button>
               )}
             </p>

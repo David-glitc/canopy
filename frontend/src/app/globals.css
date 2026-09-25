@@ -261,9 +261,13 @@ button:disabled { cursor: not-allowed; }
 .stock-feed-pair span { display: block; color: var(--quiet); font: 600 .65rem/1 var(--font-mono); }
 .stock-feed-pair strong { display: block; overflow: hidden; margin-top: .4rem; color: var(--muted); font: 560 .68rem/1 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
 
+.home-path { padding-block: 4.5rem 2rem; }
+.home-path .journey { margin-top: 2rem; }
 .journey { display: grid; grid-template-columns: repeat(3,1fr); border-block: 1px solid var(--line); }
 .journey-step { position: relative; min-height: 15rem; padding: 2rem; }
 .journey-step + .journey-step { border-left: 1px solid var(--line); }
+.journey-step { transition: background-color 180ms ease, color 180ms ease; }
+.journey-step:hover { background: rgba(184,154,244,.045); }
 .journey-number { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: .75rem; background: #302a3a; color: #dfd1fb; font-size: .75rem; font-weight: 750; }
 .journey-step h3 { margin: 2.5rem 0 0; font-size: 1.4rem; letter-spacing: -.03em; }
 .journey-step p { margin: .65rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.6; }

@@ -100,7 +100,7 @@ export default function PortfolioProfile({ address }: { address?: string }) {
       setItems(inventory);
     } catch {
       setItems([]);
-      setError("Canopy could not read this wallet’s inventory from devnet.");
+      setError("Canopy could not load this wallet’s inventory.");
     }
   }, [connection, owner]);
 

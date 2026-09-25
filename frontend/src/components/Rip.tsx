@@ -74,7 +74,7 @@ export default function Rip({
               disabled={claiming || claimed}
               className="btn-primary flex-1 px-6 py-3 text-sm disabled:opacity-40"
             >
-              {claimed ? "Claimed ✓" : claiming ? "Claiming…" : "Withdraw mock funds"}
+              {claimed ? "Claimed ✓" : claiming ? "Claiming…" : "Withdraw position"}
             </button>
             <button onClick={copy} className="btn-ghost flex-1 px-6 py-3 text-sm">
               {copied ? "Link copied ✓" : "Copy link"}

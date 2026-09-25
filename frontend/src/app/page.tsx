@@ -28,18 +28,17 @@ export default async function Home() {
       <section className="hero">
         <div className="shell hero-grid">
           <div className="hero-copy-block">
-            <p className="page-kicker">Stocks on Solana</p>
-            <h1 className="hero-title">Collect the companies <span>you follow.</span></h1>
-            <p className="hero-copy">Choose a public or private company. Mint a position. Its onchain record generates the artwork.</p>
+            <p className="page-kicker">Tokenized stocks → Digital Matter</p>
+            <h1 className="hero-title">Choose the company. <span>Shape the collectible.</span></h1>
+            <p className="hero-copy">Start with an xStock or PreStock. Your position writes the DNA for a one-of-one onchain form.</p>
             <div className="hero-actions">
-              <Link href="/markets" className="btn-primary">Explore markets</Link>
-              <Link href="/instant" className="btn-secondary">Create a collectible</Link>
+              <Link href="/markets" className="btn-primary">Choose a market</Link>
+              <Link href="/sectors" className="btn-secondary">Join a vault</Link>
             </div>
-            <div className="hero-note"><span><i aria-hidden="true" />Devnet · Mock funds · $1.50 minimum</span></div>
           </div>
 
-          <div className="collectible-stage" aria-label="Example Canopy collectible">
-            <Link className="specimen-card" href={featured ? mintHref(featured) : "/instant"} aria-label={`Create the featured ${featured?.symbol ?? "PreStocks"} collectible`}>
+          <div className="collectible-stage" aria-label="Featured Canopy collectible">
+            <Link className="specimen-card" href={featured ? mintHref(featured) : "/markets"} aria-label={`Create the featured ${featured?.symbol ?? "PreStocks"} collectible`}>
               <div className="specimen-head">
                 <span className="specimen-mark"><img src="/mark.svg" alt="" /></span>
                 <span className="specimen-series">CANOPY · 01</span>
@@ -60,27 +59,22 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="shell matter-home">
-        <div className="matter-home-copy">
-          <p className="page-kicker">Digital Matter</p>
-          <h2>Your position becomes the artwork.</h2>
-          <p>Amount, timing, and vault share determine every trait at reveal.</p>
-          <Link href="/matter" className="btn-secondary">Open the trait lab</Link>
+      <section className="shell home-path" aria-labelledby="path-title">
+        <div className="home-market-head">
+          <div><p className="page-kicker">How Canopy works</p><h2 id="path-title" className="section-heading">Market in. Matter out.</h2></div>
+          <Link href="/matter" className="btn-secondary">See the trait engine</Link>
         </div>
-        <DigitalMatterLab compact />
-      </section>
-
-      <section className="proof-strip" aria-label="Data and infrastructure partners">
-        <div className="shell proof-strip-inner">
-          <p>Built with</p>
-          <div className="proof-logos"><span>PreStocks</span><span>xStocks</span><span>Pyth</span><span>Solana</span><span>Metaplex</span></div>
+        <div className="journey">
+          <Link href="/markets" className="journey-step"><span className="journey-number">01</span><h3>Pick a company.</h3><p>Compare public stocks and pre-IPO markets in one place.</p></Link>
+          <Link href="/instant" className="journey-step"><span className="journey-number">02</span><h3>Build a position.</h3><p>Create solo, or enter a group vault with other collectors.</p></Link>
+          <Link href="/matter" className="journey-step"><span className="journey-number">03</span><h3>Reveal the form.</h3><p>Position size, timing, and vault share assemble every trait.</p></Link>
         </div>
       </section>
 
       <section className="shell section-block">
         <div className="home-market-head">
-          <div><p className="page-kicker">Markets</p><h2 className="section-heading">Choose a company.</h2></div>
-          <Link href="/markets" className="btn-secondary">View all markets</Link>
+          <div><p className="page-kicker">Live markets</p><h2 className="section-heading">Start with a company.</h2></div>
+          <Link href="/markets" className="btn-secondary">Explore every market</Link>
         </div>
 
         <div className="home-market-lane">
@@ -98,7 +92,7 @@ export default async function Home() {
                   <h3 className="market-card-name">{stock.name}</h3>
                   <p className="market-card-symbol">{stock.symbol}</p>
                   <p className="market-card-price">{stock.tokenPrice == null ? "—" : `$${stock.tokenPrice.toFixed(2)}`}</p>
-                  <div className="market-card-meta"><span>Pyth feeds</span><strong>{stock.underlyingSymbol} / {stock.symbol}</strong></div>
+                  <div className="market-card-meta"><span>Pyth market data</span><strong>{stock.underlyingSymbol} / {stock.symbol}</strong></div>
                   <Link href={`/instant?${query}`} className="btn-secondary market-card-action">Create {stock.symbol}</Link>
                 </article>
               );
@@ -121,13 +115,30 @@ export default async function Home() {
                     <h3 className="market-card-name">{stock.name.replace(" PreStocks", "")}</h3>
                     <p className="market-card-symbol">{stock.symbol}</p>
                     <p className="market-card-price">${stock.tokenPrice.toFixed(2)}</p>
-                    <div className="market-card-meta"><span>Mark ${stock.markPrice.toFixed(2)}</span><strong className={spread <= 0 ? "text-[var(--leaf)]" : "text-[var(--warning)]"}>{spread > 0 ? "+" : ""}{spread.toFixed(1)}%</strong></div>
+                    <div className="market-card-meta"><span>Company mark ${stock.markPrice.toFixed(2)}</span><strong className={spread <= 0 ? "text-[var(--leaf)]" : "text-[var(--warning)]"}>{spread > 0 ? "+" : ""}{spread.toFixed(1)}%</strong></div>
                     <Link href={mintHref(stock)} className="btn-secondary market-card-action">Create {stock.symbol}</Link>
                   </article>
                 );
               })}
             </div>
-          ) : <div className="glass p-6">Prices unavailable.</div>}
+          ) : <div className="glass p-6">Markets are refreshing.</div>}
+        </div>
+      </section>
+
+      <section className="shell matter-home">
+        <div className="matter-home-copy">
+          <p className="page-kicker">Digital Matter</p>
+          <h2>Built by your position.</h2>
+          <p>No premade editions. Every collectible is assembled from its own market and vault history.</p>
+          <Link href="/matter" className="btn-secondary">Explore the DNA</Link>
+        </div>
+        <DigitalMatterLab compact />
+      </section>
+
+      <section className="proof-strip" aria-label="Data and infrastructure partners">
+        <div className="shell proof-strip-inner">
+          <p>Market data & rails</p>
+          <div className="proof-logos"><span>PreStocks</span><span>xStocks</span><span>Pyth</span><span>Solana</span><span>Metaplex</span></div>
         </div>
       </section>
     </div>

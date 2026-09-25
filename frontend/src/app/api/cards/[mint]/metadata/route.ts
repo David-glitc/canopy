@@ -40,8 +40,8 @@ export async function GET(
       symbol: "CANOPY",
       description:
         marketAsset
-          ? `Runtime-assembled Digital Matter linked to the ${marketAsset} ${marketSource} token. Its form is deterministically generated from on-chain DNA. This devnet demo uses mock mUSDC.`
-          : "Runtime-assembled Digital Matter whose form is deterministically generated from a Canopy vault record and reveal DNA on Solana devnet.",
+          ? `Runtime-assembled Digital Matter linked to the ${marketAsset} ${marketSource} token. Its form is generated from verifiable position DNA.`
+          : "Runtime-assembled Digital Matter generated from a Canopy vault position and reveal DNA.",
       image: share.seedStr ? `${origin}/api/cards/${mint}/image${qs}` : undefined,
       external_url: `${origin}/share/${mint}${req.nextUrl.search}`,
       attributes,

@@ -3,17 +3,17 @@ import { fetchShare, type ShareData } from "@/lib/card-data";
 
 export const metadata = {
   title: "Gallery",
-  description: "Browse revealed Canopy collectibles from Solana devnet.",
+  description: "Browse revealed Canopy collectibles and their onchain traits.",
 };
 
-const DEMO_MINTERS = [
+const FEATURED_ASSETS = [
   "9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf",
   "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
 ];
 
 export default async function ShopPage() {
   const shares = await Promise.allSettled(
-    DEMO_MINTERS.map((m) => fetchShare(m))
+    FEATURED_ASSETS.map((m) => fetchShare(m))
   );
   const revealed = shares
     .filter((s): s is PromiseFulfilledResult<ShareData> => s.status === "fulfilled" && s.value !== null)
@@ -22,8 +22,8 @@ export default async function ShopPage() {
   return (
     <div className="shell pb-24 pt-16 sm:pt-24">
       <p className="page-kicker">Gallery</p>
-      <h1 className="page-title">Revealed collectibles.</h1>
-      <p className="page-lede">Inspect the generated artwork, traits, and devnet record for every revealed position.</p>
+      <h1 className="page-title">Every reveal is singular.</h1>
+      <p className="page-lede">Explore the artwork, traits, and position history behind each piece of Digital Matter.</p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {revealed.length === 0 ? (
           <div className="glass rounded-2xl p-6 sm:col-span-2 lg:col-span-3">

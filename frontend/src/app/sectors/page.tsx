@@ -2,7 +2,7 @@ import SectorList from "@/components/SectorList";
 
 export const metadata = {
   title: "Group Vaults",
-  description: "Pool mock funds, mint one collectible per deposit, and refund failed goals.",
+  description: "Pool positions, mint one collectible per deposit, and reveal together.",
 };
 
 export default function SectorsPage() {
@@ -11,11 +11,10 @@ export default function SectorsPage() {
       <div className="vault-page-head">
         <div>
           <p className="page-kicker">Group vaults</p>
-          <h1 className="page-title">Fund a stock vault together.</h1>
+          <h1 className="page-title">Build the position together.</h1>
         </div>
         <p className="page-lede">
-          Set a target and deadline, then contribute mock mUSDC. Every deposit creates a collectible
-          with a live vault share and traits assembled at reveal.
+          Join a funding cycle. Every deposit creates a live vault share and a collectible assembled at reveal.
         </p>
       </div>
       <div className="mt-10">

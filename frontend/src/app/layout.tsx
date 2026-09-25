@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <img src="/mark.svg" alt="" width={36} height={36} />
                 <div>
                   <strong>CANOPY</strong>
-                  <p>Public and pre-IPO stock collectibles on Solana devnet.</p>
+                  <p>Tokenized stocks become Digital Matter.</p>
                 </div>
               </div>
               <div className="footer-links" aria-label="Footer navigation">

@@ -113,8 +113,8 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
       setClaimed(false);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg.includes("insufficient funds")) setError("Not enough mock mUSDC. Get test funds and try again.");
-      else if (msg.includes("0x1")) setError("The transaction failed. Check your devnet balance and try again.");
+      if (msg.includes("insufficient funds")) setError("Not enough mUSDC. Add funds and try again.");
+      else if (msg.includes("0x1")) setError("The transaction failed. Check your SOL balance and try again.");
       else setError(`Mint failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
@@ -151,15 +151,38 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
     }
   }
 
+  async function addFunds() {
+    if (!publicKey) return;
+    setError(null);
+    setBusy("Adding mUSDC…");
+    try {
+      const response = await fetch("/api/faucet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: publicKey.toBase58() }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Unable to add funds");
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      setError(`Could not add mUSDC: ${message.slice(0, 140)}.`);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="glass rounded-[1.5rem] p-6 sm:p-8">
         <div className="flex items-start justify-between gap-4">
           <div>
             <label htmlFor="instant-amount" className="text-sm font-bold">Choose an amount</label>
-            <p id="instant-amount-help" className="mt-1 text-sm text-[var(--canopy-muted)]">Minimum $1.50 · mock funds only</p>
+            <p id="instant-amount-help" className="mt-1 text-sm text-[var(--canopy-muted)]">Minimum position · $1.50</p>
           </div>
-          <span className="status">Devnet</span>
+          <div className="flex items-center gap-2">
+            <span className="status">Test network</span>
+            {connected && <button type="button" onClick={addFunds} disabled={busy !== null} className="btn-ghost btn-compact disabled:opacity-40">Add mUSDC</button>}
+          </div>
         </div>
         <div className="mt-8 flex items-center gap-3 border-b border-[var(--canopy-line)] pb-5">
           <span className="font-display text-4xl font-bold text-[var(--canopy-muted)]">$</span>
@@ -176,16 +199,16 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
         </div>
         <div className="mt-6 space-y-3 text-sm text-[var(--canopy-muted)]">
           <div className="flex justify-between">
-            <span>App fee (1%)</span>
+            <span>Protocol fee (1%)</span>
             <span className="tabular">${(fee / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between text-[var(--canopy-text)]">
-            <span>Stored in the demo vault</span>
+            <span>Position value</span>
             <span className="tabular">${(net / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between">
             <span>Digital Matter</span>
-            <span className="text-[var(--canopy-green)]">assembled after mint</span>
+            <span className="text-[var(--canopy-green)]">assembled on mint</span>
           </div>
         </div>
         <button
@@ -196,7 +219,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             "focus-visible:outline-none"
           )}
         >
-          {busy ?? (connected ? `Mint demo collectible · $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to mint")}
+          {busy ?? (connected ? `Create ${asset?.symbol ?? "Canopy"} matter · $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to create")}
         </button>
         {error && (
           <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-[var(--danger)]" role="alert">
@@ -204,7 +227,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           </p>
         )}
         <p className="mt-4 text-pretty text-xs leading-relaxed text-[var(--canopy-muted)]">
-          This devnet collectible records a {asset?.source ?? "market"} reference. It does not execute a stock purchase or grant shareholder rights.
+          Tracks a {asset?.source ?? "market"} reference and does not represent company equity.
         </p>
       </div>
 
@@ -213,7 +236,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           <Rip
             imageUrl={minted.imageUrl}
             title={asset ? `${asset.symbol} collectible` : "Canopy collectible"}
-            subtitle={`$${(net / 1e6).toFixed(4)} stored in the devnet vault`}
+            subtitle={`$${(net / 1e6).toFixed(4)} position value`}
             shareUrl={minted.shareUrl}
             onClaim={claim}
             claiming={busy === "Claiming…"}
@@ -224,9 +247,9 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             <div className="mint-preview-art" aria-hidden="true">
               {asset ? <CompanyLogo symbol={asset.symbol} name={asset.symbol} className="mint-preview-logo" /> : <img src="/mark.svg" alt="" className="mint-preview-brand" />}
             </div>
-            <p className="mt-7 text-lg font-bold text-white">Your collectible appears here</p>
+            <p className="mt-7 text-lg font-bold text-white">Your matter appears here</p>
             <p className="mt-2 max-w-xs text-pretty text-sm leading-6 text-white/55">
-              Connect, mint, and let your on-chain DNA assemble the form. No finished image has been assigned yet.
+              Create the position to write its DNA and assemble the form.
             </p>
           </div>
         )}

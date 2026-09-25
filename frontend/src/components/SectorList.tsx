@@ -98,7 +98,7 @@ export default function SectorList() {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       if (msg.includes("GoalNotMet") || msg.includes("6009")) setError("The goal is invalid. Try a lower amount.");
-      else if (msg.includes("insufficient funds")) setError("Not enough devnet SOL to create the vault.");
+      else if (msg.includes("insufficient funds")) setError("Not enough SOL to create the vault.");
       else setError(`Vault creation failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(false);
@@ -109,13 +109,13 @@ export default function SectorList() {
     <div className="vault-dashboard">
       <section className="vault-command">
         <div className="vault-command-copy">
-          <span className="live-label"><i /> LIVE ON DEVNET</span>
+          <span className="live-label"><i /> ONCHAIN NOW</span>
           <p className="vault-command-eyebrow">Collective vault value</p>
           <p className="vault-command-value">{groves === null ? "—" : fmtUSD(aggregate.tvl)}</p>
-          <p className="vault-command-note">Every deposit mints a unique position. NAV updates from the pooled on-chain balance.</p>
+          <p className="vault-command-note">Every deposit creates a unique position. NAV follows the pooled balance.</p>
         </div>
         <div className="vault-command-chart">
-          <div className="vault-chart-head"><span>NETWORK FUNDING</span><strong>{aggregate.progress.toFixed(1)}%</strong></div>
+          <div className="vault-chart-head"><span>VAULT FUNDING</span><strong>{aggregate.progress.toFixed(1)}%</strong></div>
           <FundingCurve values={seededFundingSeries("canopy-network", aggregate.progress)} label="Aggregate vault funding curve" />
         </div>
         <div className="vault-command-stats">

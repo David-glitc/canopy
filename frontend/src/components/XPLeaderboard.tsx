@@ -86,8 +86,8 @@ export default function XPLeaderboard() {
         <div>
           <span className="live-label"><i /> SEASON 01 · LIVE</span>
           <p className="xp-kicker">CANOPY REPUTATION</p>
-          <h1>Earn XP from onchain activity.</h1>
-          <p>Fund group vaults, mint positions, and complete reveals. Every score below is calculated from Solana devnet records.</p>
+          <h1>Every position builds reputation.</h1>
+          <p>Create matter, join vaults, and complete reveals. Every point comes from verifiable activity.</p>
         </div>
         <div className="xp-hero-score">
           <small>NETWORK XP</small>
@@ -125,7 +125,7 @@ export default function XPLeaderboard() {
           <section className="xp-table-wrap">
             <div className="xp-table-head">
               <div><span>GLOBAL RANKING</span><strong>All collectors</strong></div>
-              <span>Updated from Solana devnet</span>
+              <span>Updated onchain</span>
             </div>
             <div className="xp-table-scroll">
               <table className="xp-table">
@@ -154,7 +154,7 @@ export default function XPLeaderboard() {
       )}
 
       <section className="xp-rules">
-        <div><span>01</span><p><strong>Fund</strong>10 XP per demo dollar deposited</p></div>
+        <div><span>01</span><p><strong>Fund</strong>10 XP per dollar deposited</p></div>
         <div><span>02</span><p><strong>Collect</strong>100 XP for every position minted</p></div>
         <div><span>03</span><p><strong>Reveal</strong>150 XP when a position is revealed</p></div>
       </section>

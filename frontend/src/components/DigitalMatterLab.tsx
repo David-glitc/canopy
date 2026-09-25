@@ -42,10 +42,10 @@ export default function DigitalMatterLab({ compact = false }: { compact?: boolea
     <div className={cn("matter-lab", compact && "matter-lab-compact")}>
       <div className={cn("matter-specimen", `matter-tone-${specimen.tone}`)}>
         <div className="matter-specimen-head">
-          <span>PROTOTYPE / {specimen.id}</span>
+          <span>SPECIMEN / {specimen.id}</span>
           <i>LIVE ASSEMBLY</i>
         </div>
-        <svg viewBox="0 0 320 460" role="img" aria-label={`Procedural prototype: ${specimen.name}`}>
+        <svg viewBox="0 0 320 460" role="img" aria-label={`Procedural specimen: ${specimen.name}`}>
           <defs>
             <pattern id="matter-grid" width="16" height="16" patternUnits="userSpaceOnUse">
               <path d="M16 0H0V16" fill="none" className="matter-grid-line" />
@@ -84,7 +84,7 @@ export default function DigitalMatterLab({ compact = false }: { compact?: boolea
               </div>
             ))}
           </div>
-          <div className="matter-samples" aria-label="Select a prototype genotype">
+          <div className="matter-samples" aria-label="Select a specimen genotype">
             {SPECIMENS.map((item, index) => (
               <button key={item.id} type="button" onClick={() => setSelected(index)} className={cn(index === selected && "is-selected")}>
                 <i className={`matter-swatch matter-tone-${item.tone}`} />

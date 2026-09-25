@@ -3,7 +3,7 @@ import PortfolioProfile from "@/components/PortfolioProfile";
 
 export const metadata = {
   title: "Wallet Activity",
-  description: "Canopy activity for a Solana devnet wallet.",
+  description: "A public Canopy portfolio and its collection activity.",
 };
 
 export default async function PersonaPage({ params }: { params: Promise<{ addr: string }> }) {

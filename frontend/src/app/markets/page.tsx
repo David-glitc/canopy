@@ -3,7 +3,7 @@ import CompanyLogo from "@/components/CompanyLogo";
 import { compactUsd, getPreStocks, getPythParity, getTokenizedStocks, premium } from "@/lib/markets";
 
 export const metadata = {
-  title: "Tokenized Stocks",
+  title: "Explore Markets",
   description: "Explore tokenized public stocks and PreStocks, then turn a market position into Digital Matter.",
 };
 
@@ -34,15 +34,15 @@ export default async function MarketsPage() {
     <div className="shell pb-20 pt-16 sm:pt-24">
       <header className="market-page-head">
         <div>
-          <p className="page-kicker">Public + private markets</p>
-          <h1 className="page-title">The stock market, collected.</h1>
+          <p className="page-kicker">Choose the source</p>
+          <h1 className="page-title">One market. Two ways in.</h1>
           <p className="page-lede">
-            Compare tokenized public stocks and pre-IPO companies, then mint a collectible tied to your selection.
+            Move between public stocks and pre-IPO companies, then turn your pick into Digital Matter.
           </p>
         </div>
         <aside className="market-context">
-          <strong className="block text-[var(--ink)]">This is a devnet experience.</strong>
-          Minting uses mock mUSDC. Canopy records the selected market as collectible metadata and does not execute a stock purchase.
+          <strong className="block text-[var(--ink)]">Pick → position → reveal.</strong>
+          Choose a token, set an amount, and let its onchain history assemble the collectible.
         </aside>
       </header>
 
@@ -51,9 +51,9 @@ export default async function MarketsPage() {
           <div>
             <span className="market-lane-number">01</span>
             <div>
-              <p className="page-kicker">Tokenized public stocks</p>
-              <h2 id="stocks-title">Tokenized US equities on Solana.</h2>
-              <p>Each xStock includes its mint address and matching Pyth market feeds.</p>
+              <p className="page-kicker">Public markets</p>
+              <h2 id="stocks-title">Stocks that move onchain.</h2>
+              <p>Live xStock pricing with matching Pyth feeds.</p>
             </div>
           </div>
           <span className="status">xStocks · Pyth</span>
@@ -103,8 +103,8 @@ export default async function MarketsPage() {
             <div className="flex items-start gap-4">
               <span className="market-lane-number">02</span>
               <div>
-                <p className="page-kicker">Pre-IPO markets</p>
-                <h2 id="prestocks-title" className="text-2xl font-bold tracking-[-.035em]">Companies before the ticker.</h2>
+                <p className="page-kicker">Private markets</p>
+                <h2 id="prestocks-title" className="text-2xl font-bold tracking-[-.035em]">Collect the story before the ticker.</h2>
               </div>
             </div>
             <p className="mt-2 text-sm text-[var(--muted)]">
@@ -151,7 +151,7 @@ export default async function MarketsPage() {
                     <span className="font-semibold text-[var(--muted)]">{compactUsd(stock.impliedValuation)}</span>
                   </div>
                   <Link className="btn-primary market-card-action" href={`/instant?${query}`}>
-                    Mint {stock.symbol} collectible
+                    Create {stock.symbol} matter
                   </Link>
                 </article>
               );

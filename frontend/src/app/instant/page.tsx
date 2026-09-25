@@ -2,8 +2,8 @@ import InstantMint from "@/components/InstantMint";
 import CompanyLogo from "@/components/CompanyLogo";
 
 export const metadata = {
-  title: "Mint",
-  description: "Turn a tokenized public or private stock into Digital Matter on Solana devnet.",
+  title: "Create",
+  description: "Turn a tokenized public or private stock into Digital Matter.",
 };
 
 export default async function InstantPage({
@@ -20,12 +20,12 @@ export default async function InstantPage({
     <div className="shell pb-24 pt-16 sm:pt-24">
       <header className="market-page-head">
         <div>
-          <p className="page-kicker">One-minute devnet mint</p>
+          <p className="page-kicker">Create from a market</p>
           <h1 className="page-title">
-            {asset ? `Create ${asset} matter.` : "Mint your market pick."}
+            {asset ? `${asset} becomes Digital Matter.` : "Choose a market. Shape the matter."}
           </h1>
           <p className="page-lede">
-            Fund with mock mUSDC. The transaction becomes the DNA for a unique form at reveal.
+            Set the position size. Its onchain record becomes the DNA for a unique form.
           </p>
         </div>
         {asset && contract ? (
@@ -43,8 +43,8 @@ export default async function InstantPage({
           </div>
         ) : (
           <div className="market-context">
-            <strong className="block text-[var(--ink)]">Want a company-linked collectible?</strong>
-            <a href="/markets" className="mt-2 inline-block font-bold text-[var(--leaf)]">Choose a market first ↗</a>
+            <strong className="block text-[var(--ink)]">Start with the company.</strong>
+            <a href="/markets" className="mt-2 inline-block font-bold text-[var(--leaf)]">Choose a market ↗</a>
           </div>
         )}
       </header>
