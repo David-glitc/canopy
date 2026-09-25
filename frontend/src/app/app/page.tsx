@@ -38,14 +38,8 @@ export default async function AppHome() {
   return (
     <div className="shell app-dashboard">
       <section className="app-welcome">
-        <div className="app-welcome-copy"><p className="page-kicker">COLLECTION DESK</p><h1>Stocks you can collect.</h1><p>Choose a token or fund a shared vault.</p></div>
+        <div className="app-welcome-copy"><p className="page-kicker">COLLECTION DESK</p><h1>Build with stock tokens.</h1><p>Mint one stock now, or fund a token set together.</p></div>
         <div className="app-welcome-actions"><Link href="/markets" className="btn-primary">Browse stocks <span>↗</span></Link><Link href="/sectors" className="btn-secondary">Find a vault</Link></div>
-      </section>
-
-      <section className="app-actions" aria-label="Primary actions">
-        <Link href="/markets"><span>01</span><div><small>INSTANT</small><h2>Pick one stock</h2></div><b>↗</b></Link>
-        <Link href="/sectors"><span>02</span><div><small>GROUP VAULT</small><h2>Fund a token set</h2></div><b>↗</b></Link>
-        <Link href="/profile"><span>03</span><div><small>PORTFOLIO</small><h2>See your Shares</h2></div><b>↗</b></Link>
       </section>
 
       <section className="app-market-panel">
@@ -58,6 +52,12 @@ export default async function AppHome() {
             <i>↗</i>
           </Link>)}
         </div>
+      </section>
+
+      <section className="app-actions" aria-label="Primary actions">
+        <Link href="/markets"><span>01</span><div><small>INSTANT</small><h2>Pick one stock</h2></div><b>↗</b></Link>
+        <Link href="/sectors"><span>02</span><div><small>GROUP VAULT</small><h2>Fund a token set</h2></div><b>↗</b></Link>
+        <Link href="/profile"><span>03</span><div><small>PORTFOLIO</small><h2>See your Shares</h2></div><b>↗</b></Link>
       </section>
 
       <section className="app-bottom-grid">
