@@ -40,10 +40,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <p>Public and pre-IPO stock collectibles on Solana devnet.</p>
                 </div>
               </div>
-              <div className="footer-links" aria-label="Protocol links">
-                <a href="https://explorer.solana.com/address/9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf?cluster=devnet">Canopy program</a>
-                <a href="https://explorer.solana.com/address/BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k?cluster=devnet">Decision markets program</a>
-                <Link href="/markets">Stocks, PreStocks, and Pyth</Link>
+              <div className="footer-links" aria-label="Footer navigation">
+                <Link href="/markets">Explore</Link>
+                <Link href="/matter">Trait lab</Link>
+                <Link href="/shop">Gallery</Link>
+                <a href="https://explorer.solana.com/address/9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf?cluster=devnet">Program ↗</a>
               </div>
             </div>
           </footer>

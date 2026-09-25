@@ -12,11 +12,11 @@ export default function WalletButton() {
     const address = publicKey.toBase58();
     return (
       <div className="wallet-session">
-        <Link href="/profile" className="wallet-profile-trigger" title="Open your inventory">
+        <Link href="/profile" className="wallet-profile-trigger" title="Open your portfolio">
           <span className="wallet-avatar">{address.slice(0, 2)}</span>
           <span className="wallet-profile-copy">
             <strong>{address.slice(0, 4)}··{address.slice(-4)}</strong>
-            <small>Inventory</small>
+            <small>Portfolio</small>
           </span>
         </Link>
         <button type="button" className="wallet-disconnect" onClick={() => void disconnect()} aria-label="Disconnect wallet">×</button>
