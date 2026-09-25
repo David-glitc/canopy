@@ -5,7 +5,9 @@ import { getPreStocks, premium } from "@/lib/markets";
 export const revalidate = 60;
 
 export default async function Home() {
-  const prestocks = (await getPreStocks())
+  const allPreStocks = await getPreStocks();
+  const isPreStocksSnapshot = allPreStocks.some((stock) => stock.isFallback);
+  const prestocks = allPreStocks
     .sort((a, b) => Math.abs(premium(b.markPrice, b.tokenPrice)) - Math.abs(premium(a.markPrice, a.tokenPrice)))
     .slice(0, 3);
 
@@ -72,7 +74,7 @@ export default async function Home() {
       <section className="shell py-20">
         <div className="grid gap-10 lg:grid-cols-[.65fr_1.35fr]">
           <div>
-            <p className="page-kicker">Live private markets</p>
+            <p className="page-kicker">{isPreStocksSnapshot ? "Official market snapshot" : "Live private markets"}</p>
             <h2 className="mt-4 text-4xl font-bold tracking-[-0.05em]">Start with the spread.</h2>
             <p className="mt-4 text-base leading-7 text-[var(--muted)]">
               Canopy surfaces the difference between each PreStock token and its mark. The thesis travels
@@ -86,7 +88,7 @@ export default async function Home() {
               return (
                 <div key={stock.contract_address} className="grid grid-cols-[1fr_auto] items-center gap-5 py-5">
                   <div className="flex items-center gap-4">
-                    <img className="market-logo" src={stock.image} alt="" width={36} height={36} />
+                    <span className="market-logo" aria-hidden="true">{stock.symbol.slice(0, 2)}</span>
                     <div><p className="font-semibold">{stock.name.replace(' PreStocks', '')}</p><p className="font-mono text-xs text-[var(--quiet)]">{stock.symbol}</p></div>
                   </div>
                   <div className="text-right"><p className="font-mono font-semibold tabular">${stock.tokenPrice.toFixed(2)}</p><p className={`font-mono text-xs tabular ${spread <= 0 ? 'text-[var(--leaf)]' : 'text-[var(--warning)]'}`}>{spread > 0 ? '+' : ''}{spread.toFixed(1)}% vs mark</p></div>

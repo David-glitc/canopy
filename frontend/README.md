@@ -6,7 +6,7 @@ Canopy turns a private-market thesis into a collectible, verifiable claim on Sol
 
 **https://xcanopy.vercel.app**
 
-The `/markets` desk loads the current PreStocks catalog from the official API. Selecting a company carries its symbol, Solana mint, and reference price into a Canopy claim. The Pyth panel resolves the canonical AAPL equity and AAPLx token feeds and shows current values when `PYTH_API_KEY` is configured.
+The `/markets` desk loads the current PreStocks catalog from the official API. Selecting a company carries its symbol, Solana mint, and reference price into a Canopy claim. The Pyth panel resolves the canonical AAPL equity and AAPLx token feeds, reads fully verified Pyth Receiver accounts on Solana, and blocks parity calculations when either update is stale. A Pyth Pro key takes precedence when configured.
 
 All transactions currently settle on Solana devnet using mock mUSDC. The PreStocks reference is preserved in the NFT metadata; the app does not claim that the devnet vault holds the mainnet PreStocks asset.
 

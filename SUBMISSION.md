@@ -14,7 +14,7 @@ Canopy is a discovery-to-ownership experience for tokenized equity. Its live mar
 
 Solo users can mint and reveal instantly from $1.50 of mock mUSDC. Groups can create Sectors with a funding goal, deadline, and minimum deposit; successful Sectors seal, commit entropy, reveal all Shares, and normalize economic weights to exactly 100%. Failed Sectors remain refundable. A second Solana program adds bonded PASS/FAIL conditional markets so allocation proposals resolve from time-weighted market prices rather than raw wallet size.
 
-The Pyth desk resolves `Equity.US.AAPL/USD` beside `Crypto.AAPLX/USD`, displays market-session state, and computes the equity/token spread whenever a server-side Pyth Pro key is available. The interface labels every devnet and reference-data boundary plainly.
+The Pyth desk resolves `Equity.US.AAPL/USD` beside `Crypto.AAPLX/USD`, reads fully verified Pyth Receiver price accounts from Solana mainnet, and refuses to compute a misleading equity/token spread when either update is stale. A server-side Pyth Pro key can supply lower-latency quotes without exposing credentials. The interface labels every devnet and reference-data boundary plainly.
 
 ## Links
 
@@ -33,7 +33,7 @@ PreStocks is the product's private-market discovery layer. Canopy consumes only 
 
 ### 2. Best use of Pyth market data
 
-Canopy resolves Pyth's canonical Apple equity and AAPLx token feeds together so users can inspect the relationship between an underlying public equity and its on-chain representation. Feed identity and market-session state are live; authenticated price updates drive the parity calculation when a Pyth Pro key is present.
+Canopy resolves Pyth's canonical Apple equity and AAPLx token feeds together, discovers fully verified `PriceUpdateV2` accounts through the official Pyth Receiver program on Solana, and selects the newest update for each feed. Prices and confidence intervals are decoded from the on-chain account layout. Freshness is product logic: a stale update blocks the parity calculation instead of presenting an unsafe spread. Pyth Pro quotes take precedence when configured.
 
 Do not select Tessera, Clawpump, or Meteora: this build does not use Tessera T-Tokens and has not launched the stock-paired mainnet pool required by the latter tracks.
 
@@ -51,6 +51,7 @@ Do not select Tessera, Clawpump, or Meteora: this build does not use Tessera T-T
 - Next.js 16 production build and ESLint pass.
 - Seven deterministic card-engine tests pass.
 - Both local SBF binaries are byte-for-byte identical to the programs deployed on devnet.
+- The market desk reads the official Pyth Receiver program on Solana mainnet and links the selected update accounts.
 - The public homepage, market desk, instant mint, sector list, and metadata API were probed after deployment.
 
 ## Suggested 90-second pitch video

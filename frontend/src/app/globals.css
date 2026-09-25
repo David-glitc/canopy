@@ -95,7 +95,7 @@ button:disabled { cursor: not-allowed; }
 .market-table td { padding: 1rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .market-table tr:last-child td { border-bottom: 0; }
 .market-table tbody tr:hover { background: rgba(20,241,149,.025); }
-.market-logo { width: 2.25rem; height: 2.25rem; object-fit: contain; border-radius: .45rem; background: white; }
+.market-logo { display: grid; width: 2.25rem; height: 2.25rem; flex: 0 0 auto; place-items: center; border: 1px solid color-mix(in srgb, var(--leaf) 45%, var(--line)); border-radius: .45rem; background: rgba(20,241,149,.08); color: var(--leaf); font: 700 .7rem/1 var(--font-mono); letter-spacing: -.04em; }
 
 input, select { color: var(--paper); }
 input:focus-visible, select:focus-visible, textarea:focus-visible { border-color: var(--leaf) !important; box-shadow: 0 0 0 3px rgba(20,241,149,.15); outline: none; }

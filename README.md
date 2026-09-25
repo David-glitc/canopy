@@ -67,7 +67,7 @@ Env (`frontend/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet),
 ## Hackathon tracks
 
 - **PreStocks:** live private-market discovery and source-linked claim metadata.
-- **Pyth:** AAPL equity/AAPLx feed identity, session state, and authenticated parity marks.
+- **Pyth:** verified AAPL equity/AAPLx Receiver prices, confidence, freshness guard, and parity.
 
 ## Video shots (90s)
 
