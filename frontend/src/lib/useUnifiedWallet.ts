@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { getWalletStandardWallets } from "@dynamic-labs/solana";
 import { useConnection, useWallet as useAdapterWallet } from "@solana/wallet-adapter-react";
 import {
   ComputeBudgetProgram,
@@ -28,6 +29,25 @@ type DynamicSolanaWallet = {
     signTransaction?: (transaction: Transaction) => Promise<Transaction>;
     getSigner?: () => Promise<DynamicSolanaSigner | undefined>;
   };
+};
+
+type StandardAccount = {
+  address: string;
+  features?: readonly string[];
+};
+
+type StandardWallet = {
+  accounts: readonly StandardAccount[];
+  features: Record<string, unknown>;
+};
+
+type StandardSignTransaction = {
+  signTransaction: (input: {
+    account: StandardAccount;
+    chain: "solana:devnet";
+    transaction: Uint8Array;
+    options: { preflightCommitment: "confirmed"; minContextSlot?: number };
+  }) => Promise<readonly { signedTransaction: Uint8Array }[]>;
 };
 
 const DEFAULT_PRIORITY_FEE = 1_000;
@@ -86,6 +106,30 @@ async function signWithDynamic(wallet: DynamicSolanaWallet, transaction: Transac
   throw new Error("Connected wallet does not support Solana transaction signing");
 }
 
+async function signWithWalletStandard(
+  address: string,
+  transaction: Transaction,
+  minContextSlot?: number,
+) {
+  const wallets = getWalletStandardWallets().wallets as unknown as readonly StandardWallet[];
+  for (const wallet of wallets) {
+    const account = wallet.accounts.find((candidate) => candidate.address === address);
+    const feature = wallet.features["solana:signTransaction"] as StandardSignTransaction | undefined;
+    if (!account || !feature || (account.features && !account.features.includes("solana:signTransaction"))) continue;
+
+    const [output] = await feature.signTransaction({
+      account,
+      chain: "solana:devnet",
+      transaction: new Uint8Array(
+        transaction.serialize({ requireAllSignatures: false, verifySignatures: false }),
+      ),
+      options: { preflightCommitment: "confirmed", minContextSlot },
+    });
+    if (output) return Transaction.from(output.signedTransaction);
+  }
+  return null;
+}
+
 async function selectDevnet(wallet: DynamicSolanaWallet) {
   const network = await wallet.getNetwork?.();
   if (String(network) !== "103" && network !== "devnet") {
@@ -125,7 +169,9 @@ export function useUnifiedWallet() {
 
     if (primaryWallet && dynamicPublicKey) {
       await selectDevnet(primaryWallet);
-      const signed = await signWithDynamic(primaryWallet, transaction);
+      const signed =
+        await signWithWalletStandard(primaryWallet.address ?? dynamicPublicKey.toBase58(), transaction, options?.minContextSlot) ??
+        await signWithDynamic(primaryWallet, transaction);
       return conn.sendRawTransaction(signed.serialize(), {
         skipPreflight: options?.skipPreflight ?? false,
         maxRetries: options?.maxRetries,
