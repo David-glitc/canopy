@@ -32,6 +32,7 @@ import {
 } from "@/lib/canopy-ix";
 import { FUTARCHY_ID, parseMarket, marketPrice, type MarketData } from "@/lib/futarchy-read";
 import { cn } from "@/lib/utils";
+import { FundingCurve, VaultCycle } from "@/components/VaultVisuals";
 
 type RecRow = RecordData & { address: string };
 
@@ -320,35 +321,61 @@ export default function SectorDetail({ address }: { address: string }) {
   }
 
   const pct = grove.goal > 0n ? Math.min(100, (Number(grove.total) / Number(grove.goal)) * 100) : 0;
+  const balance = vaultBal ?? grove.total;
+  const nav = grove.shareCount > 0 ? Number(balance) / 1e6 / grove.shareCount : 0;
+  const cumulative = (records ?? []).reduce<number[]>((values, record) => {
+    values.push((values.at(-1) ?? 0) + Number(record.deposit) / 1e6);
+    return values;
+  }, [0]);
+  const chartValues = cumulative.length > 1 ? cumulative : [0, Number(grove.total) / 1e6];
+  const deadlineSeconds = Number(grove.deadline) - (networkTime ?? Math.floor(Date.now() / 1000));
+  const timeLabel = grove.status !== 0
+    ? "Funding cycle closed"
+    : deadlineSeconds <= 0
+      ? "Funding window ended"
+      : deadlineSeconds >= 86400
+        ? `${Math.floor(deadlineSeconds / 86400)}d ${Math.floor((deadlineSeconds % 86400) / 3600)}h remaining`
+        : `${Math.floor(deadlineSeconds / 3600)}h ${Math.floor((deadlineSeconds % 3600) / 60)}m remaining`;
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="rounded-full bg-[rgba(153,69,255,0.15)] px-3 py-1 font-mono2 text-sm text-[var(--canopy-purple)]">
-          {STATUS[grove.status]}
-        </span>
-        <span className="font-mono2 text-sm text-[var(--canopy-muted)]">
-          {address.slice(0, 6)}…{address.slice(-4)} · by {grove.creator.slice(0, 6)}…{grove.creator.slice(-4)}
-        </span>
-      </div>
-      <div className="mt-4 grid gap-4 sm:grid-cols-4">
-        {[
-          ["Raised", `$${(Number(grove.total) / 1e6).toFixed(2)} / $${(Number(grove.goal) / 1e6).toFixed(2)}`],
-          ["Vault", vaultBal === null ? "…" : `$${(Number(vaultBal) / 1e6).toFixed(2)}`],
-          ["Collectibles", `${grove.shareCount}`],
-          ["Min", `$${(Number(grove.minDeposit) / 1e6).toFixed(2)}`],
-        ].map(([k, v]) => (
-          <div key={k} className="glass rounded-2xl p-4">
-            <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">{k.toUpperCase()}</p>
-            <p className="font-display mt-1 text-xl font-extrabold">{v}</p>
+    <div className="vault-detail">
+      <section className="vault-detail-hero">
+        <div className="vault-detail-main">
+          <div className="vault-detail-topline">
+            <span className={cn("vault-status", `vault-status-${grove.status}`)}><i />{STATUS[grove.status]}</span>
+            <span>{address.slice(0, 6)}··{address.slice(-4)} · by {grove.creator.slice(0, 5)}··{grove.creator.slice(-4)}</span>
           </div>
-        ))}
-      </div>
-      <div className="mt-4 h-2 overflow-hidden rounded-full bg-[var(--panel-2)]">
-        <div className="h-full rounded-full bg-[var(--canopy-green)]" style={{ width: `${pct}%` }} />
-      </div>
+          <p className="vault-detail-label">TOTAL VAULT VALUE</p>
+          <div className="vault-detail-value">
+            <strong>${(Number(balance) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+            <span>{pct.toFixed(1)}% funded</span>
+          </div>
+          <div className="vault-detail-chart-head">
+            <span>Cumulative deposits</span>
+            <span>Goal ${(Number(grove.goal) / 1e6).toLocaleString()}</span>
+          </div>
+          <FundingCurve values={chartValues} label="Cumulative deposit value for this vault" />
+        </div>
+        <aside className="vault-detail-aside">
+          <div className="vault-detail-nav">
+            <span>NAV / POSITION</span>
+            <strong>${nav.toFixed(2)}</strong>
+            <small>Current pooled value ÷ {grove.shareCount || 0} minted positions</small>
+          </div>
+          <div className="vault-detail-metrics">
+            <div><span>Raised</span><strong>${(Number(grove.total) / 1e6).toFixed(2)}</strong></div>
+            <div><span>Min. position</span><strong>${(Number(grove.minDeposit) / 1e6).toFixed(2)}</strong></div>
+            <div><span>Collectors</span><strong>{grove.shareCount}</strong></div>
+            <div><span>Vault balance</span><strong>{vaultBal === null ? "Syncing" : `$${(Number(vaultBal) / 1e6).toFixed(2)}`}</strong></div>
+          </div>
+          <div className="vault-timing">
+            <div><span>CYCLE TIMING</span><strong>{timeLabel}</strong></div>
+            <VaultCycle status={grove.status} revealStarted={Boolean(revealOn)} revealReady={Boolean(revealReady)} />
+          </div>
+        </aside>
+      </section>
 
-      <div className="mt-6 flex gap-2 border-b border-[var(--canopy-line)]">
+      <div className="vault-tabs">
         {(["overview", "advance", "govern"] as const).map((t) => (
           <button
             key={t}

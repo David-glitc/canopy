@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Transaction } from "@solana/web3.js";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useUnifiedWallet } from "@/lib/useUnifiedWallet";
@@ -14,20 +15,22 @@ import {
   type GroveData,
 } from "@/lib/canopy-ix";
 import { cn } from "@/lib/utils";
+import { FundingCurve, seededFundingSeries, VaultCycle } from "@/components/VaultVisuals";
 
 type GroveRow = GroveData & { address: string };
 
 const STATUS = ["Funding", "Closed", "Cancelled", "Revealed"] as const;
 
-function fmtUSD(micros: bigint): string {
-  return `$${(Number(micros) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+function fmtUSD(micros: bigint, digits = 2): string {
+  return `$${(Number(micros) / 1e6).toLocaleString(undefined, { maximumFractionDigits: digits })}`;
 }
 
 function countdown(deadline: bigint): string {
   const s = Number(deadline) - Math.floor(Date.now() / 1000);
-  if (s <= 0) return "expired";
-  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600);
-  return d > 0 ? `${d}d ${h}h left` : `${h}h ${Math.floor((s % 3600) / 60)}m left`;
+  if (s <= 0) return "Cycle ended";
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  return d > 0 ? `${d}d ${h}h remaining` : `${h}h ${Math.floor((s % 3600) / 60)}m remaining`;
 }
 
 export default function SectorList() {
@@ -50,10 +53,7 @@ export default function SectorList() {
         address: pubkey.toBase58(),
         ...parseGrove(new Uint8Array(account.data)),
       }));
-      rows.sort((a, b) => {
-        if (a.status !== b.status) return a.status - b.status;
-        return Number(b.total - a.total);
-      });
+      rows.sort((a, b) => a.status !== b.status ? a.status - b.status : Number(b.total - a.total));
       setGroves(rows);
     } catch {
       setGroves([]);
@@ -64,6 +64,16 @@ export default function SectorList() {
     const timer = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(timer);
   }, [load]);
+
+  const aggregate = useMemo(() => {
+    const rows = groves ?? [];
+    const tvl = rows.reduce((sum, item) => sum + item.total, 0n);
+    const shares = rows.reduce((sum, item) => sum + item.shareCount, 0);
+    const active = rows.filter((item) => item.status === 0).length;
+    const goal = rows.reduce((sum, item) => sum + item.goal, 0n);
+    const progress = goal > 0n ? Math.min(100, Number(tvl) / Number(goal) * 100) : 0;
+    return { tvl, shares, active, progress };
+  }, [groves]);
 
   async function create() {
     if (!publicKey) return;
@@ -84,7 +94,7 @@ export default function SectorList() {
       const sig = await sendTransaction(new Transaction().add(ix), connection);
       await connection.confirmTransaction(sig, "confirmed");
       setShowCreate(false);
-      load();
+      await load();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       if (msg.includes("GoalNotMet") || msg.includes("6009")) setError("The goal is invalid. Try a lower amount.");
@@ -96,113 +106,82 @@ export default function SectorList() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[var(--canopy-muted)]">
-          {groves === null ? "Loading group vaults…" : `${groves.length} group vault${groves.length === 1 ? "" : "s"}`}
-        </p>
+    <div className="vault-dashboard">
+      <section className="vault-command">
+        <div className="vault-command-copy">
+          <span className="live-label"><i /> LIVE ON DEVNET</span>
+          <p className="vault-command-eyebrow">Collective vault value</p>
+          <p className="vault-command-value">{groves === null ? "—" : fmtUSD(aggregate.tvl)}</p>
+          <p className="vault-command-note">Every deposit mints a unique position. NAV updates from the pooled on-chain balance.</p>
+        </div>
+        <div className="vault-command-chart">
+          <div className="vault-chart-head"><span>NETWORK FUNDING</span><strong>{aggregate.progress.toFixed(1)}%</strong></div>
+          <FundingCurve values={seededFundingSeries("canopy-network", aggregate.progress)} label="Aggregate vault funding curve" />
+        </div>
+        <div className="vault-command-stats">
+          <div><span>Active cycles</span><strong>{groves === null ? "—" : aggregate.active}</strong></div>
+          <div><span>Positions</span><strong>{groves === null ? "—" : aggregate.shares}</strong></div>
+          <div><span>Network</span><strong>Solana</strong></div>
+        </div>
+      </section>
+
+      <div className="vault-toolbar">
+        <div>
+          <p className="vault-section-label">LIVE VAULTS</p>
+          <p className="vault-toolbar-copy">{groves === null ? "Reading on-chain accounts…" : `${groves.length} funding cycles found`}</p>
+        </div>
         <div className="flex gap-2">
-          <button onClick={() => void load()} className="btn-ghost px-4 py-2 text-sm">
-            Refresh
-          </button>
-          {connected && (
-            <button onClick={() => setShowCreate((s) => !s)} className="btn-primary px-4 py-2 text-sm">
-              {showCreate ? "Close form" : "Create a group vault"}
-            </button>
-          )}
+          <button onClick={() => void load()} className="btn-ghost px-4 py-2 text-sm">Refresh data</button>
+          {connected && <button onClick={() => setShowCreate((value) => !value)} className="btn-primary px-4 py-2 text-sm">{showCreate ? "Close" : "Create vault"}</button>}
         </div>
       </div>
 
       {showCreate && (
-        <div className="glass mt-5 grid gap-4 rounded-[1.5rem] p-5 sm:grid-cols-4">
-          <label className="text-sm">
-            <span className="font-semibold text-[var(--canopy-muted)]">Funding goal</span>
-            <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100.00"
-              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-[var(--panel)] px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
-            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD, minimum 1.00</span>
-          </label>
-          <label className="text-sm">
-            <span className="font-semibold text-[var(--canopy-muted)]">Minimum deposit</span>
-            <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2.00"
-              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-[var(--panel)] px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
-            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Mock USD per collectible</span>
-          </label>
-          <label className="text-sm">
-            <span className="font-semibold text-[var(--canopy-muted)]">Duration</span>
-            <input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5"
-              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-[var(--panel)] px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
-            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Days until close</span>
-          </label>
-          <div className="flex items-end">
-            <button onClick={create} disabled={busy} className="btn-primary w-full px-4 py-2 text-sm disabled:opacity-40">
-              {busy ? "Creating…" : "Create vault"}
-            </button>
-          </div>
+        <div className="vault-create-panel">
+          <div className="vault-create-intro"><span>NEW CYCLE</span><strong>Set the rules, then invite the group.</strong></div>
+          <label><span>Funding goal</span><div className="vault-input"><i>$</i><input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100" /></div><small>Minimum $1.00</small></label>
+          <label><span>Minimum position</span><div className="vault-input"><i>$</i><input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2" /></div><small>Per collectible</small></label>
+          <label><span>Funding window</span><div className="vault-input"><input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5" /><i>days</i></div><small>Until cycle close</small></label>
+          <button onClick={create} disabled={busy} className="btn-primary vault-create-submit">{busy ? "Creating…" : "Launch cycle →"}</button>
         </div>
       )}
-      {error && (
-        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-[var(--danger)]">
-          {error}
-        </p>
-      )}
+      {error && <p className="vault-error">{error}</p>}
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        {groves === null &&
-          [0, 1, 2, 3].map((i) => (
-            <div key={i} className="glass h-44 animate-pulse rounded-2xl" />
-          ))}
-        {groves?.map((g) => {
-          const pct = g.goal > 0n ? Math.min(100, (Number(g.total) / Number(g.goal)) * 100) : 0;
+      <div className="vault-grid">
+        {groves === null && [0, 1, 2, 3].map((i) => <div key={i} className="vault-card vault-card-loading" />)}
+        {groves?.map((grove, index) => {
+          const pct = grove.goal > 0n ? Math.min(100, Number(grove.total) / Number(grove.goal) * 100) : 0;
+          const nav = grove.shareCount > 0 ? Number(grove.total) / 1e6 / grove.shareCount : 0;
           return (
-            <a
-              key={g.address}
-              href={`/sectors/${g.address}`}
-              className="glass group rounded-[1.25rem] p-5 transition-[border-color,box-shadow,translate] duration-150 hover:-translate-y-1 hover:border-[var(--canopy-green)] hover:shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={cn(
-                    "rounded-full px-3 py-1 font-mono2 text-sm",
-                    g.status === 0
-                      ? "bg-[rgba(20,241,149,0.15)] text-[var(--canopy-green)]"
-                      : g.status === 3
-                        ? "bg-[rgba(153,69,255,0.15)] text-[var(--canopy-purple)]"
-                        : "bg-[var(--panel-2)] text-[var(--canopy-muted)]"
-                  )}
-                >
-                  {STATUS[g.status] ?? "Unknown"}
-                </span>
-                <span className="font-mono2 text-sm tabular text-[var(--canopy-muted)]">
-                  {g.status === 0 ? countdown(g.deadline) : `${g.shareCount} shares`}
-                </span>
+            <Link key={grove.address} href={`/sectors/${grove.address}`} className="vault-card" style={{ "--vault-delay": `${Math.min(index, 5) * 55}ms` } as CSSProperties}>
+              <div className="vault-card-top">
+                <span className={cn("vault-status", `vault-status-${grove.status}`)}><i />{STATUS[grove.status] ?? "Unknown"}</span>
+                <span className="vault-card-id">{grove.address.slice(0, 5)}··{grove.address.slice(-4)}</span>
               </div>
-              <p className="font-mono2 mt-3 text-sm text-[var(--canopy-muted)]">
-                {g.address.slice(0, 6)}…{g.address.slice(-4)}
-              </p>
-              <div className="mt-3 flex items-end justify-between">
-                <p className="font-display text-2xl font-extrabold">
-                  {fmtUSD(g.total)}
-                  <span className="text-sm font-normal text-[var(--canopy-muted)]"> / {fmtUSD(g.goal)}</span>
-                </p>
-                <span className="text-[var(--canopy-green)] opacity-0 transition-opacity group-hover:opacity-100">
-                  Open →
-                </span>
+              <div className="vault-card-value-row">
+                <div><small>VAULT VALUE</small><strong>{fmtUSD(grove.total)}</strong></div>
+                <span className="vault-open-arrow">↗</span>
               </div>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--panel-2)]">
-                <div
-                  className="h-full rounded-full bg-[var(--canopy-green)]"
-                  style={{ width: `${pct}%` }}
-                />
+              <div className="vault-card-chart-head"><span>Funding curve</span><strong>{pct.toFixed(0)}%</strong></div>
+              <FundingCurve compact values={seededFundingSeries(grove.address, pct)} label={`Funding progress for vault ${grove.address}`} />
+              <div className="vault-card-metrics">
+                <div><span>NAV / position</span><strong>${nav.toFixed(2)}</strong></div>
+                <div><span>Goal</span><strong>{fmtUSD(grove.goal, 0)}</strong></div>
+                <div><span>Positions</span><strong>{grove.shareCount}</strong></div>
               </div>
-            </a>
+              <div className="vault-card-cycle">
+                <div><span>{grove.status === 0 ? countdown(grove.deadline) : "Cycle complete"}</span><strong>{fmtUSD(grove.minDeposit)} min</strong></div>
+                <VaultCycle status={grove.status} />
+              </div>
+            </Link>
           );
         })}
       </div>
+
       {groves?.length === 0 && (
-        <div className="mt-8 rounded-2xl border border-[var(--canopy-line)] bg-[var(--color-surface)] p-8 text-center">
-          <p className="font-semibold">No group vaults yet</p>
-          <p className="mt-1 text-pretty text-sm text-[var(--canopy-muted)]">Create one to pool mock deposits and mint a collectible for each depositor.</p>
-          {connected && <button type="button" onClick={() => setShowCreate(true)} className="btn-primary mt-4 px-4 py-2 text-sm">Create the first vault</button>}
+        <div className="vault-empty">
+          <span>01</span><h3>Start the first funding cycle.</h3><p>Create a vault, set a target, and mint a collectible for every deposit.</p>
+          {connected && <button type="button" onClick={() => setShowCreate(true)} className="btn-primary mt-5">Create the first vault</button>}
         </div>
       )}
     </div>

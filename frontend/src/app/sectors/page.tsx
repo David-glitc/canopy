@@ -7,14 +7,18 @@ export const metadata = {
 
 export default function SectorsPage() {
   return (
-    <div className="shell pb-24 pt-16 sm:pt-24">
-      <p className="page-kicker">Group vaults</p>
-      <h1 className="page-title">Pool a pick together.</h1>
-      <p className="page-lede">
-        Each group vault has a goal and deadline. Every deposit mints a collectible. If the vault
-        misses its goal, depositors can take their mock funds back.
-      </p>
-      <div className="mt-14">
+    <div className="shell pb-24 pt-10 sm:pt-16">
+      <div className="vault-page-head">
+        <div>
+          <p className="page-kicker">Group vaults</p>
+          <h1 className="page-title">Pool conviction.<br />Collect the outcome.</h1>
+        </div>
+        <p className="page-lede">
+          Fund a private-market pick together. Each contribution becomes a unique collectible
+          with a live share of the vault.
+        </p>
+      </div>
+      <div className="mt-10">
         <SectorList />
       </div>
     </div>
