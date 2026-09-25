@@ -84,7 +84,7 @@ export default function ProgramStatus() {
         ))}
       </div>
       <p className="mt-4 font-mono2 text-sm text-[var(--canopy-muted)]">
-        devnet · mock mUSDC/xStocks · mainnet demo runs real xStocks via Jupiter
+        devnet · mock mUSDC settlement · PreStocks references · verified Pyth Receiver reads
       </p>
     </div>
   );

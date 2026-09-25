@@ -220,7 +220,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             <img src="/mark.svg" alt="" width={72} height={72} className="opacity-60" />
             <p className="mt-6 font-display text-lg font-bold">Your cipher appears here</p>
             <p className="mt-2 max-w-xs text-sm text-[var(--canopy-muted)]">
-              Mint to forge a sealed Share, rip it open, and claim real backing
+              Mint to forge a sealed Share, rip it open, and claim its mock mUSDC backing
               — all without leaving this screen.
             </p>
           </div>

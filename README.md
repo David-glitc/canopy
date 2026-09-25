@@ -1,6 +1,6 @@
 # Canopy — collectible claims on tokenized equity
 
-**A technocratic cipher-society for tokenized stocks on Solana.** Fund a Sector → mint a sealed Share → reveal a deterministic operative backed by real assets → govern by market, not by whales. Solo pulls reveal instantly. Chrome, signal, math.
+**A technocratic cipher-society for tokenized stocks on Solana.** Fund a Sector → mint a sealed Share → reveal a deterministic operative backed by transparent vault accounting → govern by market, not by whales. Solo pulls reveal instantly. Chrome, signal, math.
 
 Built for **STOCKLANA** (Solana tokenized-stocks hackathon).
 
@@ -29,9 +29,9 @@ Built for **STOCKLANA** (Solana tokenized-stocks hackathon).
 
 ## Why Solana
 
-Native xStocks (Token-2022 scaled-UI equities) · Metaplex Core single-account
-NFTs with enforced plugins · Pyth 24/7 equity marks · Jupiter execution ·
-sub-cent fees that make $1.50 pulls real.
+PreStocks market references · Metaplex Core single-account NFTs with enforced
+plugins · verified Pyth Receiver prices · sub-cent fees that make $1.50 pulls
+practical.
 
 ## Run it
 
@@ -78,10 +78,10 @@ Env (`frontend/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet),
 
 ## Status & risks
 
-Devnet demo (mock mUSDC/xStocks; Jupiter + real xStocks on mainnet-beta for
-the live round). Programs unaudited. BurnV1 close unverified on devnet Core
-version (claim ships as mark+pay; re-enable after mainnet verify). xStocks
-exclude US persons. Not investment advice; capital at risk.
+Devnet demo with mock mUSDC settlement and PreStocks reference data. Programs
+are unaudited. BurnV1 close is unverified on the current devnet Core version,
+so claim ships as mark-and-pay. PreStocks eligibility restrictions apply. Not
+investment advice; capital at risk.
 
 ## License
 

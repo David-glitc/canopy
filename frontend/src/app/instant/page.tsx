@@ -2,7 +2,7 @@ import InstantMint from "@/components/InstantMint";
 
 export const metadata = {
   title: "Instant Mint",
-  description: "Solo pull. Instant reveal. Real backing.",
+  description: "Solo pull, instant reveal, and a transparent devnet vault claim.",
 };
 
 export default async function InstantPage({

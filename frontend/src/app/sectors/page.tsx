@@ -15,7 +15,7 @@ export default function SectorsPage() {
         Funding cells.
       </h1>
       <p className="mt-4 max-w-2xl leading-relaxed text-[var(--canopy-muted)]">
-        Every Sector pools capital into real backing. Fund one to mint a sealed
+        Every Sector pools mock mUSDC into a transparent devnet vault. Fund one to mint a sealed
         Share; when it closes, the draw assigns your cut — then owners govern
         it by market.
       </p>
