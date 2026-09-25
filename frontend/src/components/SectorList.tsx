@@ -16,8 +16,15 @@ import {
 } from "@/lib/canopy-ix";
 import { cn } from "@/lib/utils";
 import { FundingCurve, seededFundingSeries, VaultCycle } from "@/components/VaultVisuals";
+import {
+  buildVaultMemo,
+  fallbackVaultMetadata,
+  loadVaultMetadata,
+  normalizeVaultLink,
+  type VaultMetadata,
+} from "@/lib/vault-metadata";
 
-type GroveRow = GroveData & { address: string };
+type GroveRow = GroveData & { address: string; metadata: VaultMetadata };
 
 const STATUS = ["Funding", "Closed", "Cancelled", "Revealed"] as const;
 
@@ -38,6 +45,9 @@ export default function SectorList() {
   const { publicKey, sendTransaction, connected } = useUnifiedWallet();
   const [groves, setGroves] = useState<GroveRow[] | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [link, setLink] = useState("");
   const [goal, setGoal] = useState("100");
   const [minDep, setMinDep] = useState("2");
   const [days, setDays] = useState("5");
@@ -49,9 +59,13 @@ export default function SectorList() {
       const accts = await connection.getProgramAccounts(CANOPY_ID, {
         filters: [{ dataSize: 8 + 142 }],
       });
-      const rows: GroveRow[] = accts.map(({ pubkey, account }) => ({
-        address: pubkey.toBase58(),
-        ...parseGrove(new Uint8Array(account.data)),
+      const rows: GroveRow[] = await Promise.all(accts.map(async ({ pubkey, account }) => {
+        const address = pubkey.toBase58();
+        return {
+          address,
+          ...parseGrove(new Uint8Array(account.data)),
+          metadata: await loadVaultMetadata(connection, address),
+        };
       }));
       rows.sort((a, b) => a.status !== b.status ? a.status - b.status : Number(b.total - a.total));
       setGroves(rows);
@@ -77,6 +91,19 @@ export default function SectorList() {
 
   async function create() {
     if (!publicKey) return;
+    if (name.trim().length < 2) {
+      setError("Give the vault a name.");
+      return;
+    }
+    if (description.trim().length < 8) {
+      setError("Add a short description of the vault strategy.");
+      return;
+    }
+    const normalizedLink = normalizeVaultLink(link);
+    if (link.trim() && !normalizedLink) {
+      setError("Enter a valid project link.");
+      return;
+    }
     setError(null);
     setBusy(true);
     try {
@@ -91,9 +118,20 @@ export default function SectorList() {
         grove,
         vault: ata(MUSDC, grove),
       });
-      const sig = await sendTransaction(new Transaction().add(ix), connection);
+      const metadata: VaultMetadata = {
+        name: name.trim().slice(0, 48),
+        description: description.trim().slice(0, 140),
+        link: normalizedLink,
+      };
+      const sig = await sendTransaction(
+        new Transaction().add(ix, buildVaultMemo(publicKey, grove, metadata)),
+        connection
+      );
       await connection.confirmTransaction(sig, "confirmed");
       setShowCreate(false);
+      setName("");
+      setDescription("");
+      setLink("");
       await load();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -139,6 +177,11 @@ export default function SectorList() {
       {showCreate && (
         <div className="vault-create-panel">
           <div className="vault-create-intro"><span>NEW CYCLE</span><strong>Set the rules, then invite the group.</strong></div>
+          <div className="vault-create-identity">
+            <label><span>Vault name</span><input value={name} onChange={(e) => setName(e.target.value)} maxLength={48} placeholder="AI Frontier Fund" /></label>
+            <label><span>Description</span><textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={140} rows={2} placeholder="A concentrated token set spanning public AI infrastructure and private frontier companies." /></label>
+            <label><span>Project link</span><input value={link} onChange={(e) => setLink(e.target.value)} maxLength={120} inputMode="url" placeholder="yourproject.xyz" /><small>Optional · recorded with the vault</small></label>
+          </div>
           <label><span>Funding goal</span><div className="vault-input"><i>$</i><input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100" /></div><small>Minimum $1.00</small></label>
           <label><span>Minimum position</span><div className="vault-input"><i>$</i><input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2" /></div><small>Per collectible</small></label>
           <label><span>Funding window</span><div className="vault-input"><input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5" /><i>days</i></div><small>Until cycle close</small></label>
@@ -157,6 +200,11 @@ export default function SectorList() {
               <div className="vault-card-top">
                 <span className={cn("vault-status", `vault-status-${grove.status}`)}><i />{STATUS[grove.status] ?? "Unknown"}</span>
                 <span className="vault-card-id">{grove.address.slice(0, 5)}··{grove.address.slice(-4)}</span>
+              </div>
+              <div className="vault-card-identity">
+                <h2>{grove.metadata.name || fallbackVaultMetadata(grove.address).name}</h2>
+                <p>{grove.metadata.description}</p>
+                {grove.metadata.link && <span>{new URL(grove.metadata.link).hostname.replace(/^www\./, "")} ↗</span>}
               </div>
               <div className="vault-card-value-row">
                 <div><small>VAULT VALUE</small><strong>{fmtUSD(grove.total)}</strong></div>

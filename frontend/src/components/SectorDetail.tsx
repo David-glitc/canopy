@@ -33,6 +33,7 @@ import {
 import { FUTARCHY_ID, parseMarket, marketPrice, type MarketData } from "@/lib/futarchy-read";
 import { cn } from "@/lib/utils";
 import { FundingCurve, VaultCycle } from "@/components/VaultVisuals";
+import { fallbackVaultMetadata, loadVaultMetadata, type VaultMetadata } from "@/lib/vault-metadata";
 
 type RecRow = RecordData & { address: string };
 
@@ -53,6 +54,7 @@ export default function SectorDetail({ address }: { address: string }) {
   const [error, setError] = useState<string | null>(null);
   const [myBal, setMyBal] = useState<bigint | null>(null);
   const [networkTime, setNetworkTime] = useState<number | null>(null);
+  const [metadata, setMetadata] = useState<VaultMetadata>(() => fallbackVaultMetadata(address));
 
   const grovePk = useMemo(() => new PublicKey(address), [address]);
 
@@ -62,6 +64,7 @@ export default function SectorDetail({ address }: { address: string }) {
       if (!g) return;
       const gd = parseGrove(new Uint8Array(g.data));
       setGrove({ ...gd, nonce: gd.nonce, creator: gd.creator } as never);
+      setMetadata(await loadVaultMetadata(connection, address));
       const recs = await connection.getProgramAccounts(CANOPY_ID, {
         filters: [{ dataSize: 8 + 119 }, { memcmp: { offset: 8, bytes: address } }],
       });
@@ -344,6 +347,11 @@ export default function SectorDetail({ address }: { address: string }) {
           <div className="vault-detail-topline">
             <span className={cn("vault-status", `vault-status-${grove.status}`)}><i />{STATUS[grove.status]}</span>
             <span>{address.slice(0, 6)}··{address.slice(-4)} · by {grove.creator.slice(0, 5)}··{grove.creator.slice(-4)}</span>
+          </div>
+          <div className="vault-detail-identity">
+            <h1>{metadata.name}</h1>
+            <p>{metadata.description}</p>
+            {metadata.link && <a href={metadata.link} target="_blank" rel="noreferrer">Visit project ↗</a>}
           </div>
           <p className="vault-detail-label">TOTAL VAULT VALUE</p>
           <div className="vault-detail-value">
