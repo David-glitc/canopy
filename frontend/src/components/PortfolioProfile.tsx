@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { PublicKey } from "@solana/web3.js";
 import { useConnection } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { CANOPY_ID, parseGrove, parseRecord, revealPda, type GroveData, type RecordData } from "@/lib/canopy-ix";
 import { useUnifiedWallet } from "@/lib/useUnifiedWallet";
 import { cn } from "@/lib/utils";
@@ -44,7 +44,7 @@ function itemState(item: InventoryItem) {
 export default function PortfolioProfile({ address }: { address?: string }) {
   const { connection } = useConnection();
   const wallet = useUnifiedWallet();
-  const { setVisible } = useWalletModal();
+  const { setShowAuthFlow } = useDynamicContext();
   const owner = address ?? wallet.publicKey?.toBase58() ?? null;
   const [items, setItems] = useState<InventoryItem[] | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
@@ -134,7 +134,7 @@ export default function PortfolioProfile({ address }: { address?: string }) {
         <p className="page-kicker">Your Canopy account</p>
         <h1>One wallet. Every position.</h1>
         <p>Connect Phantom or Solflare to load instant mints, group-vault shares, NAV, reveal state, and XP.</p>
-        <button type="button" className="btn-primary" onClick={() => setVisible(true)}>Connect wallet →</button>
+        <button type="button" className="btn-primary" onClick={() => setShowAuthFlow(true)}>Connect wallet →</button>
       </section>
     );
   }
