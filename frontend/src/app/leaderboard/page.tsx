@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Leaderboard — Canopy",
+  title: "Leaderboard",
   description: "Time-weighted price rules. Silence keeps the status quo.",
 };
 

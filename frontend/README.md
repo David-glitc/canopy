@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Canopy web app
 
-## Getting Started
+Canopy turns a private-market thesis into a collectible, verifiable claim on Solana. The app combines live [PreStocks](https://prestocks.com/products) discovery, Pyth equity/token feed context, devnet vaults, deterministic reveal cards, and conditional-market governance.
 
-First, run the development server:
+## Live app
+
+**https://xcanopy.vercel.app**
+
+The `/markets` desk loads the current PreStocks catalog from the official API. Selecting a company carries its symbol, Solana mint, and reference price into a Canopy claim. The Pyth panel resolves the canonical AAPL equity and AAPLx token feeds and shows current values when `PYTH_API_KEY` is configured.
+
+All transactions currently settle on Solana devnet using mock mUSDC. The PreStocks reference is preserved in the NFT metadata; the app does not claim that the devnet vault holds the mainnet PreStocks asset.
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create `.env.local` when these integrations are needed:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID=...
+FAUCET_KEY_JSON='[...]'
+PYTH_API_KEY=...
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`PYTH_PRO_API_KEY` is also accepted. Keep Pyth credentials server-side.
 
-## Learn More
+## Validate
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm lint
+pnpm build
+node --test packages/card-engine/test.mjs
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The two deployed devnet programs are linked in the site footer.

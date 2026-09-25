@@ -6,7 +6,7 @@ Built for **STOCKLANA** (Solana tokenized-stocks hackathon).
 
 ## Demo
 
-- **Live app:** _(Vercel URL after deploy — see Deploy)_
+- **Live app:** https://xcanopy.vercel.app
 - **Video walkthrough:** _(link after recording — shots below)_
 - **Programs (devnet):** `canopy` `9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf` ·
   `canopy-futarchy` `BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k`
@@ -44,10 +44,12 @@ node scripts/prove-d2-groves.mjs && node scripts/prove-d3-futarchy.mjs
 node scripts/prove-d4-reveal.mjs && node scripts/prove-d5-instant.mjs
 # app
 pnpm install
-pnpm --dir app dev   # http://localhost:3000
+pnpm --dir frontend install
+pnpm --dir frontend dev   # http://localhost:3000
 ```
 
-Env (`app/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet).
+Env (`frontend/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet),
+`NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID`, and optionally `PYTH_API_KEY`.
 
 ## Layout
 
@@ -57,16 +59,15 @@ Env (`app/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet).
 | `programs/canopy-futarchy` | Conditional vault + PASS/FAIL CPMM + TWAP + redeem |
 | `packages/card-engine` | DNA → layer spec (tests: `node --test`) |
 | `packages/registry` | xStock / mock asset registry |
-| `app` | Next.js: landing, Instant, Sectors, card API, faucet |
+| `frontend` | Canonical Next.js app: markets, Instant, Sectors, card API, faucet |
 | `art` | Pixel/vector generators, layers, brand, contact sheets |
 | `scripts` | Devnet proofs (each asserts PASS on-chain) |
 | `keeper` | Crank scripts (automation batch) |
 
 ## Hackathon tracks
 
-- **Main:** consumer stocks app (collectible ownership + 24/7 marks).
-- **Pyth:** NAV/marks via `Equity.US.*` + `Crypto.*x/USD` (product-central).
-- **PreStocks / Tessera (stretch):** pre-IPO card series via their APIs.
+- **PreStocks:** live private-market discovery and source-linked claim metadata.
+- **Pyth:** AAPL equity/AAPLx feed identity, session state, and authenticated parity marks.
 
 ## Video shots (90s)
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "People — Canopy",
+  title: "People",
   description: "Traits emerge from realized holdings and survived markets.",
 };
 

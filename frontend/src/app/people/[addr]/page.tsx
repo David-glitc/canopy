@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Persona — Canopy",
+  title: "Persona",
   description: "Cipher-profile for a known address.",
 };
 

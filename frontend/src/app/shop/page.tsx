@@ -2,7 +2,7 @@ import Link from "next/link";
 import { fetchShare, type ShareData } from "@/lib/card-data";
 
 export const metadata = {
-  title: "Shop — Canopy",
+  title: "Shop",
   description: "Trade cipher-keys. History compounds on-chain.",
 };
 

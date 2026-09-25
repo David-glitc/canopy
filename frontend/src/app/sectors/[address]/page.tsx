@@ -2,7 +2,7 @@ import SectorDetail from "@/components/SectorDetail";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Sector — Canopy",
+  title: "Sector",
 };
 
 export default async function SectorPage({

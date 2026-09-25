@@ -1,7 +1,7 @@
 import InstantMint from "@/components/InstantMint";
 
 export const metadata = {
-  title: "Instant Mint — Canopy",
+  title: "Instant Mint",
   description: "Solo pull. Instant reveal. Real backing.",
 };
 

@@ -10,7 +10,7 @@ type PageProps = {
 export async function generateMetadata({ params }: { params: Promise<{ mint: string }> }) {
   const { mint } = await params;
   return {
-    title: `${mint.slice(0, 8)}… — Canopy Share`,
+    title: `${mint.slice(0, 8)}… Share`,
     description: "A Canopy cipher-key backed by tokenized equity.",
   };
 }

@@ -1,7 +1,7 @@
 import SectorList from "@/components/SectorList";
 
 export const metadata = {
-  title: "Sectors — Canopy",
+  title: "Sectors",
   description: "Funding cells for tokenized equity. Back one, pull a cipher.",
 };
 
