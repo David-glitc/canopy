@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchShare } from "@/lib/card-data";
+import DnaSnake from "@/components/DnaSnake";
 
 type PageProps = {
   params: Promise<{ mint: string }>;
@@ -36,9 +37,8 @@ export default async function SharePage({ params, searchParams }: PageProps) {
             className="aspect-[2/3] w-full object-cover"
           />
         ) : (
-          <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-4 bg-[#0d0d10]">
-            <img src="/mark.svg" alt="" width={88} height={88} className="opacity-70" />
-            <p className="font-mono2 text-sm tracking-[0.06em] text-[var(--canopy-green)]">SEALED</p>
+          <div className="flex aspect-[2/3] w-full items-center justify-center bg-[#0d0d10] p-5">
+            <DnaSnake />
           </div>
         )}
       </div>

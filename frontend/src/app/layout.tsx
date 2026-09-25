@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
@@ -15,12 +15,20 @@ export const metadata: Metadata = {
     template: "%s · Canopy",
   },
   description: "Explore tokenized public stocks and PreStocks, then create company-linked Digital Matter on Solana.",
-  icons: { icon: "/favicon.svg" },
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/favicon.svg", apple: "/apple-touch-icon.png" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Canopy" },
   openGraph: {
     title: "Canopy: Tokenized stock collectibles on Solana",
     description: "Choose a public stock or PreStock and assemble verifiable Digital Matter from on-chain DNA.",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#17151b",
+  colorScheme: "dark",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

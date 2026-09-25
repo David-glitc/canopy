@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import WalletButton from "./WalletButton";
+import PwaInstall from "./PwaInstall";
 
 type NavIcon = "explore" | "create" | "vaults" | "collection" | "rankings";
 
@@ -43,7 +44,7 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-        <div className="header-actions"><WalletButton /></div>
+        <div className="header-actions"><PwaInstall /><WalletButton /></div>
       </div>
     </header>
   );

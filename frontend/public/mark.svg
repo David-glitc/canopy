@@ -1,21 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <defs>
-    <linearGradient id="canopy-ring" x1="48" y1="10" x2="19" y2="56" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#D9CCFF"/>
-      <stop offset=".48" stop-color="#A885EB"/>
-      <stop offset="1" stop-color="#D7FF72"/>
-    </linearGradient>
-    <linearGradient id="matter-face" x1="23" y1="22" x2="42" y2="43" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#2B2536"/>
-      <stop offset="1" stop-color="#151219"/>
-    </linearGradient>
-  </defs>
-  <path d="M49.8 16.4A23.4 23.4 0 1 0 50 47.4" stroke="#050407" stroke-opacity=".75" stroke-width="11" stroke-linecap="round"/>
-  <path d="M49.8 16.4A23.4 23.4 0 1 0 50 47.4" stroke="url(#canopy-ring)" stroke-width="7" stroke-linecap="round"/>
-  <path d="M32 20.5 43.5 32 32 43.5 20.5 32 32 20.5Z" fill="url(#matter-face)" stroke="#E9E0FF" stroke-opacity=".62" stroke-width="1.2"/>
-  <path d="m32 20.5-2.4 9.1-9.1 2.4 9.1 2.4 2.4 9.1 2.4-9.1 9.1-2.4-9.1-2.4-2.4-9.1Z" fill="#B89AF4" fill-opacity=".16" stroke="#B89AF4" stroke-opacity=".32" stroke-width=".75"/>
-  <rect x="28.4" y="28.4" width="7.2" height="7.2" rx="1.7" transform="rotate(45 32 32)" fill="#D7FF72"/>
-  <rect x="30.6" y="30.6" width="2.8" height="2.8" rx=".7" transform="rotate(45 32 32)" fill="#111015"/>
-  <circle cx="49.8" cy="16.4" r="2.15" fill="#F4F0FF"/>
-  <circle cx="50" cy="47.4" r="2.15" fill="#D7FF72"/>
+  <path d="M31.5 5.5 56 19.4 43.7 26.5 31.5 19.6 20.1 26.1 8 19.2 31.5 5.5Z" fill="#EEE8FF"/>
+  <path d="M7 22.8 18.8 29.5v10.4l13.1 7.5v12.9L7 46.1V22.8Z" fill="#A889E8"/>
+  <path d="m31.9 44.2 11.8-6.8L57 45 31.9 59.4l-11.7-6.7 11.7-6.8v-1.7Z" fill="#D7FF72"/>
+  <path d="m20.1 26.1 11.4-6.5 12.2 6.9-11.8 6.8-11.8-7.2Z" fill="#C7B4F4" fill-opacity=".42"/>
+  <path d="m18.8 29.5 13.1 7.6v10.3l-13.1-7.5V29.5Z" fill="#7E61B8" fill-opacity=".72"/>
+  <path d="m31.9 44.2 11.8-6.8v7.1l-11.8 6.8v-7.1Z" fill="#B6E756" fill-opacity=".8"/>
 </svg>

@@ -3,7 +3,14 @@
 import { useCallback } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useConnection, useWallet as useAdapterWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, Transaction, type SendOptions, type Signer } from "@solana/web3.js";
+import {
+  ComputeBudgetProgram,
+  PublicKey,
+  Transaction,
+  type Connection,
+  type SendOptions,
+  type Signer,
+} from "@solana/web3.js";
 
 type TransactionOptions = SendOptions & { signers?: Signer[] };
 
@@ -20,6 +27,42 @@ type DynamicSolanaWallet = {
     getSigner?: () => Promise<DynamicSolanaSigner | undefined>;
   };
 };
+
+const DEFAULT_PRIORITY_FEE = 1_000;
+const MAX_PRIORITY_FEE = 25_000;
+
+function writableAccounts(transaction: Transaction) {
+  const accounts = new Map<string, PublicKey>();
+  for (const instruction of transaction.instructions) {
+    for (const key of instruction.keys) {
+      if (key.isWritable) accounts.set(key.pubkey.toBase58(), key.pubkey);
+    }
+  }
+  return [...accounts.values()].slice(0, 128);
+}
+
+async function priorityFeeMicroLamports(connection: Connection, transaction: Transaction) {
+  try {
+    const recent = await connection.getRecentPrioritizationFees({
+      lockedWritableAccounts: writableAccounts(transaction),
+    });
+    const fees = recent
+      .map(({ prioritizationFee }) => prioritizationFee)
+      .filter((fee) => Number.isFinite(fee) && fee > 0)
+      .sort((a, b) => a - b);
+    if (!fees.length) return DEFAULT_PRIORITY_FEE;
+    const p75 = fees[Math.floor((fees.length - 1) * 0.75)];
+    return Math.min(Math.max(p75, DEFAULT_PRIORITY_FEE), MAX_PRIORITY_FEE);
+  } catch {
+    return DEFAULT_PRIORITY_FEE;
+  }
+}
+
+function hasPriorityFee(transaction: Transaction) {
+  return transaction.instructions.some(
+    (instruction) => instruction.programId.equals(ComputeBudgetProgram.programId) && instruction.data[0] === 3,
+  );
+}
 
 function publicKeyFrom(address?: string) {
   if (!address) return null;
@@ -57,6 +100,11 @@ export function useUnifiedWallet() {
     options?: TransactionOptions,
   ) => {
     if (!publicKey) throw new Error("Connect a Solana wallet first");
+
+    if (!hasPriorityFee(transaction)) {
+      const microLamports = await priorityFeeMicroLamports(conn, transaction);
+      transaction.instructions.unshift(ComputeBudgetProgram.setComputeUnitPrice({ microLamports }));
+    }
 
     const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
     transaction.feePayer = publicKey;

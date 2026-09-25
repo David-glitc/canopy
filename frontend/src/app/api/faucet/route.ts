@@ -16,7 +16,10 @@ import {
 
 export const runtime = "nodejs";
 
-const RPC = "https://api.devnet.solana.com";
+const RPC =
+  process.env.SOLANA_DEVNET_RPC_URL?.trim() ||
+  process.env.NEXT_PUBLIC_SOLANA_RPC_URL?.trim() ||
+  "https://api.devnet.solana.com";
 const MUSDC = new PublicKey("3PN7iGUrNyk6AgGkGRGx5mD9ftGRGWNJC3FRFkRRhLC5");
 const DRIP_USDC = 10_000_000; // $10
 const DRIP_SOL = 50_000_000; // 0.05

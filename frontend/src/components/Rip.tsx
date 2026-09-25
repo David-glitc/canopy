@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DnaSnake from "./DnaSnake";
 
 type Props = {
   imageUrl: string;
@@ -50,34 +51,16 @@ export default function Rip({
             className="h-full w-full object-cover"
             draggable={false}
           />
+        ) : stage === "tearing" ? (
+          <div className="relative flex h-full w-full items-center justify-center bg-[#0d0d10]" aria-label="Revealing collectible">
+            <img src="/mark.svg" alt="" width={84} height={84} className="scale-150 opacity-0 transition-all duration-500" draggable={false} />
+            <span className="animate-[rip-flash_0.9s_ease-out] absolute inset-0 bg-[rgba(215,255,114,0.12)]" />
+          </div>
         ) : (
-          <button
-            onClick={rip}
-            className="group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-5 bg-[#0d0d10]"
-            aria-label="Reveal the collectible"
-          >
-            <img
-              src="/mark.svg"
-              alt=""
-              width={84}
-              height={84}
-              className={`transition-transform duration-500 ${
-                stage === "tearing" ? "scale-150 opacity-0" : "group-hover:scale-110"
-              }`}
-              draggable={false}
-            />
-            <span
-              className={`font-mono2 text-sm tracking-[0.08em] text-[var(--canopy-green)] ${
-                stage === "tearing" ? "opacity-0" : "animate-pulse"
-              }`}
-            >
-              {stage === "tearing" ? "···" : "TAP TO REVEAL"}
-            </span>
-            {stage === "tearing" && (
-              <span className="animate-[rip-flash_0.9s_ease-out] absolute inset-0 bg-[rgba(20,241,149,0.15)]" />
-            )}
-            <span className="absolute inset-x-8 bottom-6 h-px bg-[var(--canopy-green)] opacity-40" />
-          </button>
+          <div className="sealed-artifact">
+            <DnaSnake />
+            <button type="button" onClick={rip} className="sealed-reveal">Reveal collectible <span>↗</span></button>
+          </div>
         )}
       </div>
 
