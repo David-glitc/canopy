@@ -29,12 +29,30 @@ function Icon({ name }: { name: NavIcon }) {
 
 export default function Header() {
   const pathname = usePathname();
+  if (pathname === "/") {
+    return (
+      <header className="site-header landing-header">
+        <div className="shell header-row">
+          <Link href="/" className="brand-link" aria-label="Canopy home">
+            <span className="brand-mark"><img src="/mark.svg" alt="" width={30} height={30} /></span>
+            <span className="brand-copy"><strong>CANOPY</strong></span>
+          </Link>
+          <nav className="landing-nav" aria-label="Website navigation">
+            <a href="#how">How it works</a>
+            <a href="#ways-in">Ways in</a>
+            <Link href="/matter">DNA engine</Link>
+          </nav>
+          <Link href="/app" className="btn-primary landing-launch">Open app <span>↗</span></Link>
+        </div>
+      </header>
+    );
+  }
   return (
-    <header className="site-header">
+    <header className="site-header app-header">
       <div className="shell header-row">
-        <Link href="/" className="brand-link" aria-label="Canopy home">
+        <Link href="/app" className="brand-link" aria-label="Canopy app home">
           <span className="brand-mark"><img src="/mark.svg" alt="" width={30} height={30} /></span>
-          <span className="brand-copy"><strong>CANOPY</strong></span>
+          <span className="brand-copy"><strong>CANOPY</strong><small>APP</small></span>
         </Link>
         <nav className="primary-nav" aria-label="Primary navigation">
           {LINKS.map((link) => (
