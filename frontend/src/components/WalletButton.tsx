@@ -7,7 +7,7 @@ const DynamicWalletWidget = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-10 w-36 animate-pulse rounded-xl bg-[var(--canopy-panel)]" aria-hidden="true" />
+      <div className="btn-secondary pointer-events-none" aria-hidden="true">Connect wallet</div>
     ),
   }
 );

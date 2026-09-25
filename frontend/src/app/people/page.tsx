@@ -17,7 +17,7 @@ export default function PeoplePage() {
       <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-[var(--canopy-muted)]">
         This page will list wallets that mint collectibles or join decision markets on devnet.
       </p>
-      <div className="mt-10 rounded-2xl border border-[var(--canopy-line)] bg-black/30 p-8">
+      <div className="glass mt-10 rounded-2xl p-8">
         <p className="font-semibold">No wallet profiles yet.</p>
         <p className="mt-2 text-pretty text-sm text-[var(--canopy-muted)]">
           Mint a collectible to create the first activity record.

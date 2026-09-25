@@ -18,7 +18,7 @@ export default function LeaderboardPage() {
         Vault owners can open a PASS/FAIL market for a proposed change. The time-weighted market
         price decides the result.
       </p>
-      <div className="mt-10 rounded-2xl border border-[var(--canopy-line)] bg-black/30 p-8">
+      <div className="glass mt-10 rounded-2xl p-8">
         <p className="font-semibold">No open decision markets.</p>
         <p className="mt-2 text-pretty text-sm text-[var(--canopy-muted)]">
           Open a group vault to inspect its proposal market state.

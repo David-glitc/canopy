@@ -17,7 +17,7 @@ export default function Header() {
       <div className="shell header-row">
       <Link href="/" className="brand-link" aria-label="Canopy home">
         <img src="/mark.svg" alt="" width={30} height={30} />
-        <span>CANOPY</span>
+        <span>Canopy</span>
         <span className="network-pill"><i aria-hidden="true" />devnet</span>
       </Link>
       <nav className="primary-nav" aria-label="Primary navigation">

@@ -19,6 +19,7 @@ import {
   recordPda,
 } from "@/lib/canopy-ix";
 import Rip from "./Rip";
+import CompanyLogo from "./CompanyLogo";
 import { cn } from "@/lib/utils";
 
 type Minted = {
@@ -151,13 +152,16 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
-      <div className="glass rounded-2xl p-6 sm:p-8">
-        <label htmlFor="instant-amount" className="font-mono2 text-sm text-[var(--canopy-muted)]">
-          Mock mUSDC amount
-        </label>
-        <p id="instant-amount-help" className="mono text-sm text-[var(--canopy-muted)]">Minimum $1.50. No real funds are used.</p>
-        <div className="mt-3 flex items-center gap-3">
-          <span className="font-display text-4xl font-extrabold text-[var(--canopy-muted)]">$</span>
+      <div className="glass rounded-[1.5rem] p-6 sm:p-8">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <label htmlFor="instant-amount" className="text-sm font-bold">Choose an amount</label>
+            <p id="instant-amount-help" className="mt-1 text-sm text-[var(--canopy-muted)]">Minimum $1.50 · mock funds only</p>
+          </div>
+          <span className="status">Devnet</span>
+        </div>
+        <div className="mt-8 flex items-center gap-3 border-b border-[var(--canopy-line)] pb-5">
+          <span className="font-display text-4xl font-bold text-[var(--canopy-muted)]">$</span>
           <input
             id="instant-amount"
             value={usd}
@@ -165,11 +169,11 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             inputMode="decimal"
             aria-describedby="instant-amount-help"
             aria-invalid={!valid}
-            className="font-display w-full bg-transparent text-5xl font-extrabold outline-none placeholder:text-[var(--canopy-line)]"
+            className="amount-input font-display w-full bg-transparent font-bold tracking-[-.06em] outline-none placeholder:text-[var(--canopy-line)]"
             placeholder="2.00"
           />
         </div>
-        <div className="mt-6 space-y-2 font-mono2 text-sm text-[var(--canopy-muted)]">
+        <div className="mt-6 space-y-3 text-sm text-[var(--canopy-muted)]">
           <div className="flex justify-between">
             <span>App fee (1%)</span>
             <span className="tabular">${(fee / 1e6).toFixed(4)}</span>
@@ -194,13 +198,12 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           {busy ?? (connected ? `Mint demo collectible · $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to mint")}
         </button>
         {error && (
-          <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300" role="alert">
+          <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-[var(--danger)]" role="alert">
             {error}
           </p>
         )}
-        <p className="mt-4 text-pretty font-mono2 text-sm leading-relaxed text-[var(--canopy-muted)]">
-          Devnet demo only. The collectible references a PreStocks token but does not represent real
-          stock ownership.
+        <p className="mt-4 text-pretty text-xs leading-relaxed text-[var(--canopy-muted)]">
+          This collectible is a devnet demo. It references a PreStocks token and does not represent stock ownership.
         </p>
       </div>
 
@@ -216,11 +219,13 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             claimed={claimed}
           />
         ) : (
-          <div className="glass flex h-full min-h-[420px] flex-col items-center justify-center rounded-2xl p-8 text-center">
-            <img src="/mark.svg" alt="" width={72} height={72} className="opacity-60" />
-            <p className="mt-6 font-display text-lg font-bold">Your collectible will appear here</p>
-            <p className="mt-2 max-w-xs text-pretty text-sm text-[var(--canopy-muted)]">
-              Connect a wallet and mint with mock funds. Then reveal the artwork and inspect its metadata.
+          <div className="mint-preview flex h-full min-h-[420px] flex-col items-center justify-center rounded-[1.5rem] p-8 text-center">
+            <div className="mint-preview-art" aria-hidden="true">
+              {asset ? <CompanyLogo symbol={asset.symbol} name={asset.symbol} className="mint-preview-logo" /> : <span>C</span>}
+            </div>
+            <p className="mt-7 text-lg font-bold text-white">Your collectible appears here</p>
+            <p className="mt-2 max-w-xs text-pretty text-sm leading-6 text-white/55">
+              Connect your wallet, mint with mock funds, then reveal the artwork.
             </p>
           </div>
         )}

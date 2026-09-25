@@ -40,20 +40,21 @@ export default function ProgramStatus() {
   ];
 
   return (
-    <div className="glass rounded-2xl p-6">
+    <div className="glass rounded-[1.5rem] p-6 sm:p-8">
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-sm font-bold tracking-[0.2em] text-[var(--canopy-muted)]">
-          DEPLOYED PROGRAMS
-        </h3>
-        <span className="font-mono2 text-sm tabular text-[var(--canopy-green)]">
-          {slot === null ? "…" : `slot ${slot.toLocaleString()}`}
+        <div>
+          <h3 className="text-lg font-bold tracking-[-.025em]">Deployed programs</h3>
+          <p className="mt-1 text-sm text-[var(--canopy-muted)]">Live checks from Solana devnet</p>
+        </div>
+        <span className="status">
+          {slot === null ? "Checking" : `Slot ${slot.toLocaleString()}`}
         </span>
       </div>
-      <div className="mt-4 space-y-3">
+      <div className="mt-6 overflow-hidden rounded-xl border border-[var(--canopy-line)]">
         {rows.map(([name, addr, desc], i) => (
           <div
             key={name}
-            className="flex flex-col gap-1 rounded-xl border border-[var(--canopy-line)] bg-black/40 p-4 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 bg-white p-4 [&+&]:border-t [&+&]:border-[var(--canopy-line)] sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
               <div className="flex items-center gap-2">
@@ -66,25 +67,25 @@ export default function ProgramStatus() {
                         : "bg-red-500"
                   }`}
                 />
-                <span className="font-mono2 text-sm font-bold">{name}</span>
+                <span className="text-sm font-bold">{name}</span>
               </div>
-              <p className="mt-1 font-mono2 text-sm tabular text-[var(--canopy-muted)]">
-                {addr} · {desc}
+              <p className="mt-1 max-w-md text-xs leading-5 text-[var(--canopy-muted)]">
+                {desc} · {addr.slice(0, 6)}…{addr.slice(-5)}
               </p>
             </div>
             <a
-              className="font-mono2 text-sm text-[var(--canopy-cyan)] no-underline transition-colors hover:text-[var(--canopy-text)]"
+              className="text-xs font-bold text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)]"
               href={`https://explorer.solana.com/address/${addr}?cluster=devnet`}
               target="_blank"
               rel="noreferrer"
             >
-              View on Solana Explorer ↗
+              Open in Explorer ↗
             </a>
           </div>
         ))}
       </div>
-      <p className="mt-4 font-mono2 text-sm text-[var(--canopy-muted)]">
-        Solana devnet · mock mUSDC · official PreStocks data · verified Pyth price updates
+      <p className="mt-4 text-xs leading-5 text-[var(--canopy-muted)]">
+        Solana devnet · mock mUSDC · official PreStocks data · verified Pyth updates
       </p>
     </div>
   );

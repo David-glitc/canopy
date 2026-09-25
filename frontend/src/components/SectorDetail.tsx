@@ -344,7 +344,7 @@ export default function SectorDetail({ address }: { address: string }) {
           </div>
         ))}
       </div>
-      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-[var(--panel-2)]">
         <div className="h-full rounded-full bg-[var(--canopy-green)]" style={{ width: `${pct}%` }} />
       </div>
 
@@ -486,7 +486,7 @@ export default function SectorDetail({ address }: { address: string }) {
                   <p className="font-mono2 text-sm font-bold">Proposal #{m.proposalId.toString()}</p>
                   <span className={cn(
                     "rounded-full px-3 py-1 font-mono2 text-sm",
-                    m.decided ? (m.passed ? "bg-[rgba(20,241,149,0.15)] text-[var(--canopy-green)]" : "bg-white/10 text-[var(--canopy-muted)]") : "bg-[rgba(153,69,255,0.15)] text-[var(--canopy-purple)]"
+                    m.decided ? (m.passed ? "bg-[rgba(23,107,75,0.1)] text-[var(--canopy-green)]" : "bg-[var(--panel-2)] text-[var(--canopy-muted)]") : "bg-[rgba(91,85,201,0.1)] text-[var(--canopy-purple)]"
                   )}>
                     {m.decided ? (m.passed ? "PASSED" : "REJECTED") : closesIn > 0 ? `open · ${Math.floor(closesIn / 60)}m left` : "closing…"}
                   </span>
@@ -496,7 +496,7 @@ export default function SectorDetail({ address }: { address: string }) {
                   <span>trades <span className="text-[var(--canopy-text)]">{m.tradeCount.toString()}</span></span>
                   <span>book <span className="text-[var(--canopy-text)]">{(Number(m.passReserve) / 1e6).toFixed(2)} / {(Number(m.failReserve) / 1e6).toFixed(2)}</span></span>
                 </div>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--panel-2)]">
                   <div className="h-full rounded-full bg-[var(--canopy-green)]" style={{ width: `${Math.min(100, (price / 2) * 100)}%` }} />
                 </div>
               </div>
@@ -512,7 +512,7 @@ export default function SectorDetail({ address }: { address: string }) {
 
       {busy && <p className="mt-4 font-mono2 text-sm text-[var(--canopy-green)]">{busy}</p>}
       {error && (
-        <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300">
+        <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-[var(--danger)]">
           {error}
         </p>
       )}

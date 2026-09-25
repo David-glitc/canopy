@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#050505] text-[#F5F7F7]">
+      <body className="min-h-full flex flex-col">
         <Providers>
           <a className="skip-link" href="#main-content">Skip to content</a>
           <Header />

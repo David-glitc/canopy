@@ -1,4 +1,5 @@
 import InstantMint from "@/components/InstantMint";
+import CompanyLogo from "@/components/CompanyLogo";
 
 export const metadata = {
   title: "Mint",
@@ -15,23 +16,38 @@ export default async function InstantPage({
   const contract = selected.contract?.slice(0, 64);
   const tokenPrice = Number(selected.price);
   return (
-    <div className="mx-auto max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
-      <p className="page-kicker">One-minute devnet demo</p>
-      <h1 className="font-display mt-4 text-balance text-4xl font-extrabold sm:text-6xl">
-        {asset ? `Mint an ${asset} collectible.` : "Mint a devnet collectible."}
-      </h1>
-      <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-[var(--canopy-muted)]">
-        Pay with mock mUSDC. Your wallet receives a Metaplex Core asset with the selected PreStocks
-        symbol and Solana token address in its metadata.
-      </p>
-      {asset && Number.isFinite(tokenPrice) && (
-        <div className="mt-6 inline-flex items-center gap-4 border border-[var(--line)] bg-[var(--panel)] px-4 py-3">
-          <span className="font-mono text-sm text-[var(--leaf)]">{asset}</span>
-          <span className="font-mono text-sm tabular">PreStocks ${tokenPrice.toFixed(2)}</span>
-          <a className="font-mono text-xs text-[var(--quiet)] hover:text-[var(--leaf)]" href={`https://solscan.io/token/${contract}`}>Verify PreStocks token ↗</a>
+    <div className="shell pb-24 pt-16 sm:pt-24">
+      <header className="market-page-head">
+        <div>
+          <p className="page-kicker">One-minute devnet mint</p>
+          <h1 className="page-title">
+            {asset ? `Make ${asset} yours.` : "Mint your market pick."}
+          </h1>
+          <p className="page-lede">
+            Pay with mock mUSDC and receive a Metaplex Core collectible tied to your selected PreStocks token.
+          </p>
         </div>
-      )}
-      <div className="mt-10">
+        {asset && Number.isFinite(tokenPrice) ? (
+          <div className="market-context">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <CompanyLogo symbol={asset} name={asset} className="price-feed-logo" />
+                <div>
+                  <strong className="block text-lg text-[var(--ink)]">{asset}</strong>
+                  <span>PreStocks · ${tokenPrice.toFixed(2)}</span>
+                </div>
+              </div>
+              <a className="text-xs font-bold text-[var(--leaf)]" href={`https://solscan.io/token/${contract}`} target="_blank" rel="noreferrer">Verify token ↗</a>
+            </div>
+          </div>
+        ) : (
+          <div className="market-context">
+            <strong className="block text-[var(--ink)]">Want a company-linked collectible?</strong>
+            <a href="/markets" className="mt-2 inline-block font-bold text-[var(--leaf)]">Choose a PreStock first ↗</a>
+          </div>
+        )}
+      </header>
+      <div className="mt-12">
         <InstantMint asset={asset && contract ? { symbol: asset, contract, tokenPrice: Number.isFinite(tokenPrice) ? tokenPrice : undefined } : undefined} />
       </div>
     </div>

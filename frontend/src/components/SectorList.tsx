@@ -98,7 +98,7 @@ export default function SectorList() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p className="font-mono2 text-sm text-[var(--canopy-muted)]">
+        <p className="text-sm text-[var(--canopy-muted)]">
           {groves === null ? "Loading group vaults…" : `${groves.length} group vault${groves.length === 1 ? "" : "s"}`}
         </p>
         <div className="flex gap-2">
@@ -114,23 +114,23 @@ export default function SectorList() {
       </div>
 
       {showCreate && (
-        <div className="glass mt-4 grid gap-3 rounded-2xl p-5 sm:grid-cols-4">
+        <div className="glass mt-5 grid gap-4 rounded-[1.5rem] p-5 sm:grid-cols-4">
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">Funding goal</span>
+            <span className="font-semibold text-[var(--canopy-muted)]">Funding goal</span>
             <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100.00"
-              className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-white px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD, minimum 1.00</span>
           </label>
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">Minimum deposit</span>
+            <span className="font-semibold text-[var(--canopy-muted)]">Minimum deposit</span>
             <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2.00"
-              className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-white px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Mock USD per collectible</span>
           </label>
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">Duration</span>
+            <span className="font-semibold text-[var(--canopy-muted)]">Duration</span>
             <input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5"
-              className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-white px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Days until close</span>
           </label>
           <div className="flex items-end">
@@ -141,7 +141,7 @@ export default function SectorList() {
         </div>
       )}
       {error && (
-        <p className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300">
+        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-[var(--danger)]">
           {error}
         </p>
       )}
@@ -157,7 +157,7 @@ export default function SectorList() {
             <a
               key={g.address}
               href={`/sectors/${g.address}`}
-              className="glass group rounded-2xl p-5 transition-colors hover:border-[var(--canopy-green)]"
+              className="glass group rounded-[1.25rem] p-5 transition-[border-color,box-shadow,translate] duration-150 hover:-translate-y-1 hover:border-[var(--canopy-green)] hover:shadow-lg"
             >
               <div className="flex items-center justify-between">
                 <span
@@ -167,7 +167,7 @@ export default function SectorList() {
                       ? "bg-[rgba(20,241,149,0.15)] text-[var(--canopy-green)]"
                       : g.status === 3
                         ? "bg-[rgba(153,69,255,0.15)] text-[var(--canopy-purple)]"
-                        : "bg-white/10 text-[var(--canopy-muted)]"
+                        : "bg-[var(--panel-2)] text-[var(--canopy-muted)]"
                   )}
                 >
                   {STATUS[g.status] ?? "Unknown"}
@@ -188,7 +188,7 @@ export default function SectorList() {
                   Open →
                 </span>
               </div>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--panel-2)]">
                 <div
                   className="h-full rounded-full bg-[var(--canopy-green)]"
                   style={{ width: `${pct}%` }}

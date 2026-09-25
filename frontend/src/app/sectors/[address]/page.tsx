@@ -12,9 +12,9 @@ export default async function SectorPage({
 }) {
   const { address } = await params;
   return (
-    <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
+    <div className="shell pb-24 pt-16 sm:pt-24">
       <Link href="/sectors" className="font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]">
-        ← all group vaults
+        ← All group vaults
       </Link>
       <div className="mt-4">
         <SectorDetail address={address} />
