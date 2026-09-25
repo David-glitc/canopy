@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/markets", label: "PreStocks" },
   { href: "/instant", label: "Mint" },
   { href: "/sectors", label: "Group Vaults" },
+  { href: "/matter", label: "DNA" },
   { href: "/leaderboard", label: "XP" },
 ];
 

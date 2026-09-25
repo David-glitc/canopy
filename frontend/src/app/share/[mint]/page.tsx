@@ -55,8 +55,8 @@ export default async function SharePage({ params, searchParams }: PageProps) {
         </h1>
         <p className="mt-4 leading-relaxed text-[var(--canopy-muted)]">
           {revealed
-            ? "The artwork and traits come from this collectible's on-chain vault record."
-            : "This collectible stays sealed until its group vault completes the reveal."}
+            ? "This form was assembled at request time from the collectible's on-chain DNA. It is reproducible, but was never selected from a preminted image set."
+            : "No final image exists yet. The collectible stays sealed until its group vault commits reveal entropy."}
         </p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -72,8 +72,19 @@ export default async function SharePage({ params, searchParams }: PageProps) {
 
         {revealed && (
           <div className="mt-8">
-            <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">SIGNAL</p>
+            <div className="share-dna-head">
+              <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">DIGITAL MATTER GENOME</p>
+              <span>{share.matterDna}</span>
+            </div>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {share.matterTraits
+                .filter((trait) => trait.trait_type !== "Economic Rarity")
+                .map((trait) => (
+                  <div key={trait.trait_type} className="share-trait">
+                    <p>{trait.trait_type}</p>
+                    <strong>{trait.value}</strong>
+                  </div>
+                ))}
               {Object.entries(share.attrs)
                 .filter(([key]) => !["sealed", "revealed", "claimed", "deposit_lamports", "weight_1e18", "rarity", "dna", "instant"].includes(key))
                 .slice(0, 8)
@@ -96,6 +107,9 @@ export default async function SharePage({ params, searchParams }: PageProps) {
           </a>
           <Link href="/shop" className="btn-ghost px-6 py-3 text-sm text-center">
             Browse gallery
+          </Link>
+          <Link href="/matter" className="btn-ghost px-6 py-3 text-sm text-center">
+            How DNA works
           </Link>
         </div>
 

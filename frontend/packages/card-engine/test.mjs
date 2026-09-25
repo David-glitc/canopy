@@ -2,7 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { composeCard } from "./compose.mjs";
 import { dnaFromSeed } from "./dna.mjs";
-import traits from "./traits.json" with { type: "json" };
 
 test("deterministic: same seed twice", () => {
   const a = composeCard("canopy-test-1", "Epic");
@@ -16,38 +15,34 @@ test("distinct seeds differ", () => {
   assert.notDeepEqual(a, b);
 });
 
-test("frame matches cosmetic grade; economic preserved", () => {
+test("genome preserves economic state and emits procedural rules", () => {
   for (const s of ["a", "b", "c", "d", "e"]) {
     const c = composeCard("seed-" + s, "Rare");
     assert.equal(c.economicRarity, "Rare");
-    assert.equal(c.frame, traits.frames[c.cosmetic]);
-    assert.ok(c.base && c.wash);
+    assert.match(c.frame, /^procedural:/);
+    assert.ok(c.base && c.wash && c.silhouette && c.matter && c.core);
+    assert.equal(c.traits.some((trait) => trait.trait_type === "Form"), true);
   }
 });
 
-test("base weights sum positive; all bases reachable", () => {
-  const sum = traits.bases.reduce((s, b) => s + b.weight, 0);
-  assert.ok(sum > 0);
+test("procedural forms are reachable", () => {
   const seen = new Set();
   for (let i = 0; i < 500; i++) seen.add(composeCard("dist-" + i, "Common").baseId);
-  assert.ok(seen.size >= 8, `expected variety, saw ${seen.size}`);
+  assert.ok(seen.size >= 6, `expected variety, saw ${seen.size}`);
 });
 
 test("star sigil only on Elite+", () => {
   for (let i = 0; i < 2000; i++) {
     const c = composeCard("sigil-" + i, "Common");
-    if (c.sigil && c.sigil.includes("star")) {
-      assert.ok(["Elite", "Mythic", "Ascendant"].includes(c.cosmetic));
-    }
+    if (c.sigil === "star") assert.ok(["Elite", "Mythic", "Ascendant"].includes(c.cosmetic));
   }
 });
 
-test("rays/spores flags follow tier", () => {
+test("aura flags map to procedural fields", () => {
   for (let i = 0; i < 500; i++) {
     const c = composeCard("tier-" + i, "Legendary");
-    const tier = ["Forged", "Refined", "Masterwork", "Elite", "Mythic", "Ascendant"].indexOf(c.cosmetic);
-    assert.equal(c.rays, tier >= 3);
-    assert.equal(c.spores, tier >= 4);
+    assert.equal(c.rays, c.aura === "Solar Rays");
+    assert.equal(c.spores, c.aura === "Spore Field");
   }
 });
 

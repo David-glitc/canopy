@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ProgramStatus from "@/components/ProgramStatus";
 import CompanyLogo from "@/components/CompanyLogo";
+import DigitalMatterLab from "@/components/DigitalMatterLab";
 import { getPreStocks, premium } from "@/lib/markets";
 
 export const revalidate = 60;
@@ -69,6 +70,19 @@ export default async function Home() {
             <span className="float-chip float-chip-b">Tap to mint this pick</span>
           </div>
         </div>
+      </section>
+
+      <section className="shell matter-home">
+        <div className="matter-home-copy">
+          <p className="page-kicker">Digital Matter Theory</p>
+          <h2>The image is not waiting in a folder.</h2>
+          <p>
+            Every collectible is assembled from on-chain DNA when it is revealed. Funding state
+            becomes form, material, core, aura, crown, and pixel geometry.
+          </p>
+          <Link href="/matter" className="btn-secondary">Enter the DNA lab <span>↗</span></Link>
+        </div>
+        <DigitalMatterLab compact />
       </section>
 
       <section className="proof-strip" aria-label="Technology partners">

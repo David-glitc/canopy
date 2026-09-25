@@ -4,6 +4,7 @@ import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { fetchAsset } from "@metaplex-foundation/mpl-core";
 import { publicKey as umiPk } from "@metaplex-foundation/umi";
 import { CANOPY_ID } from "./canopy-ix";
+import { composeCard } from "../../packages/card-engine/compose.mjs";
 
 const RPC = "https://api.devnet.solana.com";
 
@@ -17,6 +18,8 @@ export type ShareData = {
   weight: bigint | null;
   attrs: Record<string, string>;
   dna: string | null;
+  matterDna: string | null;
+  matterTraits: Array<{ trait_type: string; value: string }>;
 };
 
 export function bandForWeight(weight: bigint): string {
@@ -62,6 +65,7 @@ export async function fetchShare(
       seedStr = `pool:${seedHex}:${index}`;
     }
   }
+  const matterSpec = seedStr ? composeCard(seedStr, economicRarity) : null;
 
   return {
     mint,
@@ -73,5 +77,7 @@ export async function fetchShare(
     weight,
     attrs,
     dna: attrs.dna ?? null,
+    matterDna: matterSpec?.dna ?? null,
+    matterTraits: matterSpec?.traits ?? [],
   };
 }

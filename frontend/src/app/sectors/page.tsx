@@ -15,7 +15,7 @@ export default function SectorsPage() {
         </div>
         <p className="page-lede">
           Fund a private-market pick together. Each contribution becomes a unique collectible
-          with a live share of the vault.
+          with a live share of the vault and DNA assembled at reveal.
         </p>
       </div>
       <div className="mt-10">

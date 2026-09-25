@@ -21,6 +21,9 @@ export async function GET(
   const qs = grove && index ? `?grove=${grove}&index=${index}` : "";
   const attributes = [
     { trait_type: "Economic Rarity", value: share.economicRarity },
+    { trait_type: "Assembly", value: "Runtime Digital Matter" },
+    ...(share.matterDna ? [{ trait_type: "Digital Matter DNA", value: share.matterDna }] : []),
+    ...share.matterTraits.filter((trait) => trait.trait_type !== "Economic Rarity"),
     ...(marketAsset ? [{ trait_type: "Market", value: marketAsset }] : []),
     ...(marketContract ? [{ trait_type: "PreStocks Mint", value: marketContract }] : []),
     ...(Number.isFinite(marketPrice) ? [{ trait_type: "PreStocks Reference Price", value: `$${marketPrice.toFixed(2)}` }] : []),
@@ -36,8 +39,8 @@ export async function GET(
       symbol: "CANOPY",
       description:
         marketAsset
-          ? `A Canopy collectible linked to the ${marketAsset} PreStocks token. This devnet demo uses mock mUSDC.`
-          : "A Canopy collectible linked to a mock mUSDC vault on Solana devnet.",
+          ? `Runtime-assembled Digital Matter linked to the ${marketAsset} PreStocks token. Its form is deterministically generated from on-chain DNA. This devnet demo uses mock mUSDC.`
+          : "Runtime-assembled Digital Matter whose form is deterministically generated from a Canopy vault record and reveal DNA on Solana devnet.",
       image: share.seedStr ? `${origin}/api/cards/${mint}/image${qs}` : undefined,
       external_url: `${origin}/share/${mint}${qs}`,
       attributes,

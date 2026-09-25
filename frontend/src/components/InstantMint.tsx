@@ -183,8 +183,8 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             <span className="tabular">${(net / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between">
-            <span>Artwork</span>
-            <span className="text-[var(--canopy-green)]">ready after mint</span>
+            <span>Digital Matter</span>
+            <span className="text-[var(--canopy-green)]">assembled after mint</span>
           </div>
         </div>
         <button
@@ -225,7 +225,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             </div>
             <p className="mt-7 text-lg font-bold text-white">Your collectible appears here</p>
             <p className="mt-2 max-w-xs text-pretty text-sm leading-6 text-white/55">
-              Connect your wallet, mint with mock funds, then reveal the artwork.
+              Connect, mint, and let your on-chain DNA assemble the form. No finished image has been assigned yet.
             </p>
           </div>
         )}

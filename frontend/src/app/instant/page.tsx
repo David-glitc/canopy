@@ -24,7 +24,7 @@ export default async function InstantPage({
             {asset ? `Make ${asset} yours.` : "Mint your market pick."}
           </h1>
           <p className="page-lede">
-            Pay with mock mUSDC and receive a Metaplex Core collectible tied to your selected PreStocks token.
+            Pay with mock mUSDC. Your on-chain DNA assembles a one-of-one Digital Matter form at reveal.
           </p>
         </div>
         {asset && Number.isFinite(tokenPrice) ? (
