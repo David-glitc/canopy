@@ -20,6 +20,8 @@ type DynamicSolanaSigner = {
 
 type DynamicSolanaWallet = {
   address?: string;
+  getNetwork?: () => Promise<string | number | undefined>;
+  switchNetwork?: (networkChainId: string | number) => Promise<void>;
   signTransaction?: (transaction: Transaction) => Promise<Transaction>;
   getSigner?: () => Promise<DynamicSolanaSigner>;
   connector?: {
@@ -84,6 +86,13 @@ async function signWithDynamic(wallet: DynamicSolanaWallet, transaction: Transac
   throw new Error("Connected wallet does not support Solana transaction signing");
 }
 
+async function selectDevnet(wallet: DynamicSolanaWallet) {
+  const network = await wallet.getNetwork?.();
+  if (String(network) !== "103" && network !== "devnet") {
+    await wallet.switchNetwork?.("103");
+  }
+}
+
 /** Dynamic is primary. Wallet Adapter remains available as a fallback. */
 export function useUnifiedWallet() {
   const { connection } = useConnection();
@@ -115,6 +124,7 @@ export function useUnifiedWallet() {
     if (signers.length) transaction.partialSign(...signers);
 
     if (primaryWallet && dynamicPublicKey) {
+      await selectDevnet(primaryWallet);
       const signed = await signWithDynamic(primaryWallet, transaction);
       return conn.sendRawTransaction(signed.serialize(), {
         skipPreflight: options?.skipPreflight ?? false,

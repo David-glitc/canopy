@@ -58,6 +58,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         appName: "Canopy",
         appLogoUrl: "/mark.svg",
         initialAuthenticationMode: "connect-only",
+        networkValidationMode: "always",
         shadowDOMEnabled: false,
       }}
     >
