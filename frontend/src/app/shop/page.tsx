@@ -2,8 +2,8 @@ import Link from "next/link";
 import { fetchShare, type ShareData } from "@/lib/card-data";
 
 export const metadata = {
-  title: "Shop",
-  description: "Trade cipher-keys. History compounds on-chain.",
+  title: "Gallery",
+  description: "Browse revealed Canopy collectibles from Solana devnet.",
 };
 
 const DEMO_MINTERS = [
@@ -22,21 +22,20 @@ export default async function ShopPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
       <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
-        03 / SHOP
+        GALLERY
       </p>
       <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
-        Trade cipher-keys.
+        Revealed collectibles.
       </h1>
-      <p className="mt-4 max-w-2xl leading-relaxed text-[var(--canopy-muted)]">
-        Revealed Shares trade with their claim attached. History compounds
-        on-chain — crash survivors and cold-storage keys carry their scars
-        in the open.
+      <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-[var(--canopy-muted)]">
+        Browse the artwork and metadata created by the devnet mint.
       </p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {revealed.length === 0 ? (
-          <p className="font-mono2 text-sm text-[var(--canopy-muted)]">
-            No revealed shares available yet. Fund a Sector to mint one.
-          </p>
+          <div className="border border-[var(--line)] bg-[var(--panel)] p-6 sm:col-span-2 lg:col-span-3">
+            <p className="font-semibold">No revealed collectibles yet.</p>
+            <Link href="/instant" className="btn-primary mt-4">Mint the first one</Link>
+          </div>
         ) : (
           revealed.map((share) => (
             <Link

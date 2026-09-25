@@ -54,7 +54,7 @@ export default function Rip({
           <button
             onClick={rip}
             className="group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-5 bg-[#0d0d10]"
-            aria-label="Rip the seal"
+            aria-label="Reveal the collectible"
           >
             <img
               src="/mark.svg"
@@ -71,7 +71,7 @@ export default function Rip({
                 stage === "tearing" ? "opacity-0" : "animate-pulse"
               }`}
             >
-              {stage === "tearing" ? "···" : "TAP TO RIP"}
+              {stage === "tearing" ? "···" : "TAP TO REVEAL"}
             </span>
             {stage === "tearing" && (
               <span className="animate-[rip-flash_0.9s_ease-out] absolute inset-0 bg-[rgba(20,241,149,0.15)]" />
@@ -91,10 +91,10 @@ export default function Rip({
               disabled={claiming || claimed}
               className="btn-primary flex-1 px-6 py-3 text-sm disabled:opacity-40"
             >
-              {claimed ? "Claimed ✓" : claiming ? "Claiming…" : "Claim backing"}
+              {claimed ? "Claimed ✓" : claiming ? "Claiming…" : "Withdraw mock funds"}
             </button>
             <button onClick={copy} className="btn-ghost flex-1 px-6 py-3 text-sm">
-              {copied ? "Link copied ✓" : "Share"}
+              {copied ? "Link copied ✓" : "Copy link"}
             </button>
           </div>
           <button

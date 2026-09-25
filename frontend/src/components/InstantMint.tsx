@@ -53,7 +53,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
 
   async function mint() {
     if (!publicKey) {
-      setError("No wallet connected — connect Phantom or Backpack to mint.");
+      setError("Connect a wallet before minting.");
       return;
     }
     if (!valid) {
@@ -111,9 +111,9 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
       setClaimed(false);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg.includes("insufficient funds")) setError("Couldn't mint — insufficient mUSDC. Get test funds and try again.");
-      else if (msg.includes("0x1")) setError("Couldn't mint — transaction failed. Check balance and try again.");
-      else setError(`Couldn't mint — ${msg.slice(0, 160)}. Try again.`);
+      if (msg.includes("insufficient funds")) setError("Not enough mock mUSDC. Get test funds and try again.");
+      else if (msg.includes("0x1")) setError("The transaction failed. Check your devnet balance and try again.");
+      else setError(`Mint failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
     }
@@ -143,7 +143,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
       setClaimed(true);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setError(`Couldn't claim — ${msg.slice(0, 160)}. Try again.`);
+      setError(`Claim failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
     }
@@ -152,10 +152,10 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="glass rounded-2xl p-6 sm:p-8">
-        <label htmlFor="instant-amount" className="font-mono2 text-sm tracking-[0.12em] text-[var(--canopy-muted)]">
-          Amount
+        <label htmlFor="instant-amount" className="font-mono2 text-sm text-[var(--canopy-muted)]">
+          Mock mUSDC amount
         </label>
-        <p id="instant-amount-help" className="mono text-sm text-[var(--canopy-muted)]">mUSDC on devnet · 6 decimals</p>
+        <p id="instant-amount-help" className="mono text-sm text-[var(--canopy-muted)]">Minimum $1.50. No real funds are used.</p>
         <div className="mt-3 flex items-center gap-3">
           <span className="font-display text-4xl font-extrabold text-[var(--canopy-muted)]">$</span>
           <input
@@ -171,16 +171,16 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
         </div>
         <div className="mt-6 space-y-2 font-mono2 text-sm text-[var(--canopy-muted)]">
           <div className="flex justify-between">
-            <span>Treasury fee (1%)</span>
+            <span>App fee (1%)</span>
             <span className="tabular">${(fee / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between text-[var(--canopy-text)]">
-            <span>Vault backing</span>
+            <span>Stored in the demo vault</span>
             <span className="tabular">${(net / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between">
-            <span>Reveal</span>
-            <span className="text-[var(--canopy-green)]">instant · same tx</span>
+            <span>Artwork</span>
+            <span className="text-[var(--canopy-green)]">ready after mint</span>
           </div>
         </div>
         <button
@@ -191,16 +191,16 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             "focus-visible:outline-none"
           )}
         >
-          {busy ?? (connected ? `Mint for $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to mint")}
+          {busy ?? (connected ? `Mint demo collectible · $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to mint")}
         </button>
         {error && (
           <p className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 font-mono2 text-sm text-red-300" role="alert">
             {error}
           </p>
         )}
-        <p className="mt-4 font-mono2 text-sm leading-relaxed text-[var(--canopy-muted)]">
-          Settles in mock mUSDC on devnet. Solo weight is always 100%
-          (Legendary band); the operative look still rolls unique per pull.
+        <p className="mt-4 text-pretty font-mono2 text-sm leading-relaxed text-[var(--canopy-muted)]">
+          Devnet demo only. The collectible references a PreStocks token but does not represent real
+          stock ownership.
         </p>
       </div>
 
@@ -208,8 +208,8 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
         {minted ? (
           <Rip
             imageUrl={minted.imageUrl}
-            title={asset ? `${asset.symbol} Canopy Share` : "Canopy Instant Share"}
-            subtitle={`100% · $${(net / 1e6).toFixed(4)} devnet backing`}
+            title={asset ? `${asset.symbol} collectible` : "Canopy collectible"}
+            subtitle={`$${(net / 1e6).toFixed(4)} stored in the devnet vault`}
             shareUrl={minted.shareUrl}
             onClaim={claim}
             claiming={busy === "Claiming…"}
@@ -218,10 +218,9 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
         ) : (
           <div className="glass flex h-full min-h-[420px] flex-col items-center justify-center rounded-2xl p-8 text-center">
             <img src="/mark.svg" alt="" width={72} height={72} className="opacity-60" />
-            <p className="mt-6 font-display text-lg font-bold">Your cipher appears here</p>
-            <p className="mt-2 max-w-xs text-sm text-[var(--canopy-muted)]">
-              Mint to forge a sealed Share, rip it open, and claim its mock mUSDC backing
-              — all without leaving this screen.
+            <p className="mt-6 font-display text-lg font-bold">Your collectible will appear here</p>
+            <p className="mt-2 max-w-xs text-pretty text-sm text-[var(--canopy-muted)]">
+              Connect a wallet and mint with mock funds. Then reveal the artwork and inspect its metadata.
             </p>
           </div>
         )}

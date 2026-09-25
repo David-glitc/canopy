@@ -36,8 +36,8 @@ export async function GET(
       symbol: "CANOPY",
       description:
         marketAsset
-          ? `A collectible Canopy claim carrying the ${marketAsset} PreStocks market thesis. Devnet demo backing settles in mock mUSDC.`
-          : "A collectible cipher-key backed by a Canopy devnet vault.",
+          ? `A Canopy collectible linked to the ${marketAsset} PreStocks token. This devnet demo uses mock mUSDC.`
+          : "A Canopy collectible linked to a mock mUSDC vault on Solana devnet.",
       image: share.seedStr ? `${origin}/api/cards/${mint}/image${qs}` : undefined,
       external_url: `${origin}/share/${mint}${qs}`,
       attributes,

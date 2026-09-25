@@ -35,15 +35,15 @@ export default function ProgramStatus() {
   }, [connection]);
 
   const rows: Array<[string, string, string]> = [
-    ["canopy", CANOPY.toBase58(), "groves · shares · reveal · claim · instant"],
-    ["canopy-futarchy", FUTARCHY.toBase58(), "conditional markets · TWAP"],
+    ["Canopy", CANOPY.toBase58(), "vaults, collectibles, refunds, and withdrawals"],
+    ["Canopy Markets", FUTARCHY.toBase58(), "PASS/FAIL decision markets"],
   ];
 
   return (
     <div className="glass rounded-2xl p-6">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-sm font-bold tracking-[0.2em] text-[var(--canopy-muted)]">
-          OVERLAYER STATUS
+          DEPLOYED PROGRAMS
         </h3>
         <span className="font-mono2 text-sm tabular text-[var(--canopy-green)]">
           {slot === null ? "…" : `slot ${slot.toLocaleString()}`}
@@ -78,13 +78,13 @@ export default function ProgramStatus() {
               target="_blank"
               rel="noreferrer"
             >
-              explorer ↗
+              View on Solana Explorer ↗
             </a>
           </div>
         ))}
       </div>
       <p className="mt-4 font-mono2 text-sm text-[var(--canopy-muted)]">
-        devnet · mock mUSDC settlement · PreStocks references · verified Pyth Receiver reads
+        Solana devnet · mock mUSDC · official PreStocks data · verified Pyth price updates
       </p>
     </div>
   );

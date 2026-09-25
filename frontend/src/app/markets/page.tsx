@@ -3,7 +3,7 @@ import { compactUsd, getPreStocks, getPythParity, premium } from "@/lib/markets"
 
 export const metadata = {
   title: "Markets",
-  description: "Discover PreStocks and inspect Pyth equity-to-token parity before minting a Canopy claim.",
+  description: "Compare official PreStocks prices and mint a devnet collectible.",
 };
 
 export const revalidate = 60;
@@ -31,22 +31,22 @@ export default async function MarketsPage() {
 
   return (
     <div className="shell pb-16 pt-16 sm:pt-24">
-      <p className="page-kicker">Live market sources</p>
-      <h1 className="page-title">Pick the company. Let the claim reveal.</h1>
-      <p className="page-lede">
-        Canopy turns a market thesis into a verifiable Solana collectible. PreStocks supplies the
-        private-company universe; Pyth supplies the public-market reference layer.
+      <p className="page-kicker">Official PreStocks data</p>
+      <h1 className="page-title text-balance">Choose a company to mint.</h1>
+      <p className="page-lede text-pretty">
+        Compare token and mark prices, choose a PreStock, and mint a devnet collectible with its
+        symbol and Solana address in the metadata.
       </p>
 
       <section className="mt-14" aria-labelledby="prestocks-title">
         <div className="flex flex-col gap-4 border-b border-[var(--line)] pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-mono text-sm text-[var(--leaf)]">PRESTOCKS / SOLANA</p>
-            <h2 id="prestocks-title" className="mt-2 text-3xl font-bold tracking-[-0.04em]">Pre-IPO claim desk</h2>
+            <p className="font-mono text-sm text-[var(--leaf)]">PRESTOCKS</p>
+            <h2 id="prestocks-title" className="mt-2 text-balance text-3xl font-bold">Available companies</h2>
           </div>
-          <p className="max-w-md text-sm leading-6 text-[var(--muted)]">
-            {isPreStocksSnapshot ? "Last-known official PreStocks snapshot · Sep 25, 16:15 UTC. " : "Live token and mark prices from the official PreStocks API. "}
-            Choose a company to carry its Solana mint into your devnet Canopy Share metadata.
+          <p className="max-w-md text-pretty text-sm leading-6 text-[var(--muted)]">
+            {isPreStocksSnapshot ? "Official snapshot from Sep 25 at 16:15 UTC. " : "Live prices from the official PreStocks API. "}
+            The mint uses mock funds on Solana devnet.
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default async function MarketsPage() {
                           <div>
                             <strong className="block text-sm">{stock.name.replace(" PreStocks", "")}</strong>
                             <a className="font-mono text-xs text-[var(--quiet)] hover:text-[var(--leaf)]" href={`https://solscan.io/token/${stock.contract_address}`}>
-                              {shortAddress(stock.contract_address)}
+                              {shortAddress(stock.contract_address)} · verify
                             </a>
                           </div>
                         </div>
@@ -94,7 +94,7 @@ export default async function MarketsPage() {
                         {spread > 0 ? "+" : ""}{spread.toFixed(1)}%
                       </td>
                       <td className="font-mono text-sm tabular text-[var(--muted)]">{compactUsd(stock.impliedValuation)}</td>
-                      <td><Link className="btn-primary btn-compact whitespace-nowrap" href={`/instant?${query}`}>Mint claim</Link></td>
+                      <td><Link className="btn-primary btn-compact whitespace-nowrap" href={`/instant?${query}`}>Mint {stock.symbol}</Link></td>
                     </tr>
                   );
                 })}
@@ -108,20 +108,20 @@ export default async function MarketsPage() {
           </div>
         )}
         <p className="mt-4 text-xs leading-5 text-[var(--quiet)]">
-          PreStocks provide economic exposure only and carry eligibility, liquidity, and total-loss risk.
-          {isPreStocksSnapshot ? " The live source is rate-limited; snapshot values are clearly marked above." : ""}
-          {" The Canopy demo settles with mock mUSDC on devnet."}
+          PreStocks tokens carry eligibility, liquidity, and loss risk. Canopy uses mock mUSDC on
+          devnet and does not create real stock ownership.
+          {isPreStocksSnapshot ? " The live API is rate-limited, so this table shows the last official snapshot." : ""}
         </p>
       </section>
 
       <section className="mt-20" aria-labelledby="pyth-title">
         <div className="grid gap-8 border-t border-[var(--line)] pt-8 lg:grid-cols-[.7fr_1.3fr]">
           <div>
-            <p className="font-mono text-sm text-[var(--purple)]">PYTH / PARITY GUARD</p>
-            <h2 id="pyth-title" className="mt-2 text-3xl font-bold tracking-[-0.04em]">Underlying versus 24/7 token.</h2>
-            <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
-              Canopy resolves the canonical AAPL equity feed beside AAPLx, then reads fully verified
-              Pyth Receiver updates from Solana. Stale data automatically blocks the parity signal.
+            <p className="font-mono text-sm text-[var(--purple)]">PYTH PRICE CHECK</p>
+            <h2 id="pyth-title" className="mt-2 text-balance text-3xl font-bold">Compare Apple with AAPLx.</h2>
+            <p className="mt-4 text-pretty text-sm leading-6 text-[var(--muted)]">
+              Canopy reads verified Pyth updates for Apple stock and its 24/7 token. If either price
+              is stale, no spread is shown.
             </p>
           </div>
           <div className="grid gap-px overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--line)] sm:grid-cols-2">
@@ -130,7 +130,7 @@ export default async function MarketsPage() {
                 <div className="flex items-start justify-between gap-3">
                   <span className="font-mono text-xs text-[var(--quiet)]">{feed?.symbol ?? "Feed unavailable"}</span>
                   <span className="status">
-                    {feed?.price == null ? (feed?.isOpen ? "Feed active" : "Market closed") : feed.stale ? "Stale update" : "Live update"}
+                  {feed?.price == null ? (feed?.isOpen ? "Waiting for price" : "Market closed") : feed.stale ? "Price is stale" : "Price is fresh"}
                   </span>
                 </div>
                 <p className="mt-8 font-mono text-3xl font-semibold tabular">
@@ -138,15 +138,15 @@ export default async function MarketsPage() {
                 </p>
                 <p className="mt-2 text-sm text-[var(--muted)]">
                   {feed?.price == null
-                    ? "Price metadata is available; no verified update was found."
-                    : `${feed.stale ? "Parity blocked" : `Confidence ±$${feed.confidence?.toFixed(4)}`} · ${publishedLabel(feed.publishTime)}`}
+                    ? "No verified price update was found."
+                    : `${feed.stale ? "Not used for comparison" : `Confidence ±$${feed.confidence?.toFixed(4)}`} · ${publishedLabel(feed.publishTime)}`}
                 </p>
                 {feed?.updateAccount && (
                   <a
                     className="mt-4 inline-block font-mono text-xs text-[var(--leaf)]"
                     href={`https://solscan.io/account/${feed.updateAccount}`}
                   >
-                    Pyth Receiver account ↗
+                    Verify Pyth account ↗
                   </a>
                 )}
                 {feed && <p className="mt-5 break-all font-mono text-xs text-[var(--quiet)]">{feed.id}</p>}
@@ -154,7 +154,7 @@ export default async function MarketsPage() {
             ))}
             <div className="bg-[var(--ink-2)] p-4 sm:col-span-2">
               <p className="font-mono text-sm text-[var(--muted)]">
-                Parity spread: <strong className="text-[var(--paper)]">{parity == null ? "blocked until both Pyth updates are fresh" : `${parity > 0 ? "+" : ""}${parity.toFixed(3)}%`}</strong>
+                Price difference: <strong className="text-[var(--paper)]">{parity == null ? "not shown because one price is stale" : `${parity > 0 ? "+" : ""}${parity.toFixed(3)}%`}</strong>
               </p>
             </div>
           </div>

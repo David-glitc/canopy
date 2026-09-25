@@ -5,10 +5,9 @@ import { usePathname } from "next/navigation";
 import WalletButton from "./WalletButton";
 
 const LINKS = [
-  { href: "/markets", label: "Markets" },
-  { href: "/sectors", label: "Sectors" },
-  { href: "/instant", label: "Instant" },
-  { href: "/shop", label: "Shop" },
+  { href: "/markets", label: "PreStocks" },
+  { href: "/instant", label: "Mint" },
+  { href: "/sectors", label: "Group Vaults" },
 ];
 
 export default function Header() {

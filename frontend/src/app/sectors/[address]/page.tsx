@@ -2,7 +2,7 @@ import SectorDetail from "@/components/SectorDetail";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Sector",
+  title: "Group Vault",
 };
 
 export default async function SectorPage({
@@ -14,7 +14,7 @@ export default async function SectorPage({
   return (
     <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
       <Link href="/sectors" className="font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]">
-        ← all sectors
+        ← all group vaults
       </Link>
       <div className="mt-4">
         <SectorDetail address={address} />

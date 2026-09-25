@@ -13,58 +13,60 @@ export default async function Home() {
 
   return (
     <div>
-      <section className="shell grid min-h-[min(48rem,calc(100vh-4.5rem))] items-center gap-12 border-x border-[var(--line)] px-5 py-16 sm:px-10 lg:grid-cols-[1.08fr_.92fr] lg:px-14">
+      <section className="shell grid min-h-[min(44rem,calc(100vh-4.5rem))] items-center gap-12 border-x border-[var(--line)] px-5 py-16 sm:px-10 lg:grid-cols-[1.08fr_.92fr] lg:px-14">
         <div>
-          <p className="page-kicker">Solana devnet · programs live</p>
-          <h1 className="page-title">Own the thesis. Reveal the weight.</h1>
-          <p className="page-lede">
-            Choose a tokenized company, fund a shared vault, and mint a sealed Core NFT. When the
-            Sector closes, Solana entropy reveals your pro-rata claim and market-governance weight.
+          <p className="page-kicker">PreStocks collectibles · Solana devnet</p>
+          <h1 className="page-title text-balance">
+            <span className="block">Pick a company.</span>
+            <span className="block">Mint a collectible.</span>
+          </h1>
+          <p className="page-lede text-pretty">
+            Compare tokenized pre-IPO companies from PreStocks, choose one, and mint a Metaplex
+            Core collectible with mock funds.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/markets" className="btn-primary">Choose a company</Link>
-            <Link href="/sectors" className="btn-secondary">Inspect live Sectors</Link>
+            <Link href="/markets" className="btn-primary">Browse PreStocks</Link>
+            <Link href="/instant" className="btn-secondary">Try the mint</Link>
           </div>
           <dl className="mt-12 grid max-w-xl grid-cols-3 border-y border-[var(--line)] py-4">
-            <div><dt className="font-mono text-xs text-[var(--quiet)]">ENTRY</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">$1.50</dd></div>
-            <div><dt className="font-mono text-xs text-[var(--quiet)]">MAX SHARES</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">20</dd></div>
-            <div><dt className="font-mono text-xs text-[var(--quiet)]">WEIGHT SUM</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">1e18</dd></div>
+            <div><dt className="font-mono text-xs text-[var(--quiet)]">MINIMUM</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">$1.50</dd></div>
+            <div><dt className="font-mono text-xs text-[var(--quiet)]">PAYMENT</dt><dd className="mt-1 font-mono text-lg font-semibold">mock USDC</dd></div>
+            <div><dt className="font-mono text-xs text-[var(--quiet)]">NETWORK</dt><dd className="mt-1 font-mono text-lg font-semibold">devnet</dd></div>
           </dl>
         </div>
 
-        <div className="relative mx-auto w-full max-w-[31rem]" aria-label="Canopy claim lifecycle preview">
+        <div className="relative mx-auto w-full max-w-[31rem]" aria-label="How Canopy works">
           <div className="absolute -inset-3 border border-[var(--line)]" aria-hidden="true" />
           <div className="relative bg-[var(--panel)] p-4 sm:p-6">
             <div className="flex items-center justify-between border-b border-[var(--line)] pb-4">
               <div>
-                <p className="font-mono text-xs text-[var(--quiet)]">PRE-IPO SECTOR / 0042</p>
-                <p className="mt-1 font-semibold">Private AI basket</p>
+                <p className="font-mono text-xs text-[var(--quiet)]">ONE-MINUTE DEMO</p>
+                <p className="mt-1 font-semibold">From market list to wallet</p>
               </div>
-              <span className="status">Funding</span>
+              <span className="status">Live</span>
             </div>
-            <div className="grid grid-cols-[1fr_auto] items-center gap-6 py-7">
-              <div>
-                <p className="font-mono text-xs text-[var(--quiet)]">VAULT PROGRESS</p>
-                <p className="mt-2 text-4xl font-bold tracking-[-0.05em]">$230 <span className="text-lg text-[var(--quiet)]">/ $250</span></p>
-                <div className="mt-4 h-1.5 bg-[var(--line)]"><div className="h-full w-[92%] bg-[var(--leaf)]" /></div>
-              </div>
-              <img src="/assets/cards/share-sealed.svg" alt="Sealed Canopy Share" width={116} height={174} />
-            </div>
-            <div className="grid grid-cols-3 gap-px bg-[var(--line)]">
-              {[['FUND', 'mUSDC'], ['REVEAL', 'slot hash'], ['CLAIM', 'pro-rata']].map(([label, value]) => (
-                <div key={label} className="bg-[var(--ink-2)] p-3">
-                  <p className="font-mono text-xs text-[var(--quiet)]">{label}</p>
-                  <p className="mt-1 text-sm font-semibold">{value}</p>
-                </div>
+            <ol className="divide-y divide-[var(--line)]">
+              {[
+                ["01", "Compare", "See PreStocks token and mark prices."],
+                ["02", "Mint", "Pay with mock funds on Solana devnet."],
+                ["03", "Verify", "Open the asset metadata and program."],
+              ].map(([step, title, copy]) => (
+                <li key={step} className="grid grid-cols-[2rem_1fr] gap-4 py-5">
+                  <span className="font-mono text-xs text-[var(--leaf)]">{step}</span>
+                  <div>
+                    <p className="font-semibold">{title}</p>
+                    <p className="mt-1 text-sm text-[var(--muted)]">{copy}</p>
+                  </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </div>
       </section>
 
       <section className="border-y border-[var(--line)] bg-[var(--ink-2)]">
         <div className="shell flex flex-wrap items-center justify-between gap-4 py-4 text-sm">
-          <span className="font-mono text-[var(--quiet)]">Market inputs</span>
+          <span className="font-mono text-[var(--quiet)]">Built with</span>
           <div className="flex flex-wrap gap-x-7 gap-y-2 font-semibold">
             <span>PreStocks</span><span>Pyth Network</span><span>Solana</span><span>Metaplex Core</span>
           </div>
@@ -74,13 +76,12 @@ export default async function Home() {
       <section className="shell py-20">
         <div className="grid gap-10 lg:grid-cols-[.65fr_1.35fr]">
           <div>
-            <p className="page-kicker">{isPreStocksSnapshot ? "Official market snapshot" : "Live private markets"}</p>
-            <h2 className="mt-4 text-4xl font-bold tracking-[-0.05em]">Start with the spread.</h2>
-            <p className="mt-4 text-base leading-7 text-[var(--muted)]">
-              Canopy surfaces the difference between each PreStock token and its mark. The thesis travels
-              into the Share you mint; settlement stays safely on devnet for the hackathon.
+            <p className="page-kicker">{isPreStocksSnapshot ? "Official PreStocks snapshot" : "Live PreStocks data"}</p>
+            <h2 className="mt-4 text-balance text-4xl font-bold">Choose from official PreStocks.</h2>
+            <p className="mt-4 text-pretty text-base leading-7 text-[var(--muted)]">
+              Compare token price with the company mark, then send your pick straight to the mint.
             </p>
-            <Link href="/markets" className="btn-secondary mt-6">Open the market desk</Link>
+            <Link href="/markets" className="btn-secondary mt-6">See all PreStocks</Link>
           </div>
           <div className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
             {prestocks.length ? prestocks.map((stock) => {
@@ -102,15 +103,24 @@ export default async function Home() {
       <section className="shell border-t border-[var(--line)] py-20">
         <div className="grid gap-px border border-[var(--line)] bg-[var(--line)] md:grid-cols-3">
           {[
-            ["Fund", "Deposit into a deterministic PDA vault. Every contribution mints one sealed Core Share."],
-            ["Reveal", "Commit, wait ten slots, then normalize deposit-weighted entropy so every claim adds to 1e18."],
-            ["Govern", "Established Sectors open bonded PASS/FAIL markets. A time-weighted price decides."],
+            ["Pick", "Browse official PreStocks data and choose a company."],
+            ["Mint", "Use mock mUSDC to create a collectible on Solana devnet."],
+            ["Verify", "Inspect the asset metadata and both deployed programs."],
           ].map(([title, copy]) => (
             <article key={title} className="bg-[var(--panel)] p-7">
               <h2 className="text-xl font-bold">{title}</h2>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{copy}</p>
+              <p className="mt-3 text-pretty text-sm leading-6 text-[var(--muted)]">{copy}</p>
             </article>
           ))}
+        </div>
+        <div className="mt-10 flex flex-col justify-between gap-5 border border-[var(--line)] bg-[var(--panel)] p-7 sm:flex-row sm:items-center">
+          <div>
+            <p className="font-semibold">Want the group demo?</p>
+            <p className="mt-1 text-pretty text-sm text-[var(--muted)]">
+              Shared vaults pool mock deposits, mint one collectible per deposit, and refund failed goals.
+            </p>
+          </div>
+          <Link href="/sectors" className="btn-secondary whitespace-nowrap">Open group vaults</Link>
         </div>
       </section>
 

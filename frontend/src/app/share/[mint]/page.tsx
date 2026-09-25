@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ mint: str
   const { mint } = await params;
   return {
     title: `${mint.slice(0, 8)}… Share`,
-    description: "A Canopy cipher-key linked to a transparent devnet vault.",
+    description: "A Canopy collectible linked to a transparent devnet vault.",
   };
 }
 
@@ -45,18 +45,18 @@ export default async function SharePage({ params, searchParams }: PageProps) {
 
       <div className="max-w-2xl">
         <Link href="/sectors" className="font-mono2 text-sm text-[var(--canopy-muted)] no-underline transition-colors hover:text-[var(--canopy-text)]">
-          ← back to Sectors
+          ← back to group vaults
         </Link>
         <p className="mt-8 font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
           CANOPY SHARE
         </p>
         <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
-          {revealed ? share.name : "Sealed cipher-key"}
+          {revealed ? share.name : "Sealed collectible"}
         </h1>
         <p className="mt-4 leading-relaxed text-[var(--canopy-muted)]">
           {revealed
-            ? "This operative identity is derived from the assets and market history held by its Sector."
-            : "The reveal seed is still locked. The claim remains sealed until its Sector completes reveal."}
+            ? "The artwork and traits come from this collectible's on-chain vault record."
+            : "This collectible stays sealed until its group vault completes the reveal."}
         </p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -95,7 +95,7 @@ export default async function SharePage({ params, searchParams }: PageProps) {
             View metadata
           </a>
           <Link href="/shop" className="btn-ghost px-6 py-3 text-sm text-center">
-            Browse Shop
+            Browse gallery
           </Link>
         </div>
 

@@ -128,10 +128,10 @@ export default function SectorDetail({ address }: { address: string }) {
       await load();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg.includes("GoalNotMet")) setError("Couldn't seal — goal not met. Fund more and try again.");
-      else if (msg.includes("NotExpired")) setError("Couldn't cancel — deadline not reached yet.");
-      else if (msg.includes("insufficient funds")) setError("Couldn't submit — insufficient funds. Get test funds and try again.");
-      else setError(`Couldn't complete — ${msg.slice(0, 160)}. Try again.`);
+      if (msg.includes("GoalNotMet")) setError("The vault has not reached its goal yet.");
+      else if (msg.includes("NotExpired")) setError("The deadline has not passed yet.");
+      else if (msg.includes("insufficient funds")) setError("Not enough test funds. Use the faucet and try again.");
+      else setError(`Transaction failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(null);
     }
@@ -335,7 +335,7 @@ export default function SectorDetail({ address }: { address: string }) {
         {[
           ["Raised", `$${(Number(grove.total) / 1e6).toFixed(2)} / $${(Number(grove.goal) / 1e6).toFixed(2)}`],
           ["Vault", vaultBal === null ? "…" : `$${(Number(vaultBal) / 1e6).toFixed(2)}`],
-          ["Shares", `${grove.shareCount}`],
+          ["Collectibles", `${grove.shareCount}`],
           ["Min", `$${(Number(grove.minDeposit) / 1e6).toFixed(2)}`],
         ].map(([k, v]) => (
           <div key={k} className="glass rounded-2xl p-4">
@@ -360,7 +360,7 @@ export default function SectorDetail({ address }: { address: string }) {
                 : "text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]"
             )}
           >
-            {t === "overview" ? "SHARES" : t === "advance" ? "FUND + ADVANCE" : "GOVERNANCE"}
+            {t === "overview" ? "COLLECTIBLES" : t === "advance" ? "DEPOSIT & REVEAL" : "VOTE MARKETS"}
           </button>
         ))}
       </div>
@@ -374,7 +374,7 @@ export default function SectorDetail({ address }: { address: string }) {
               {r.revealed ? (
                 <img
                   src={`/api/cards/${r.coreAsset}/image?grove=${address}&index=${r.index}`}
-                  alt={`Share ${r.index}`}
+                  alt={`Collectible ${r.index}`}
                   className="aspect-[2/3] w-full object-cover"
                   loading="lazy"
                 />
@@ -393,14 +393,14 @@ export default function SectorDetail({ address }: { address: string }) {
                 </div>
                 {publicKey && r.owner === publicKey.toBase58() && r.status === 0 && r.revealed && grove.status === 3 && (
                   <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-2 text-sm disabled:opacity-40">
-                    Claim share
+                    Withdraw funds
                   </button>
                 )}
               </div>
             </div>
           ))}
           {records?.length === 0 && (
-            <p className="text-sm text-[var(--canopy-muted)]">No shares yet — be the first to fund.</p>
+            <p className="text-sm text-[var(--canopy-muted)]">No collectibles yet. Make the first deposit.</p>
           )}
         </div>
       )}
@@ -408,7 +408,7 @@ export default function SectorDetail({ address }: { address: string }) {
       {tab === "advance" && (
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <div className="glass rounded-2xl p-6">
-            <h3 className="font-display font-bold">Fund this sector</h3>
+            <h3 className="font-display font-bold">Deposit mock mUSDC</h3>
             <div className="mt-3 flex items-center gap-3">
               <span className="text-2xl text-[var(--canopy-muted)]">$</span>
               <input
@@ -428,37 +428,37 @@ export default function SectorDetail({ address }: { address: string }) {
               )}
             </p>
             <button onClick={fund} disabled={busy !== null || !connected || grove.status !== 0} className="btn-primary mt-5 w-full px-6 py-3 text-sm disabled:opacity-40">
-              {busy ?? "Mint share"}
+              {busy ?? "Deposit and mint"}
             </button>
           </div>
           <div className="glass rounded-2xl p-6">
-            <h3 className="font-display font-bold">Advance the lifecycle</h3>
-            <p className="mt-1 font-mono2 text-sm text-[var(--canopy-muted)]">
-              Permissionless cranks. Anyone may push a ready sector forward.
+            <h3 className="font-display font-bold">Finish the vault</h3>
+            <p className="mt-1 text-pretty font-mono2 text-sm text-[var(--canopy-muted)]">
+              Anyone can run the next step when its requirement is met.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <button onClick={() => advance("close")} disabled={busy !== null || !canClose} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
-                Seal sector
+                Close funding
               </button>
               <button onClick={() => advance("cancel")} disabled={busy !== null || !canCancel} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
-                Cancel sector
+                Cancel failed vault
               </button>
               <button onClick={() => advance("commit")} disabled={busy !== null || !(grove.status === 1 && !revealOn)} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40">
-                Commit reveal
+                Start reveal
               </button>
               <button onClick={() => advance("reveal")} disabled={busy !== null || !revealReady} className="btn-ghost px-4 py-2.5 text-sm disabled:opacity-40" title={revealReady ? "Ready" : "Needs commit + 10 slots"}>
-                Reveal shares
+                Reveal collectibles
               </button>
             </div>
             {myRecs.length > 0 && (
               <div className="mt-4 border-t border-[var(--canopy-line)] pt-4">
-                <p className="font-mono2 text-sm text-[var(--canopy-muted)]">MY SHARES ({myRecs.length})</p>
+                <p className="font-mono2 text-sm text-[var(--canopy-muted)]">MY COLLECTIBLES ({myRecs.length})</p>
                 {myRecs.map((r) => (
                   <div key={r.address} className="mt-2 flex items-center justify-between text-sm">
                     <span className="font-mono2 text-sm tabular">#{r.index} · {(Number(r.deposit) / 1e6).toFixed(2)}</span>
                     {grove.status === 3 && r.status === 0 && r.revealed && (
                       <button onClick={() => claimRec(r)} disabled={busy !== null} className="btn-primary px-4 py-1.5 text-sm disabled:opacity-40">
-                        Claim {(Number(r.weight) * Number(grove.total) / 1e18 / 1e6).toFixed(4)}
+                        Withdraw ${(Number(r.weight) * Number(grove.total) / 1e18 / 1e6).toFixed(4)}
                       </button>
                     )}
                     {grove.status === 2 && r.status === 0 && (
@@ -504,7 +504,7 @@ export default function SectorDetail({ address }: { address: string }) {
           })}
           {markets?.length === 0 && (
             <p className="text-sm text-[var(--canopy-muted)]">
-              No proposals yet. Owners bond collateral to open a pass/fail market on allocation changes — trading UI lands next.
+              No proposals yet. A proposal opens a PASS/FAIL market that can approve a vault change.
             </p>
           )}
         </div>

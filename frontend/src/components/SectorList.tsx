@@ -87,9 +87,9 @@ export default function SectorList() {
       load();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg.includes("GoalNotMet") || msg.includes("6009")) setError("Couldn't create sector — goal not met is for closing, not creating. Try a lower goal.");
-      else if (msg.includes("insufficient funds")) setError("Couldn't create sector — insufficient SOL for rent. Fund your wallet and try again.");
-      else setError(`Couldn't create sector — ${msg.slice(0, 160)}. Try again.`);
+      if (msg.includes("GoalNotMet") || msg.includes("6009")) setError("The goal is invalid. Try a lower amount.");
+      else if (msg.includes("insufficient funds")) setError("Not enough devnet SOL to create the vault.");
+      else setError(`Vault creation failed: ${msg.slice(0, 160)}. Try again.`);
     } finally {
       setBusy(false);
     }
@@ -99,7 +99,7 @@ export default function SectorList() {
     <div>
       <div className="flex items-center justify-between">
         <p className="font-mono2 text-sm text-[var(--canopy-muted)]">
-          {groves === null ? "Loading sectors…" : `${groves.length} sector${groves.length === 1 ? "" : "s"}`}
+          {groves === null ? "Loading group vaults…" : `${groves.length} group vault${groves.length === 1 ? "" : "s"}`}
         </p>
         <div className="flex gap-2">
           <button onClick={() => void load()} className="btn-ghost px-4 py-2 text-sm">
@@ -107,7 +107,7 @@ export default function SectorList() {
           </button>
           {connected && (
             <button onClick={() => setShowCreate((s) => !s)} className="btn-primary px-4 py-2 text-sm">
-              {showCreate ? "Close" : "Create sector"}
+              {showCreate ? "Close form" : "Create a group vault"}
             </button>
           )}
         </div>
@@ -116,7 +116,7 @@ export default function SectorList() {
       {showCreate && (
         <div className="glass mt-4 grid gap-3 rounded-2xl p-5 sm:grid-cols-4">
           <label className="text-sm">
-            <span className="font-mono2 text-[var(--canopy-muted)]">Goal</span>
+            <span className="font-mono2 text-[var(--canopy-muted)]">Funding goal</span>
             <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100.00"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD, minimum 1.00</span>
@@ -125,7 +125,7 @@ export default function SectorList() {
             <span className="font-mono2 text-[var(--canopy-muted)]">Minimum deposit</span>
             <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2.00"
               className="mt-1 w-full rounded-lg border border-[var(--canopy-line)] bg-black/50 px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
-            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD per share</span>
+            <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Mock USD per collectible</span>
           </label>
           <label className="text-sm">
             <span className="font-mono2 text-[var(--canopy-muted)]">Duration</span>
@@ -135,7 +135,7 @@ export default function SectorList() {
           </label>
           <div className="flex items-end">
             <button onClick={create} disabled={busy} className="btn-primary w-full px-4 py-2 text-sm disabled:opacity-40">
-              {busy ? "Creating…" : "Create sector"}
+              {busy ? "Creating…" : "Create vault"}
             </button>
           </div>
         </div>
@@ -200,9 +200,9 @@ export default function SectorList() {
       </div>
       {groves?.length === 0 && (
         <div className="mt-8 rounded-2xl border border-[var(--canopy-line)] bg-[var(--color-surface)] p-8 text-center">
-          <p className="font-semibold">No sectors yet</p>
-          <p className="mt-1 text-sm text-[var(--canopy-muted)]">Sectors pool deposits and mint Shares. Create the first sector to start funding.</p>
-          {connected && <p className="mt-3 text-sm text-[var(--canopy-muted)]">Set a goal, minimum, and duration above then Create sector.</p>}
+          <p className="font-semibold">No group vaults yet</p>
+          <p className="mt-1 text-pretty text-sm text-[var(--canopy-muted)]">Create one to pool mock deposits and mint a collectible for each depositor.</p>
+          {connected && <button type="button" onClick={() => setShowCreate(true)} className="btn-primary mt-4 px-4 py-2 text-sm">Create the first vault</button>}
         </div>
       )}
     </div>
