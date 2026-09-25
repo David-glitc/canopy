@@ -54,7 +54,7 @@ export default function ProgramStatus() {
         {rows.map(([name, addr, desc], i) => (
           <div
             key={name}
-            className="flex flex-col gap-3 bg-white p-4 [&+&]:border-t [&+&]:border-[var(--canopy-line)] sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 bg-[var(--panel)] p-4 [&+&]:border-t [&+&]:border-[var(--canopy-line)] sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
               <div className="flex items-center gap-2">

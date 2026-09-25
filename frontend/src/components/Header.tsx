@@ -15,19 +15,26 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="shell header-row">
-      <Link href="/" className="brand-link" aria-label="Canopy home">
-        <img src="/mark.svg" alt="" width={30} height={30} />
-        <span>Canopy</span>
-        <span className="network-pill"><i aria-hidden="true" />devnet</span>
-      </Link>
-      <nav className="primary-nav" aria-label="Primary navigation">
-        {LINKS.map((l) => (
-          <Link key={l.href} href={l.href} aria-current={pathname.startsWith(l.href) ? "page" : undefined}>
-            {l.label}
-          </Link>
-        ))}
-      </nav>
-      <WalletButton />
+        <Link href="/" className="brand-link" aria-label="Canopy home">
+          <span className="brand-mark">
+            <img src="/mark.svg" alt="" width={30} height={30} />
+          </span>
+          <span className="brand-copy">
+            <strong>Canopy</strong>
+            <small>Private markets, collected</small>
+          </span>
+        </Link>
+        <nav className="primary-nav" aria-label="Primary navigation">
+          {LINKS.map((l) => (
+            <Link key={l.href} href={l.href} aria-current={pathname.startsWith(l.href) ? "page" : undefined}>
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="header-actions">
+          <span className="network-pill"><i aria-hidden="true" />Solana devnet</span>
+          <WalletButton />
+        </div>
       </div>
     </header>
   );

@@ -118,19 +118,19 @@ export default function SectorList() {
           <label className="text-sm">
             <span className="font-semibold text-[var(--canopy-muted)]">Funding goal</span>
             <input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100.00"
-              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-white px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-[var(--panel)] px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">USD, minimum 1.00</span>
           </label>
           <label className="text-sm">
             <span className="font-semibold text-[var(--canopy-muted)]">Minimum deposit</span>
             <input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2.00"
-              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-white px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-[var(--panel)] px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Mock USD per collectible</span>
           </label>
           <label className="text-sm">
             <span className="font-semibold text-[var(--canopy-muted)]">Duration</span>
             <input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5"
-              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-white px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
+              className="mt-2 w-full rounded-lg border border-[var(--canopy-line)] bg-[var(--panel)] px-3 py-2 outline-none focus:border-[var(--canopy-green)]" />
             <span className="font-mono2 text-xs text-[var(--canopy-muted)]">Days until close</span>
           </label>
           <div className="flex items-end">

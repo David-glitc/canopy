@@ -60,11 +60,11 @@ export default async function SharePage({ params, searchParams }: PageProps) {
         </p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-[var(--canopy-line)] bg-white p-4">
+          <div className="rounded-xl border border-[var(--canopy-line)] bg-[var(--panel)] p-4">
             <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">ECONOMIC RARITY</p>
             <p className="mt-1 font-display text-lg font-extrabold text-[var(--canopy-text)]">{share.economicRarity}</p>
           </div>
-          <div className="rounded-xl border border-[var(--canopy-line)] bg-white p-4">
+          <div className="rounded-xl border border-[var(--canopy-line)] bg-[var(--panel)] p-4">
             <p className="font-mono2 text-sm tracking-[0.2em] text-[var(--canopy-muted)]">STATUS</p>
             <p className="mt-1 font-display text-lg font-extrabold text-[var(--canopy-green)]">{revealed ? "Revealed" : "Locked"}</p>
           </div>
@@ -78,7 +78,7 @@ export default async function SharePage({ params, searchParams }: PageProps) {
                 .filter(([key]) => !["sealed", "revealed", "claimed", "deposit_lamports", "weight_1e18", "rarity", "dna", "instant"].includes(key))
                 .slice(0, 8)
                 .map(([key, value]) => (
-                  <div key={key} className="rounded-xl border border-[var(--canopy-line)] bg-white p-3">
+                  <div key={key} className="rounded-xl border border-[var(--canopy-line)] bg-[var(--panel)] p-3">
                     <p className="font-mono2 text-[11px] uppercase text-[var(--canopy-muted)]">{key.replaceAll("_", " ")}</p>
                     <p className="mt-1 text-sm text-[var(--canopy-text)]">{value}</p>
                   </div>

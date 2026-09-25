@@ -121,7 +121,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="border-y border-[var(--line)] bg-white/45">
+      <section className="border-y border-[var(--line)] bg-[var(--panel)]/45">
         <div className="shell section-block">
           <div className="grid gap-8 lg:grid-cols-[.7fr_1.3fr] lg:gap-20">
             <div>

@@ -13,9 +13,15 @@ type DynamicSolanaWallet = {
   address?: string;
   chain?: string;
   signTransaction?: (transaction: Transaction) => Promise<Transaction>;
+  getSigner?: () => Promise<DynamicSolanaSigner>;
   connector?: {
     signTransaction?: (transaction: Transaction) => Promise<Transaction>;
+    getSigner?: () => Promise<DynamicSolanaSigner | undefined>;
   };
+};
+
+type DynamicSolanaSigner = {
+  signTransaction: (transaction: Transaction) => Promise<Transaction>;
 };
 
 function parsePublicKey(address?: string) {
@@ -53,8 +59,6 @@ export function useUnifiedWallet() {
       }
       // Fallback: Dynamic Solana wallet
       if (primaryWallet) {
-        // Dynamic Solana wallets expose signTransaction / signAllTransactions via the connector
-        // Try a few shapes to stay compatible across @dynamic-labs/solana versions
         const signers = opts?.signers ?? [];
 
         tx.feePayer = publicKey ?? undefined;
@@ -64,15 +68,22 @@ export function useUnifiedWallet() {
         }
         if (signers.length) tx.partialSign(...signers);
 
-        // If wallet has a direct signTransaction, use it then send via connection
-        // The generic flow: sign with Dynamic, add extra signers, sendRaw
-        let signed = tx;
-        const maybeSign = primaryWallet.signTransaction ?? primaryWallet.connector?.signTransaction;
-        if (maybeSign) {
-          signed = await maybeSign(tx);
+        let signed: Transaction;
+        if (primaryWallet.getSigner) {
+          const signer = await primaryWallet.getSigner();
+          signed = await signer.signTransaction(tx);
+        } else if (primaryWallet.connector?.getSigner) {
+          const signer = await primaryWallet.connector.getSigner();
+          if (!signer) throw new Error("Dynamic could not load the Solana signer");
+          signed = await signer.signTransaction(tx);
+        } else if (primaryWallet.signTransaction) {
+          signed = await primaryWallet.signTransaction(tx);
+        } else if (primaryWallet.connector?.signTransaction) {
+          signed = await primaryWallet.connector.signTransaction(tx);
+        } else {
+          throw new Error("Connected wallet does not support Solana transaction signing");
         }
 
-        // If we signed via Dynamic, send raw; otherwise fallback to adapter send
         try {
           const raw = signed.serialize();
           const sig = await conn.sendRawTransaction(raw, { skipPreflight: false });
