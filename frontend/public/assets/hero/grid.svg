@@ -1,0 +1,16 @@
+<svg width="800" height="400" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1B2421" stroke-width="0.5" opacity="0.5"/>
+    </pattern>
+    <radialGradient id="fade" cx="50%" cy="30%" r="70%">
+      <stop offset="30%" stop-color="white" stop-opacity="1"/>
+      <stop offset="75%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="gridMask">
+      <rect width="800" height="400" fill="url(#fade)"/>
+    </mask>
+  </defs>
+  <rect width="800" height="400" fill="url(#grid)" mask="url(#gridMask)" opacity="0.6"/>
+  <circle cx="400" cy="80" r="200" fill="#14F195" opacity="0.04" />
+</svg>

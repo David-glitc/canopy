@@ -3,6 +3,8 @@ target/
 node_modules/
 dist/
 .next/
+.vercel/node/
+.vercel/output/
 .DS_Store
 *.log
 .env

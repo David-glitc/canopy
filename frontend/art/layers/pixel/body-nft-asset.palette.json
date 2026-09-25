@@ -1,0 +1,67 @@
+{
+  "source": "Tree_spirit_NFT_asset_render_20260917011820.jpeg",
+  "grid": [
+    96,
+    144
+  ],
+  "levels": 6,
+  "runs": 4750,
+  "palette": [
+    {
+      "color": "#cccccc",
+      "px": 1492
+    },
+    {
+      "color": "#999999",
+      "px": 1447
+    },
+    {
+      "color": "#999966",
+      "px": 361
+    },
+    {
+      "color": "#cccc99",
+      "px": 360
+    },
+    {
+      "color": "#99cc99",
+      "px": 240
+    },
+    {
+      "color": "#666666",
+      "px": 191
+    },
+    {
+      "color": "#669966",
+      "px": 146
+    },
+    {
+      "color": "#666633",
+      "px": 140
+    },
+    {
+      "color": "#996666",
+      "px": 80
+    },
+    {
+      "color": "#ccffcc",
+      "px": 56
+    },
+    {
+      "color": "#336633",
+      "px": 54
+    },
+    {
+      "color": "#cc9999",
+      "px": 39
+    },
+    {
+      "color": "#ffffcc",
+      "px": 34
+    },
+    {
+      "color": "#333333",
+      "px": 28
+    }
+  ]
+}

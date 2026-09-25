@@ -1,116 +1,118 @@
-import Link from "next/link"
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core"
+import Link from "next/link";
+import ProgramStatus from "@/components/ProgramStatus";
+import { getPreStocks, premium } from "@/lib/markets";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const prestocks = (await getPreStocks())
+    .sort((a, b) => Math.abs(premium(b.markPrice, b.tokenPrice)) - Math.abs(premium(a.markPrice, a.tokenPrice)))
+    .slice(0, 3);
+
   return (
-    <div className="bg-[#050505] text-[#F5F7F7]">
-      {/* NAV - minimal, single line */}
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#050505]/80 border-b border-[#1B2421]">
-        <div className="max-w-[1280px] mx-auto px-6 h-[64px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 no-underline">
-            <div className="size-8 rounded-lg bg-gradient-to-br from-[#14f195] to-[#9945FF] grid place-items-center font-mono text-xs font-bold text-black">C</div>
-            <span className="font-bold tracking-[-0.02em]">CANOPY</span>
-            <span className="hidden sm:inline-flex ml-2 rounded-full border border-[#14f195]/20 bg-[#14f195]/10 px-2 py-0.5 font-mono text-[10px] text-[#14f195]">DEVNET</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <Link href="/sectors" className="text-[#A2AAA8] hover:text-white no-underline">Sectors</Link>
-            <Link href="/instant" className="text-[#A2AAA8] hover:text-white no-underline">Instant</Link>
-            <Link href="/shop" className="text-[#A2AAA8] hover:text-white no-underline">Shop</Link>
-          </nav>
-          <DynamicWidget />
-        </div>
-      </header>
-
-      {/* HERO - editorial, 2-col, not centered */}
-      <section className="max-w-[1280px] mx-auto px-6 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center py-16 lg:py-24">
+    <div>
+      <section className="shell grid min-h-[min(48rem,calc(100vh-4.5rem))] items-center gap-12 border-x border-[var(--line)] px-5 py-16 sm:px-10 lg:grid-cols-[1.08fr_.92fr] lg:px-14">
         <div>
-          <div className="inline-flex items-center gap-2 mono text-xs">
-            <span className="size-2 rounded-full bg-[#14f195] animate-pulse" />
-            <span className="font mono text-xs tracking-[0.14em] text-[#14f195]">LIVE ON SOLANA DEVNET</span>
-          </div>
-          <h1 className="mt-4 text-[42px] sm:text-[56px] font-bold leading-[0.9] tracking-[-0.03em] text-balance">
-            Collectible<br />
-            <span className="bg-gradient-to-r from-[#14f195] to-[#9945FF] bg-clip-text text-transparent">claims on</span><br />
-            tokenized equity.
-          </h1>
-          <p className="mt-5 max-w-[480px] text-[17px] leading-[1.6] text-[#A2AAA8] text-pretty">
-            A Sector is a vault. A Share is a key. Fund with mUSDC, reveal your weight, claim pro-rata — or govern by market.
+          <p className="page-kicker">Solana devnet · programs live</p>
+          <h1 className="page-title">Own the thesis. Reveal the weight.</h1>
+          <p className="page-lede">
+            Choose a tokenized company, fund a shared vault, and mint a sealed Core NFT. When the
+            Sector closes, Solana entropy reveals your pro-rata claim and market-governance weight.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/instant" className="inline-flex h-11 items-center justify-center rounded-full bg-[#14f195] px-6 text-sm font-semibold text-black hover:brightness-110">Launch app — $1.50</Link>
-            <Link href="/sectors" className="inline-flex h-11 items-center justify-center rounded-full border border-[#1B2421] px-6 text-sm font-medium hover:border-[#14f195]/30">Explore sectors</Link>
+            <Link href="/markets" className="btn-primary">Choose a company</Link>
+            <Link href="/sectors" className="btn-secondary">Inspect live Sectors</Link>
           </div>
-          <div className="mt-6 flex items-center gap-3 mono text-xs text-[#68716E]">
-            <span>mock mUSDC</span><span>·</span><span>slot-hash entropy</span><span>·</span><span>Core Shares</span>
-          </div>
+          <dl className="mt-12 grid max-w-xl grid-cols-3 border-y border-[var(--line)] py-4">
+            <div><dt className="font-mono text-xs text-[var(--quiet)]">ENTRY</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">$1.50</dd></div>
+            <div><dt className="font-mono text-xs text-[var(--quiet)]">MAX SHARES</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">20</dd></div>
+            <div><dt className="font-mono text-xs text-[var(--quiet)]">WEIGHT SUM</dt><dd className="mt-1 font-mono text-lg font-semibold tabular">1e18</dd></div>
+          </dl>
         </div>
-        <div className="relative hidden lg:block">
-          <div className="rounded-2xl border border-[#1B2421] bg-[#101114] overflow-hidden shadow-[0_18px_50px_rgba(0,0,0,0.35)]">
-            <div className="h-9 flex items-center gap-2 px-4 border-b border-[#1B2421] bg-[#0B0B0D]">
-              <span className="size-2.5 rounded-full bg-[#ff5c7a]" /><span className="size-2.5 rounded-full bg-[#f5c451]" /><span className="size-2.5 rounded-full bg-[#14f195]" />
-              <span className="mono text-xs text-[#68716E] ml-2">canopy/terminal — Sector #42 · 68% funded</span>
+
+        <div className="relative mx-auto w-full max-w-[31rem]" aria-label="Canopy claim lifecycle preview">
+          <div className="absolute -inset-3 border border-[var(--line)]" aria-hidden="true" />
+          <div className="relative bg-[var(--panel)] p-4 sm:p-6">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-4">
+              <div>
+                <p className="font-mono text-xs text-[var(--quiet)]">PRE-IPO SECTOR / 0042</p>
+                <p className="mt-1 font-semibold">Private AI basket</p>
+              </div>
+              <span className="status">Funding</span>
             </div>
-            <div className="p-6">
-              <div className="aspect-[16/10] rounded-xl border border-[#1B2421] bg-[#080909] grid place-items-center">
-                <div className="text-center">
-                  <div className="size-12 mx-auto rounded-xl bg-[#14f195]/10 border border-[#14f195]/20 grid place-items-center">◆</div>
-                  <div className="mono text-xs text-[#68716E] mt-3">PDA vault · Core Share</div>
-                  <div className="text-sm font-bold mt-1">Sealed → Reveal → Claim</div>
+            <div className="grid grid-cols-[1fr_auto] items-center gap-6 py-7">
+              <div>
+                <p className="font-mono text-xs text-[var(--quiet)]">VAULT PROGRESS</p>
+                <p className="mt-2 text-4xl font-bold tracking-[-0.05em]">$230 <span className="text-lg text-[var(--quiet)]">/ $250</span></p>
+                <div className="mt-4 h-1.5 bg-[var(--line)]"><div className="h-full w-[92%] bg-[var(--leaf)]" /></div>
+              </div>
+              <img src="/assets/cards/share-sealed.svg" alt="Sealed Canopy Share" width={116} height={174} />
+            </div>
+            <div className="grid grid-cols-3 gap-px bg-[var(--line)]">
+              {[['FUND', 'mUSDC'], ['REVEAL', 'slot hash'], ['CLAIM', 'pro-rata']].map(([label, value]) => (
+                <div key={label} className="bg-[var(--ink-2)] p-3">
+                  <p className="font-mono text-xs text-[var(--quiet)]">{label}</p>
+                  <p className="mt-1 text-sm font-semibold">{value}</p>
                 </div>
-              </div>
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                <div className="rounded-xl border border-[#1B2421] bg-[#050505] p-3 text-center"><div className="mono text-[10px] text-[#68716E]">RAISED</div><div className="mono text-sm font-bold">$230 / $250</div></div>
-                <div className="rounded-xl border border-[#1B2421] bg-[#050505] p-3 text-center"><div className="mono text-[10px] text-[#68716E]">SHARES</div><div className="text-sm font-bold">4</div></div>
-                <div className="rounded-xl bg-[#14f195] p-3 text-center"><div className="mono text-[10px] text-black/60">ACTION</div><div className="text-xs font-bold text-black">Fund →</div></div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* PROOF STRIP */}
-      <section className="border-y border-[#1B2421] bg-[#0B0B0D]/50">
-        <div className="max-w-[1280px] mx-auto px-6 flex flex-wrap items-center justify-between gap-4 py-3">
-          <span className="mono text-xs text-[#68716E]">Built on</span>
-          <div className="flex items-center gap-6 mono text-xs font-medium">
-            <span>Solana</span><span className="text-[#1B2421]">·</span><span>Metaplex Core</span><span className="text-[#1B2421]">·</span><span>Jupiter</span><span className="text-[#1B2421]">·</span><span>Pyth</span>
+      <section className="border-y border-[var(--line)] bg-[var(--ink-2)]">
+        <div className="shell flex flex-wrap items-center justify-between gap-4 py-4 text-sm">
+          <span className="font-mono text-[var(--quiet)]">Market inputs</span>
+          <div className="flex flex-wrap gap-x-7 gap-y-2 font-semibold">
+            <span>PreStocks</span><span>Pyth Network</span><span>Solana</span><span>Metaplex Core</span>
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS - 3 steps, not 4 equal */}
-      <section className="max-w-[1280px] mx-auto px-6 py-16">
-        <h2 className="text-2xl font-bold tracking-[-0.02em]">Fund. Reveal. Claim.</h2>
-        <p className="mt-2 max-w-[520px] text-[15px] leading-[1.6] text-[#A2AAA8]">Sectors pool mUSDC into PDA vaults. Every deposit mints a Share that later reveals a weight. Weights sum to 1e18.</p>
-        <div className="mt-8 grid md:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-[#1B2421] bg-[#101114] p-6">
-            <div className="mono text-xs text-[#14f195]">01 — Fund</div>
-            <h3 className="font-semibold mt-2">Deposit. Mint sealed.</h3>
-            <p className="mono text-xs text-[#68716E] mt-2">mUSDC → PDA vault → Core Share · 20 max</p>
+      <section className="shell py-20">
+        <div className="grid gap-10 lg:grid-cols-[.65fr_1.35fr]">
+          <div>
+            <p className="page-kicker">Live private markets</p>
+            <h2 className="mt-4 text-4xl font-bold tracking-[-0.05em]">Start with the spread.</h2>
+            <p className="mt-4 text-base leading-7 text-[var(--muted)]">
+              Canopy surfaces the difference between each PreStock token and its mark. The thesis travels
+              into the Share you mint; settlement stays safely on devnet for the hackathon.
+            </p>
+            <Link href="/markets" className="btn-secondary mt-6">Open the market desk</Link>
           </div>
-          <div className="rounded-2xl border border-[#1B2421] bg-[#101114] p-6">
-            <div className="mono text-xs text-[#14f195]">02 — Reveal</div>
-            <h3 className="font-semibold mt-2">Slot-hash → weight</h3>
-            <p className="mono text-xs text-[#68716E] mt-2">commit + 10 slots → 0.5–2.0× normalized</p>
-          </div>
-          <div className="rounded-2xl border border-[#1B2421] bg-[#101114] p-6">
-            <div className="mono text-xs text-[#14f195]">03 — Claim</div>
-            <h3 className="font-semibold mt-2">Claim pro-rata</h3>
-            <p className="mono text-xs text-[#68716E] mt-2">weight * total / 1e18 · burn delegate</p>
+          <div className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
+            {prestocks.length ? prestocks.map((stock) => {
+              const spread = premium(stock.markPrice, stock.tokenPrice);
+              return (
+                <div key={stock.contract_address} className="grid grid-cols-[1fr_auto] items-center gap-5 py-5">
+                  <div className="flex items-center gap-4">
+                    <img className="market-logo" src={stock.image} alt="" width={36} height={36} />
+                    <div><p className="font-semibold">{stock.name.replace(' PreStocks', '')}</p><p className="font-mono text-xs text-[var(--quiet)]">{stock.symbol}</p></div>
+                  </div>
+                  <div className="text-right"><p className="font-mono font-semibold tabular">${stock.tokenPrice.toFixed(2)}</p><p className={`font-mono text-xs tabular ${spread <= 0 ? 'text-[var(--leaf)]' : 'text-[var(--warning)]'}`}>{spread > 0 ? '+' : ''}{spread.toFixed(1)}% vs mark</p></div>
+                </div>
+              );
+            }) : <p className="py-8 text-[var(--muted)]">Live PreStocks prices will appear here.</p>}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-[1280px] mx-auto px-6 pb-16">
-        <div className="rounded-2xl border border-[#14f195]/20 bg-[#14f195] p-8 text-black">
-          <h2 className="text-2xl font-bold tracking-[-0.02em]">Choose the Sector. See what your Share reveals.</h2>
-          <div className="mt-4 flex gap-3">
-            <Link href="/sectors" className="inline-flex h-10 items-center justify-center rounded-full bg-black px-5 text-sm font-bold text-white">Explore sectors →</Link>
-            <Link href="/instant" className="inline-flex h-10 items-center justify-center rounded-full border border-black/20 px-5 text-sm font-bold">Instant mint — $1.50</Link>
-          </div>
+      <section className="shell border-t border-[var(--line)] py-20">
+        <div className="grid gap-px border border-[var(--line)] bg-[var(--line)] md:grid-cols-3">
+          {[
+            ["Fund", "Deposit into a deterministic PDA vault. Every contribution mints one sealed Core Share."],
+            ["Reveal", "Commit, wait ten slots, then normalize deposit-weighted entropy so every claim adds to 1e18."],
+            ["Govern", "Established Sectors open bonded PASS/FAIL markets. A time-weighted price decides."],
+          ].map(([title, copy]) => (
+            <article key={title} className="bg-[var(--panel)] p-7">
+              <h2 className="text-xl font-bold">{title}</h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{copy}</p>
+            </article>
+          ))}
         </div>
       </section>
+
+      <section className="shell"><ProgramStatus /></section>
     </div>
-  )
+  );
 }
