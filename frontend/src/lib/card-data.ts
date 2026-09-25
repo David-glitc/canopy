@@ -20,7 +20,35 @@ export type ShareData = {
   dna: string | null;
   matterDna: string | null;
   matterTraits: Array<{ trait_type: string; value: string }>;
+  position: MarketPosition | null;
 };
+
+export type MarketPosition = {
+  symbol: string;
+  mint: string;
+  source: "PreStocks" | "xStocks";
+  referencePrice: number | null;
+  weight: number;
+};
+
+function positionFromUri(uri: string): MarketPosition | null {
+  try {
+    const params = new URL(uri).searchParams;
+    const symbol = params.get("asset")?.slice(0, 24).toUpperCase();
+    const mint = params.get("contract")?.slice(0, 64);
+    if (!symbol || !mint) return null;
+    const rawPrice = Number(params.get("price"));
+    return {
+      symbol,
+      mint,
+      source: params.get("source") === "xStocks" ? "xStocks" : "PreStocks",
+      referencePrice: Number.isFinite(rawPrice) && rawPrice > 0 ? rawPrice : null,
+      weight: 100,
+    };
+  } catch {
+    return null;
+  }
+}
 
 export function bandForWeight(weight: bigint): string {
   const P = 10_000_000_000_000_000n;
@@ -79,5 +107,6 @@ export async function fetchShare(
     dna: attrs.dna ?? null,
     matterDna: matterSpec?.dna ?? null,
     matterTraits: matterSpec?.traits ?? [],
+    position: positionFromUri(asset.uri),
   };
 }

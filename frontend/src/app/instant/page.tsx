@@ -22,10 +22,10 @@ export default async function InstantPage({
         <div>
           <p className="page-kicker">Create from a market</p>
           <h1 className="page-title">
-            {asset ? `${asset} becomes Digital Matter.` : "Choose a market. Shape the matter."}
+            {asset ? `Build a ${asset} Share.` : "Choose a market. Shape the matter."}
           </h1>
           <p className="page-lede">
-            Set the position size. Its onchain record becomes the DNA for a unique form.
+            Set the position size. The token target and vault record become the DNA for a unique form.
           </p>
         </div>
         {asset && contract ? (

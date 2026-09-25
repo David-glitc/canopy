@@ -2,10 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchShare } from "@/lib/card-data";
 import DnaSnake from "@/components/DnaSnake";
+import CompanyLogo from "@/components/CompanyLogo";
 
 type PageProps = {
   params: Promise<{ mint: string }>;
-  searchParams: Promise<{ grove?: string; index?: string }>;
+  searchParams: Promise<{ grove?: string; index?: string; asset?: string; contract?: string; source?: string; price?: string }>;
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ mint: string }> }) {
@@ -18,7 +19,8 @@ export async function generateMetadata({ params }: { params: Promise<{ mint: str
 
 export default async function SharePage({ params, searchParams }: PageProps) {
   const { mint } = await params;
-  const { grove, index } = await searchParams;
+  const query = await searchParams;
+  const { grove, index } = query;
   const share = await fetchShare(mint, grove, index);
 
   if (!share) notFound();
@@ -26,6 +28,14 @@ export default async function SharePage({ params, searchParams }: PageProps) {
   const qs = grove && index ? `?grove=${grove}&index=${index}` : "";
   const revealed = Boolean(share.seedStr);
   const imageUrl = revealed ? `/api/cards/${mint}/image${qs}` : "";
+  const queryPrice = Number(query.price);
+  const position = share.position ?? (query.asset && query.contract ? {
+    symbol: query.asset.slice(0, 24).toUpperCase(),
+    mint: query.contract.slice(0, 64),
+    source: query.source === "xStocks" ? "xStocks" as const : "PreStocks" as const,
+    referencePrice: Number.isFinite(queryPrice) && queryPrice > 0 ? queryPrice : null,
+    weight: 100,
+  } : null);
 
   return (
     <div className="mx-auto grid min-h-screen max-w-6xl items-start gap-10 px-6 pb-28 pt-28 lg:grid-cols-[minmax(0,420px)_1fr] lg:pt-36">
@@ -69,6 +79,34 @@ export default async function SharePage({ params, searchParams }: PageProps) {
             <p className="mt-1 font-display text-lg font-bold text-[var(--canopy-green)]">{revealed ? "Revealed" : "Locked"}</p>
           </div>
         </div>
+
+        {position && (
+          <section className="position-record" aria-labelledby="position-record-title">
+            <div className="position-record-head">
+              <div>
+                <p className="font-mono2 text-sm tracking-[0.04em] text-[var(--canopy-muted)]">TOKEN SET</p>
+                <h2 id="position-record-title">What this Share points to</h2>
+              </div>
+              <span className="position-weight">{position.weight}% target</span>
+            </div>
+            <div className="position-token">
+              <CompanyLogo symbol={position.symbol} name={position.symbol} className="position-token-logo" />
+              <div className="min-w-0 flex-1">
+                <strong>{position.symbol}</strong>
+                <span>{position.source}{position.referencePrice ? ` · $${position.referencePrice.toFixed(2)} reference` : ""}</span>
+              </div>
+              <a href={`https://solscan.io/token/${position.mint}`} target="_blank" rel="noreferrer">Verify ↗</a>
+            </div>
+            <div className="position-allocation" aria-label={`${position.symbol} target allocation ${position.weight}%`}>
+              <span style={{ width: `${position.weight}%` }} />
+            </div>
+            <div className="position-ledger">
+              <span>Market target <strong>{position.symbol}</strong></span>
+              <span>Held in vault <strong>mUSDC</strong></span>
+            </div>
+            <p className="position-truth">This mint can reclaim its mUSDC position value. The stock token is recorded as its allocation target; no stock swap was executed by this transaction.</p>
+          </section>
+        )}
 
         {revealed && (
           <div className="mt-8">

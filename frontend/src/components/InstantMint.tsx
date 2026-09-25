@@ -198,6 +198,13 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           />
         </div>
         <div className="mt-6 space-y-3 text-sm text-[var(--canopy-muted)]">
+          {asset && (
+            <div className="instant-target-row">
+              <CompanyLogo symbol={asset.symbol} name={asset.symbol} className="instant-target-logo" />
+              <span><small>Token-set target</small><strong>{asset.symbol}</strong></span>
+              <b>100%</b>
+            </div>
+          )}
           <div className="flex justify-between">
             <span>Protocol fee (1%)</span>
             <span className="tabular">${(fee / 1e6).toFixed(4)}</span>
@@ -207,8 +214,8 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             <span className="tabular">${(net / 1e6).toFixed(4)}</span>
           </div>
           <div className="flex justify-between">
-            <span>Digital Matter</span>
-            <span className="text-[var(--canopy-green)]">assembled on mint</span>
+            <span>Vault asset</span>
+            <span className="text-[var(--canopy-text)]">mUSDC</span>
           </div>
         </div>
         <button
@@ -219,7 +226,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             "focus-visible:outline-none"
           )}
         >
-          {busy ?? (connected ? `Create ${asset?.symbol ?? "Canopy"} matter · $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to create")}
+          {busy ?? (connected ? `Mint ${asset?.symbol ?? "Canopy"} Share · $${(lamports / 1e6).toFixed(2)}` : "Connect wallet to create")}
         </button>
         {error && (
           <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-[var(--danger)]" role="alert">
@@ -227,7 +234,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           </p>
         )}
         <p className="mt-4 text-pretty text-xs leading-relaxed text-[var(--canopy-muted)]">
-          Tracks a {asset?.source ?? "market"} reference and does not represent company equity.
+          {asset ? `${asset.symbol} is encoded as the allocation target. This transaction deposits mUSDC; it does not execute the stock swap.` : "Choose a stock first to encode a token-set target."}
         </p>
       </div>
 
