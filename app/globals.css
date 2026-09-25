@@ -78,7 +78,7 @@ body { background: var(--color-bg); color: var(--color-text); font-family: var(-
 @media (max-width: 900px) { .hero { grid-template-columns: 1fr; min-height: auto; padding: 72px 28px; } .dashboard-grid { grid-template-columns: 1fr; } .grid-span-4,.grid-span-6,.grid-span-8,.grid-span-12 { grid-column: span 1; } }
 @media (max-width: 640px) { .container { width: min(100% - 40px, 1280px); } .heading-xl { font-size: 38px; letter-spacing: -1.5px; } .navbar { padding: 0 20px; } .hero { padding: 56px 20px; } }
 
-/* Sherwood compat - keep existing */
+/* Legacy compatibility aliases */
 .page-container-wide { width: min(100%, 76rem); margin-inline: auto; padding-inline: clamp(1rem,3vw,2rem); }
 .product-surface { border: 1px solid #1b2421; border-radius: 18px; background: #101114; }
 
@@ -108,4 +108,3 @@ body { background: var(--color-bg); color: var(--color-text); font-family: var(-
 .glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
 @keyframes table-row-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .table-row-in { animation: table-row-in 0.4s ease-out both; }
-

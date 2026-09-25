@@ -25,7 +25,7 @@ const ATA_ID: Pubkey = spl_associated_token_account::ID;
 const REVEAL_DELAY_SLOTS: u64 = 10;
 /// Ownership fixed point (100% = 1e18).
 const WEIGHT_ONE: u128 = 1_000_000_000_000_000_000;
-/// Multiplier band in bps (0.5x-2.0x), ported from Sherhood RevealEngine.
+/// Multiplier band in bps (0.5x-2.0x).
 const MULT_FLOOR: u64 = 5_000;
 const MULT_SPAN: u64 = 15_001;
 /// Instant-mint floor: $1.50 in 6-dec quote.
@@ -1004,7 +1004,7 @@ fn update_share_plugin_cpi<'info>(
 }
 
 /// Deposit-weighted rolls normalized to WEIGHT_ONE with a >0 floor.
-/// Ported from Sherhood RevealEngine._allocate (single-pass max correction).
+/// Single-pass maximum correction for normalized reveal weights.
 fn compute_weights(
     seed: &[u8; 32],
     grove: &Pubkey,
@@ -1071,7 +1071,7 @@ fn compute_weights(
     Ok(weights)
 }
 
-/// Ownership-share rarity bands (Sherhood): 40/20/8%.
+/// Ownership-share rarity bands: 40/20/8%.
 fn rarity_band(weight: u64) -> &'static str {
     const PCT: u128 = WEIGHT_ONE / 100;
     let w = weight as u128;

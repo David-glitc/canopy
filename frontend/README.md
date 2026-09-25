@@ -17,10 +17,9 @@ pnpm install
 pnpm dev
 ```
 
-Create `.env.local` when these integrations are needed:
+Create `.env.local` when server integrations are needed. Wallet connections use Phantom or Solflare directly:
 
 ```bash
-NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID=...
 FAUCET_KEY_JSON='[...]'
 PYTH_API_KEY=...
 ```

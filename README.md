@@ -48,8 +48,8 @@ pnpm --dir frontend install
 pnpm --dir frontend dev   # http://localhost:3000
 ```
 
-Env (`frontend/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet),
-`NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID`, and optionally `PYTH_API_KEY`.
+Env (`frontend/.env.local`): `FAUCET_KEY_JSON='[...]'` (devnet drip wallet)
+and optionally `PYTH_API_KEY`.
 
 ## Layout
 

@@ -9,8 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@dynamic-labs/sdk-react-core": "^5.9.0",
-    "@dynamic-labs/solana": "^5.9.0",
     "@metaplex-foundation/mpl-core": "^1.10.0",
     "@metaplex-foundation/umi": "^1.6.0",
     "@metaplex-foundation/umi-bundle-defaults": "^1.6.0",

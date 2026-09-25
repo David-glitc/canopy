@@ -99,7 +99,7 @@
   --radius-xl: 24px;
   --radius-pill: 999px;
 
-  /* Sherwood compat */
+  /* Legacy token aliases */
   --sb-bg: #050505;
   --sb-surface: #101114;
   --sb-card: #101114;
