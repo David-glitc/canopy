@@ -11,11 +11,11 @@ export default function SectorsPage() {
       <div className="vault-page-head">
         <div>
           <p className="page-kicker">Group vaults</p>
-          <h1 className="page-title">Pool conviction.<br />Collect the outcome.</h1>
+          <h1 className="page-title">Fund a stock vault together.</h1>
         </div>
         <p className="page-lede">
-          Fund a private-market pick together. Each contribution becomes a unique collectible
-          with a live share of the vault and DNA assembled at reveal.
+          Set a target and deadline, then contribute mock mUSDC. Every deposit creates a collectible
+          with a live vault share and traits assembled at reveal.
         </p>
       </div>
       <div className="mt-10">

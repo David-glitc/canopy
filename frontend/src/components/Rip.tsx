@@ -67,7 +67,7 @@ export default function Rip({
               draggable={false}
             />
             <span
-              className={`font-mono2 text-sm tracking-[0.4em] text-[var(--canopy-green)] ${
+              className={`font-mono2 text-sm tracking-[0.08em] text-[var(--canopy-green)] ${
                 stage === "tearing" ? "opacity-0" : "animate-pulse"
               }`}
             >
@@ -83,7 +83,7 @@ export default function Rip({
 
       {stage === "revealed" && (
         <div className="mt-6 text-center">
-          <h3 className="font-display text-xl font-extrabold">{title}</h3>
+          <h3 className="font-display text-xl font-bold">{title}</h3>
           <p className="mt-1 font-mono2 text-sm text-[var(--canopy-green)]">{subtitle}</p>
           <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
             <button

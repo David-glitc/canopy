@@ -381,7 +381,7 @@ export default function SectorDetail({ address }: { address: string }) {
             key={t}
             onClick={() => setTab(t)}
             className={cn(
-              "px-4 py-2.5 font-mono2 text-sm tracking-[0.2em] no-underline transition-colors",
+              "px-4 py-2.5 font-mono2 text-sm tracking-[0.04em] no-underline transition-colors",
               tab === t
                 ? "border-b-2 border-[var(--canopy-green)] text-[var(--canopy-text)]"
                 : "text-[var(--canopy-muted)] hover:text-[var(--canopy-text)]"
@@ -408,7 +408,7 @@ export default function SectorDetail({ address }: { address: string }) {
               ) : (
                 <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-3 bg-[#0d0d10]">
                   <img src="/mark.svg" alt="" width={54} height={54} className="opacity-70" />
-                  <span className="font-mono2 text-sm tracking-[0.35em] text-[var(--canopy-green)]">SEALED</span>
+                  <span className="font-mono2 text-sm tracking-[0.06em] text-[var(--canopy-green)]">SEALED</span>
                 </div>
               )}
               <div className="flex items-center justify-between p-4">
@@ -442,7 +442,7 @@ export default function SectorDetail({ address }: { address: string }) {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 inputMode="decimal"
-                className="font-display w-full bg-transparent text-4xl font-extrabold outline-none"
+                className="font-display w-full bg-transparent text-4xl font-bold outline-none"
                 placeholder="5.00"
               />
             </div>

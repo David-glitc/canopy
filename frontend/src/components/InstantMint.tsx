@@ -170,7 +170,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             inputMode="decimal"
             aria-describedby="instant-amount-help"
             aria-invalid={!valid}
-            className="amount-input font-display w-full bg-transparent font-bold tracking-[-.06em] outline-none placeholder:text-[var(--canopy-line)]"
+            className="amount-input font-display w-full bg-transparent font-bold tracking-[-.04em] outline-none placeholder:text-[var(--canopy-line)]"
             placeholder="2.00"
           />
         </div>
@@ -222,7 +222,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
         ) : (
           <div className="mint-preview flex h-full min-h-[420px] flex-col items-center justify-center rounded-[1.5rem] p-8 text-center">
             <div className="mint-preview-art" aria-hidden="true">
-              {asset ? <CompanyLogo symbol={asset.symbol} name={asset.symbol} className="mint-preview-logo" /> : <span>C</span>}
+              {asset ? <CompanyLogo symbol={asset.symbol} name={asset.symbol} className="mint-preview-logo" /> : <img src="/mark.svg" alt="" className="mint-preview-brand" />}
             </div>
             <p className="mt-7 text-lg font-bold text-white">Your collectible appears here</p>
             <p className="mt-2 max-w-xs text-pretty text-sm leading-6 text-white/55">

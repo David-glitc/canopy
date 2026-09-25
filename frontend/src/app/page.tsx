@@ -35,8 +35,8 @@ export default async function Home() {
               Collect the companies <span>you&apos;re watching.</span>
             </h1>
             <p className="hero-copy">
-              Explore tokenized public stocks and pre-IPO companies, then turn your market position
-              into a verifiable being assembled from on-chain DNA.
+              Choose a tokenized public stock or pre-IPO company. Canopy turns the position into
+              a collectible assembled from its onchain record.
             </p>
             <div className="hero-actions">
               <Link href="/markets" className="btn-primary">Choose a company <span aria-hidden="true">↗</span></Link>
@@ -53,7 +53,7 @@ export default async function Home() {
             <span className="float-chip float-chip-a">Metaplex Core asset</span>
             <Link className="specimen-card" href={featured ? mintHref(featured) : "/instant"} aria-label={`Mint the featured ${featured?.symbol ?? "PreStocks"} collectible`}>
               <div className="specimen-head">
-                <span className="specimen-mark">C</span>
+                <span className="specimen-mark"><img src="/mark.svg" alt="" /></span>
                 <span className="specimen-series">CANOPY · SERIES 01</span>
               </div>
               <div className="specimen-art">
@@ -75,11 +75,11 @@ export default async function Home() {
 
       <section className="shell matter-home">
         <div className="matter-home-copy">
-          <p className="page-kicker">Digital Matter Theory</p>
-          <h2>The image is not waiting in a folder.</h2>
+          <p className="page-kicker">Generated from the position</p>
+          <h2>Your position determines the artwork.</h2>
           <p>
-            Every collectible is assembled from on-chain DNA when it is revealed. Funding state
-            becomes form, material, core, aura, crown, and pixel geometry.
+            Funding amount, timing, and vault share become the form, material, core, crown, and
+            pixel geometry when the collectible is revealed.
           </p>
           <Link href="/matter" className="btn-secondary">Enter the DNA lab <span>↗</span></Link>
         </div>
@@ -88,7 +88,7 @@ export default async function Home() {
 
       <section className="proof-strip" aria-label="Technology partners">
         <div className="shell proof-strip-inner">
-          <p>Live product data and verifiable onchain assets</p>
+          <p>Prices from PreStocks and Pyth. Assets verified on Solana.</p>
           <div className="proof-logos">
             <span>PreStocks</span><span>Pyth</span><span>Solana</span><span>Metaplex</span>
           </div>
@@ -99,7 +99,7 @@ export default async function Home() {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="page-kicker">Public stocks onchain</p>
-            <h2 className="section-heading">Tesla, Apple, Nvidia. In your wallet.</h2>
+            <h2 className="section-heading">Public stocks, priced and verified.</h2>
           </div>
           <p className="max-w-sm text-sm leading-6 text-[var(--muted)] sm:text-right">
             Official Solana xStocks assets paired with Pyth equity and token feeds.
@@ -176,9 +176,9 @@ export default async function Home() {
         <div className="shell section-block">
           <div className="grid gap-8 lg:grid-cols-[.7fr_1.3fr] lg:gap-20">
             <div>
-              <p className="page-kicker">The whole demo</p>
+              <p className="page-kicker">How it works</p>
               <h2 className="section-heading">From a market pick to your wallet.</h2>
-              <p className="section-copy">The flow is short enough to test during judging and transparent enough to verify afterward.</p>
+              <p className="section-copy">Choose a company, fund with mock mUSDC, then inspect the asset and transaction on Solana.</p>
             </div>
             <div className="journey">
               {[
@@ -200,9 +200,9 @@ export default async function Home() {
       <section className="shell section-block">
         <div className="grid gap-8 lg:grid-cols-[.72fr_1.28fr] lg:items-start">
           <div>
-            <p className="page-kicker">Built on devnet</p>
-            <h2 className="section-heading">Check the programs yourself.</h2>
-            <p className="section-copy">Both Canopy programs are deployed and linked directly to Solana Explorer.</p>
+            <p className="page-kicker">Verify onchain</p>
+            <h2 className="section-heading">Inspect the deployed programs.</h2>
+            <p className="section-copy">Open both Canopy programs in Solana Explorer and verify every transaction.</p>
             <Link href="/sectors" className="btn-secondary mt-6">Try group vaults</Link>
           </div>
           <ProgramStatus />

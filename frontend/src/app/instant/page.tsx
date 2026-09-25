@@ -22,10 +22,10 @@ export default async function InstantPage({
         <div>
           <p className="page-kicker">One-minute devnet mint</p>
           <h1 className="page-title">
-            {asset ? `Make ${asset} yours.` : "Mint your market pick."}
+            {asset ? `Create ${asset} matter.` : "Mint your market pick."}
           </h1>
           <p className="page-lede">
-            Pay with mock mUSDC. Your on-chain DNA assembles a one-of-one Digital Matter form at reveal.
+            Fund with mock mUSDC. The transaction becomes the DNA for a unique form at reveal.
           </p>
         </div>
         {asset && contract ? (

@@ -37,7 +37,7 @@ export default async function MarketsPage() {
           <p className="page-kicker">Public + private markets</p>
           <h1 className="page-title">The stock market, collected.</h1>
           <p className="page-lede">
-            Explore tokenized public stocks and pre-IPO companies on Solana. Turn any market signal into evolving Digital Matter.
+            Compare tokenized public stocks and pre-IPO companies, then mint a collectible tied to your selection.
           </p>
         </div>
         <aside className="market-context">
@@ -52,8 +52,8 @@ export default async function MarketsPage() {
             <span className="market-lane-number">01</span>
             <div>
               <p className="page-kicker">Tokenized public stocks</p>
-              <h2 id="stocks-title">US equities, alive on Solana.</h2>
-              <p>Official xStocks assets with Solana mint addresses and matching Pyth market feeds.</p>
+              <h2 id="stocks-title">Tokenized US equities on Solana.</h2>
+              <p>Each xStock includes its mint address and matching Pyth market feeds.</p>
             </div>
           </div>
           <span className="status">xStocks · Pyth</span>
@@ -168,7 +168,7 @@ export default async function MarketsPage() {
         <div className="grid gap-10 lg:grid-cols-[.65fr_1.35fr] lg:items-start">
           <div>
             <p className="page-kicker">Pyth price check</p>
-            <h2 id="pyth-title" className="section-heading">Apple stock beside AAPLx.</h2>
+            <h2 id="pyth-title" className="section-heading">Compare Apple stock with AAPLx.</h2>
             <p className="section-copy">
               Pyth gives Canopy a verified reference for the underlying stock and its 24/7 token.
               The difference appears only when both updates are fresh.

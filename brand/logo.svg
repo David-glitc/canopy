@@ -1,18 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 64">
+<svg xmlns="http://www.w3.org/2000/svg" width="310" height="72" viewBox="0 0 310 72" fill="none">
   <defs>
-    <linearGradient id="cy" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#14F195"/>
-      <stop offset="1" stop-color="#9945FF"/>
+    <linearGradient id="ring" x1="51" y1="12" x2="22" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9CCFF"/><stop offset=".48" stop-color="#A885EB"/><stop offset="1" stop-color="#D7FF72"/>
+    </linearGradient>
+    <linearGradient id="face" x1="26" y1="25" x2="45" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B2536"/><stop offset="1" stop-color="#151219"/>
     </linearGradient>
   </defs>
-  <g>
-    <polygon points="32,4 56.25,18 56.25,46 32,60 7.75,46 7.75,18" fill="#07070B" stroke="url(#cy)" stroke-width="3.5" stroke-linejoin="round"/>
-    <path d="M14,45 L32,21 L50,45" fill="none" stroke="url(#cy)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <polygon points="32,29 40,37 32,45 24,37" fill="url(#cy)"/>
-    <circle cx="32" cy="37" r="2.2" fill="#fff"/>
-    <circle cx="14" cy="45" r="3" fill="#14F195"/>
-    <circle cx="50" cy="45" r="3" fill="#9945FF"/>
+  <g transform="translate(4 4)">
+    <path d="M49.8 16.4A23.4 23.4 0 1 0 50 47.4" stroke="#050407" stroke-opacity=".75" stroke-width="11" stroke-linecap="round"/>
+    <path d="M49.8 16.4A23.4 23.4 0 1 0 50 47.4" stroke="url(#ring)" stroke-width="7" stroke-linecap="round"/>
+    <path d="M32 20.5 43.5 32 32 43.5 20.5 32 32 20.5Z" fill="url(#face)" stroke="#E9E0FF" stroke-opacity=".62" stroke-width="1.2"/>
+    <path d="m32 20.5-2.4 9.1-9.1 2.4 9.1 2.4 2.4 9.1 2.4-9.1 9.1-2.4-9.1-2.4-2.4-9.1Z" fill="#B89AF4" fill-opacity=".16" stroke="#B89AF4" stroke-opacity=".32" stroke-width=".75"/>
+    <rect x="28.4" y="28.4" width="7.2" height="7.2" rx="1.7" transform="rotate(45 32 32)" fill="#D7FF72"/>
+    <rect x="30.6" y="30.6" width="2.8" height="2.8" rx=".7" transform="rotate(45 32 32)" fill="#111015"/>
   </g>
-  <text x="72" y="42" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="32" letter-spacing="5" fill="#F5F5F5">CANOPY</text>
-  <rect x="238" y="28" width="10" height="10" fill="url(#cy)"/>
+  <text x="82" y="35" fill="#F4F2F7" font-family="Geist, Inter, Arial, sans-serif" font-size="27" font-weight="720" letter-spacing="1.2">CANOPY</text>
+  <text x="84" y="52" fill="#918A98" font-family="Geist Mono, monospace" font-size="8.5" font-weight="600" letter-spacing="1.75">MARKETS, MADE COLLECTIBLE</text>
 </svg>

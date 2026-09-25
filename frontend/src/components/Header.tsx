@@ -22,8 +22,8 @@ export default function Header() {
             <img src="/mark.svg" alt="" width={30} height={30} />
           </span>
           <span className="brand-copy">
-            <strong>Canopy</strong>
-            <small>Private markets, collected</small>
+            <strong>CANOPY</strong>
+            <small>Markets, made collectible</small>
           </span>
         </Link>
         <nav className="primary-nav" aria-label="Primary navigation">

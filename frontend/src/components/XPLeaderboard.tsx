@@ -86,8 +86,8 @@ export default function XPLeaderboard() {
         <div>
           <span className="live-label"><i /> SEASON 01 · LIVE</span>
           <p className="xp-kicker">CANOPY REPUTATION</p>
-          <h1>Climb the canopy.</h1>
-          <p>Earn XP by funding group vaults, minting positions, and completing reveals. Every point below is calculated from on-chain activity.</p>
+          <h1>Earn XP from onchain activity.</h1>
+          <p>Fund group vaults, mint positions, and complete reveals. Every score below is calculated from Solana devnet records.</p>
         </div>
         <div className="xp-hero-score">
           <small>NETWORK XP</small>

@@ -12,11 +12,11 @@ export default function MatterPage() {
       <section className="shell matter-hero">
         <div className="matter-hero-copy">
           <span className="live-label"><i /> DIGITAL MATTER THEORY · 01</span>
-          <p className="page-kicker">The reveal is the birth</p>
-          <h1>No image exists until the chain decides.</h1>
+          <p className="page-kicker">Procedural collectibles</p>
+          <h1>Every trait comes from the transaction.</h1>
           <p>
-            A Canopy collectible begins as sealed potential. Funding position, vault state, reveal
-            entropy, and its index become DNA. The renderer interprets that DNA into a being in real time.
+            Funding amount, vault state, reveal entropy, and position index become DNA. The renderer
+            uses those inputs to assemble the form when it is requested.
           </p>
           <div className="hero-actions">
             <Link href="/instant" className="btn-primary">Create matter <span>↗</span></Link>
@@ -24,16 +24,16 @@ export default function MatterPage() {
           </div>
         </div>
         <div className="matter-hero-side">
-          <span>NOT A PFP DROP</span>
+          <span>NO PREMADE EDITIONS</span>
           <strong>∞</strong>
-          <p>There is no catalog of finished editions. The protocol stores causes. The renderer produces form.</p>
+          <p>The protocol stores the inputs and rules. The renderer reconstructs the same result from them.</p>
         </div>
       </section>
 
       <section className="shell matter-lab-section">
         <div className="matter-section-head">
-          <div><p className="page-kicker">Live genotype explorer</p><h2>DNA becomes visible matter.</h2></div>
-          <p>These prototypes trace the same geometry system now used by the live collectible renderer.</p>
+          <div><p className="page-kicker">Trait explorer</p><h2>Onchain inputs become visible traits.</h2></div>
+          <p>Change the sample position to see how the renderer maps each input to geometry and material.</p>
         </div>
         <DigitalMatterLab />
       </section>
@@ -41,7 +41,7 @@ export default function MatterPage() {
       <section className="matter-process">
         <div className="shell">
           <div className="matter-section-head">
-            <div><p className="page-kicker">Assembly cycle</p><h2>State → seed → form.</h2></div>
+            <div><p className="page-kicker">Assembly cycle</p><h2>Record → seed → form.</h2></div>
             <p>The artwork can be reconstructed from its inputs, but nobody can pick a finished character before reveal.</p>
           </div>
           <div className="matter-steps">

@@ -130,7 +130,7 @@ export default function PortfolioProfile({ address }: { address?: string }) {
   if (!owner) {
     return (
       <section className="profile-connect">
-        <span className="profile-orbit" aria-hidden="true"><i>C</i></span>
+        <span className="profile-orbit" aria-hidden="true"><img src="/mark.svg" alt="" /></span>
         <p className="page-kicker">Your Canopy account</p>
         <h1>One wallet. Every position.</h1>
         <p>Connect Phantom or Solflare to load instant mints, group-vault shares, NAV, reveal state, and XP.</p>

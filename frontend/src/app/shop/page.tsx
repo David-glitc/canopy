@@ -20,19 +20,13 @@ export default async function ShopPage() {
     .map((s) => s.value as ShareData);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 pb-24 pt-28">
-      <p className="font-mono2 text-sm tracking-[0.3em] text-[var(--canopy-green)]">
-        GALLERY
-      </p>
-      <h1 className="font-display mt-3 text-4xl font-extrabold sm:text-5xl">
-        Revealed collectibles.
-      </h1>
-      <p className="mt-4 max-w-2xl text-pretty leading-relaxed text-[var(--canopy-muted)]">
-        Browse the artwork and metadata created by the devnet mint.
-      </p>
+    <div className="shell pb-24 pt-16 sm:pt-24">
+      <p className="page-kicker">Gallery</p>
+      <h1 className="page-title">Revealed collectibles.</h1>
+      <p className="page-lede">Inspect the generated artwork, traits, and devnet record for every revealed position.</p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {revealed.length === 0 ? (
-          <div className="border border-[var(--line)] bg-[var(--panel)] p-6 sm:col-span-2 lg:col-span-3">
+          <div className="glass rounded-2xl p-6 sm:col-span-2 lg:col-span-3">
             <p className="font-semibold">No revealed collectibles yet.</p>
             <Link href="/instant" className="btn-primary mt-4">Mint the first one</Link>
           </div>
@@ -55,7 +49,7 @@ export default async function ShopPage() {
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
-                    <p className="font-mono2 text-sm tracking-[0.4em] text-[var(--canopy-green)]">SEALED</p>
+                    <p className="font-mono2 text-xs font-semibold text-[var(--canopy-green)]">SEALED</p>
                   </div>
                 )}
               </div>

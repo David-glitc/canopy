@@ -33,9 +33,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main-content" className="flex-1">{children}</main>
           <footer className="site-footer">
             <div className="shell footer-row">
-              <div>
-                <strong>Canopy</strong>
-                <p>Public and pre-IPO stock collectibles on Solana devnet.</p>
+              <div className="footer-brand">
+                <img src="/mark.svg" alt="" width={36} height={36} />
+                <div>
+                  <strong>CANOPY</strong>
+                  <p>Public and pre-IPO stock collectibles on Solana devnet.</p>
+                </div>
               </div>
               <div className="footer-links" aria-label="Protocol links">
                 <a href="https://explorer.solana.com/address/9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf?cluster=devnet">Canopy program</a>
