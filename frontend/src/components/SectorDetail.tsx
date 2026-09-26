@@ -121,9 +121,18 @@ export default function SectorDetail({ address }: { address: string }) {
   }, [connection, address, publicKey, grovePk]);
 
   useEffect(() => {
+    let debounce: number | undefined;
     const timer = window.setTimeout(() => void load(), 0);
-    return () => window.clearTimeout(timer);
-  }, [load]);
+    const subscription = connection.onAccountChange(grovePk, () => {
+      window.clearTimeout(debounce);
+      debounce = window.setTimeout(() => void load(), 400);
+    }, "confirmed");
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(debounce);
+      void connection.removeAccountChangeListener(subscription);
+    };
+  }, [connection, grovePk, load]);
 
   async function run(label: string, fn: () => Promise<void>) {
     setError(null);

@@ -12,21 +12,27 @@ import {
   buildCreateGrove,
   grovePda,
   parseGrove,
+  parseRecord,
   type GroveData,
 } from "@/lib/canopy-ix";
 import { cn } from "@/lib/utils";
-import { FundingCurve, seededFundingSeries, VaultCycle } from "@/components/VaultVisuals";
+import { FundingCurve, VaultCycle } from "@/components/VaultVisuals";
 import {
   buildVaultMemo,
+  cacheVaultMetadata,
   fallbackVaultMetadata,
-  loadVaultMetadata,
+  loadVaultMetadataBatch,
   normalizeVaultLink,
   type VaultMetadata,
 } from "@/lib/vault-metadata";
 import { VAULT_ASSETS } from "@/lib/vault-assets";
 import CompanyLogo from "@/components/CompanyLogo";
 
-type GroveRow = GroveData & { address: string; metadata: VaultMetadata };
+type GroveRow = GroveData & {
+  address: string;
+  metadata: VaultMetadata;
+  fundingSeries: number[];
+};
 
 const STATUS = ["Funding", "Closed", "Cancelled", "Revealed"] as const;
 
@@ -50,47 +56,105 @@ export default function SectorList() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
-  const [selectedAssets, setSelectedAssets] = useState(["NVDAx", "AAPLx", "TSLAx"]);
+  const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
   const [goal, setGoal] = useState("100");
   const [minDep, setMinDep] = useState("2");
   const [days, setDays] = useState("5");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createdAddress, setCreatedAddress] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
-      const accts = await connection.getProgramAccounts(CANOPY_ID, {
-        filters: [{ dataSize: 8 + 142 }],
-      });
-      const rows: GroveRow[] = await Promise.all(accts.map(async ({ pubkey, account }) => {
+      const [accts, recordAccounts] = await Promise.all([
+        connection.getProgramAccounts(CANOPY_ID, { filters: [{ dataSize: 8 + 142 }] }),
+        connection.getProgramAccounts(CANOPY_ID, { filters: [{ dataSize: 8 + 119 }] }),
+      ]);
+      const addresses = accts.map(({ pubkey }) => pubkey.toBase58());
+      const metadataByAddress = await loadVaultMetadataBatch(connection, addresses);
+      const depositsByGrove = new Map<string, Array<{ index: number; deposit: bigint }>>();
+      for (const { account } of recordAccounts) {
+        try {
+          const record = parseRecord(new Uint8Array(account.data));
+          const deposits = depositsByGrove.get(record.grove) ?? [];
+          deposits.push({ index: record.index, deposit: record.deposit });
+          depositsByGrove.set(record.grove, deposits);
+        } catch {
+          // Ignore unrelated or malformed accounts without dropping valid vaults.
+        }
+      }
+      const rows: GroveRow[] = accts.flatMap(({ pubkey, account }) => {
         const address = pubkey.toBase58();
-        return {
-          address,
-          ...parseGrove(new Uint8Array(account.data)),
-          metadata: await loadVaultMetadata(connection, address),
-        };
-      }));
-      rows.sort((a, b) => a.status !== b.status ? a.status - b.status : Number(b.total - a.total));
+        try {
+          const deposits = (depositsByGrove.get(address) ?? []).sort((a, b) => a.index - b.index);
+          let cumulative = 0;
+          const fundingSeries = [0, ...deposits.map(({ deposit }) => {
+            cumulative += Number(deposit) / 1e6;
+            return cumulative;
+          })];
+          return [{
+            address,
+            ...parseGrove(new Uint8Array(account.data)),
+            metadata: metadataByAddress.get(address) ?? fallbackVaultMetadata(address),
+            fundingSeries: fundingSeries.length > 1 ? fundingSeries : [0, 0],
+          }];
+        } catch {
+          return [];
+        }
+      });
+      rows.sort((a, b) => {
+        const aPublished = a.metadata.tokens.length > 0 ? 1 : 0;
+        const bPublished = b.metadata.tokens.length > 0 ? 1 : 0;
+        if (aPublished !== bPublished) return bPublished - aPublished;
+        if (a.status !== b.status) return a.status - b.status;
+        return Number(b.deadline - a.deadline);
+      });
       setGroves(rows);
-    } catch {
-      setGroves([]);
+    } catch (cause) {
+      setGroves((current) => current ?? []);
+      setError((current) => current ?? `Could not refresh on-chain vaults: ${cause instanceof Error ? cause.message.slice(0, 100) : "RPC unavailable"}`);
     }
   }, [connection]);
 
   useEffect(() => {
+    let debounce: number | undefined;
     const timer = window.setTimeout(() => void load(), 0);
-    return () => window.clearTimeout(timer);
-  }, [load]);
+    const poll = window.setInterval(() => void load(), 15_000);
+    const subscription = connection.onProgramAccountChange(CANOPY_ID, () => {
+      window.clearTimeout(debounce);
+      debounce = window.setTimeout(() => void load(), 500);
+    }, "confirmed");
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(debounce);
+      window.clearInterval(poll);
+      void connection.removeProgramAccountChangeListener(subscription);
+    };
+  }, [connection, load]);
+
+  const visibleGroves = useMemo(
+    () => (groves ?? []).filter((grove) => grove.metadata.tokens.length > 0),
+    [groves],
+  );
 
   const aggregate = useMemo(() => {
-    const rows = groves ?? [];
+    const rows = visibleGroves;
     const tvl = rows.reduce((sum, item) => sum + item.total, 0n);
     const shares = rows.reduce((sum, item) => sum + item.shareCount, 0);
     const active = rows.filter((item) => item.status === 0).length;
     const goal = rows.reduce((sum, item) => sum + item.goal, 0n);
     const progress = goal > 0n ? Math.min(100, Number(tvl) / Number(goal) * 100) : 0;
-    return { tvl, shares, active, progress };
-  }, [groves]);
+    let running = 0;
+    const fundingSeries = [0];
+    for (const row of rows) {
+      for (let index = 1; index < row.fundingSeries.length; index += 1) {
+        running += row.fundingSeries[index] - row.fundingSeries[index - 1];
+        fundingSeries.push(running);
+      }
+    }
+    if (fundingSeries.length === 1) fundingSeries.push(0);
+    return { tvl, shares, active, progress, fundingSeries };
+  }, [visibleGroves]);
 
   async function create() {
     if (!publicKey) return;
@@ -114,7 +178,8 @@ export default function SectorList() {
     setError(null);
     setBusy(true);
     try {
-      const nonce = BigInt(Date.now() % 100000) * 1000n + BigInt(Math.floor(Math.random() * 1000));
+      const nonceBytes = crypto.getRandomValues(new Uint8Array(8));
+      const nonce = new DataView(nonceBytes.buffer).getBigUint64(0, true);
       const grove = grovePda(publicKey, nonce);
       const ix = buildCreateGrove({
         creator: publicKey,
@@ -147,12 +212,35 @@ export default function SectorList() {
         connection
       );
       await connection.confirmTransaction(sig, "confirmed");
+      cacheVaultMetadata(grove.toBase58(), metadata);
+      const account = await connection.getAccountInfo(grove, "confirmed");
+      const parsed = account ? parseGrove(new Uint8Array(account.data)) : {
+        creator: publicKey.toBase58(),
+        nonce,
+        quoteMint: MUSDC.toBase58(),
+        vault: ata(MUSDC, grove).toBase58(),
+        goal: BigInt(Math.round(parseFloat(goal || "0") * 1e6)),
+        deadline: BigInt(Math.floor(Date.now() / 1000) + parseFloat(days || "0") * 86400),
+        minDeposit: BigInt(Math.round(parseFloat(minDep || "0") * 1e6)),
+        total: 0n,
+        shareCount: 0,
+        status: 0,
+        bump: 0,
+      };
+      const created: GroveRow = {
+        address: grove.toBase58(),
+        ...parsed,
+        metadata,
+        fundingSeries: [0, 0],
+      };
+      setGroves((current) => [created, ...(current ?? []).filter((item) => item.address !== created.address)]);
+      setCreatedAddress(created.address);
       setShowCreate(false);
       setName("");
       setDescription("");
       setLink("");
-      setSelectedAssets(["NVDAx", "AAPLx", "TSLAx"]);
-      await load();
+      setSelectedAssets([]);
+      window.setTimeout(() => void load(), 1_500);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       if (msg.includes("GoalNotMet") || msg.includes("6009")) setError("The goal is invalid. Try a lower amount.");
@@ -174,7 +262,7 @@ export default function SectorList() {
         </div>
         <div className="vault-command-chart">
           <div className="vault-chart-head"><span>VAULT FUNDING</span><strong>{aggregate.progress.toFixed(1)}%</strong></div>
-          <FundingCurve values={seededFundingSeries("canopy-network", aggregate.progress)} label="Aggregate vault funding curve" />
+          <FundingCurve values={aggregate.fundingSeries} label="Cumulative verified vault deposits" />
         </div>
         <div className="vault-command-stats">
           <div><span>Active cycles</span><strong>{groves === null ? "—" : aggregate.active}</strong></div>
@@ -186,7 +274,7 @@ export default function SectorList() {
       <div className="vault-toolbar">
         <div>
           <p className="vault-section-label">LIVE VAULTS</p>
-          <p className="vault-toolbar-copy">{groves === null ? "Reading on-chain accounts…" : `${groves.length} funding cycles found`}</p>
+          <p className="vault-toolbar-copy">{groves === null ? "Reading on-chain accounts…" : `${visibleGroves.length} published on-chain ${visibleGroves.length === 1 ? "vault" : "vaults"}`}</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => void load()} className="btn-ghost px-4 py-2 text-sm">Refresh data</button>
@@ -218,14 +306,15 @@ export default function SectorList() {
           <label><span>Funding goal</span><div className="vault-input"><i>$</i><input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100" /></div><small>Minimum $1.00</small></label>
           <label><span>Minimum position</span><div className="vault-input"><i>$</i><input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2" /></div><small>Per collectible</small></label>
           <label><span>Funding window</span><div className="vault-input"><input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5" /><i>days</i></div><small>Until cycle close</small></label>
-          <button onClick={create} disabled={busy} className="btn-primary vault-create-submit">{busy ? "Creating…" : "Launch cycle →"}</button>
+          <button onClick={create} disabled={busy} className="btn-primary vault-create-submit">{busy ? "Creating on-chain…" : "Create on-chain vault →"}</button>
         </div>
       )}
       {error && <p className="vault-error">{error}</p>}
+      {createdAddress && <p className="vault-success">Vault created on-chain. <Link href={`/sectors/${createdAddress}`}>Open vault ↗</Link></p>}
 
       <div className="vault-grid">
         {groves === null && [0, 1, 2, 3].map((i) => <div key={i} className="vault-card vault-card-loading" />)}
-        {groves?.map((grove, index) => {
+        {visibleGroves.map((grove, index) => {
           const pct = grove.goal > 0n ? Math.min(100, Number(grove.total) / Number(grove.goal) * 100) : 0;
           const nav = grove.shareCount > 0 ? Number(grove.total) / 1e6 / grove.shareCount : 0;
           return (
@@ -248,7 +337,7 @@ export default function SectorList() {
                 <span className="vault-open-arrow">↗</span>
               </div>
               <div className="vault-card-chart-head"><span>Funding curve</span><strong>{pct.toFixed(0)}%</strong></div>
-              <FundingCurve compact values={seededFundingSeries(grove.address, pct)} label={`Funding progress for vault ${grove.address}`} />
+              <FundingCurve compact values={grove.fundingSeries} label={`Verified deposits for vault ${grove.address}`} />
               <div className="vault-card-metrics">
                 <div><span>NAV / position</span><strong>${nav.toFixed(2)}</strong></div>
                 <div><span>Goal</span><strong>{fmtUSD(grove.goal, 0)}</strong></div>
@@ -263,7 +352,7 @@ export default function SectorList() {
         })}
       </div>
 
-      {groves?.length === 0 && (
+      {groves !== null && visibleGroves.length === 0 && (
         <div className="vault-empty">
           <span>01</span><h3>Start the first funding cycle.</h3><p>Create a vault, set a target, and mint a collectible for every deposit.</p>
           {connected && <button type="button" onClick={() => setShowCreate(true)} className="btn-primary mt-5">Create the first vault</button>}

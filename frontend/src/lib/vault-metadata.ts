@@ -2,6 +2,7 @@ import { PublicKey, TransactionInstruction, type Connection } from "@solana/web3
 
 const MEMO_PROGRAM = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 const PREFIX = "CANOPY_VAULT:";
+const CACHE_PREFIX = "canopy:vault-metadata:";
 
 export type VaultMetadata = {
   name: string;
@@ -24,6 +25,27 @@ export function fallbackVaultMetadata(address: string): VaultMetadata {
     link: null,
     tokens: [],
   };
+}
+
+function readCachedVaultMetadata(address: string): VaultMetadata | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(`${CACHE_PREFIX}${address}`);
+    if (!raw) return null;
+    const metadata = JSON.parse(raw) as VaultMetadata;
+    return metadata.name && metadata.description && Array.isArray(metadata.tokens) ? metadata : null;
+  } catch {
+    return null;
+  }
+}
+
+export function cacheVaultMetadata(address: string, metadata: VaultMetadata) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(`${CACHE_PREFIX}${address}`, JSON.stringify(metadata));
+  } catch {
+    // On-chain memo lookup remains the source of truth when storage is unavailable.
+  }
 }
 
 export function normalizeVaultLink(value: string): string | null {
@@ -98,14 +120,71 @@ export async function loadVaultMetadata(
   connection: Connection,
   address: string
 ): Promise<VaultMetadata> {
+  const cached = readCachedVaultMetadata(address);
+  if (cached) return cached;
   try {
     const signatures = await connection.getSignaturesForAddress(new PublicKey(address), { limit: 8 });
     for (const signature of signatures) {
       const metadata = parseVaultMemo(signature.memo, address);
-      if (metadata) return metadata;
+      if (metadata) {
+        cacheVaultMetadata(address, metadata);
+        return metadata;
+      }
     }
   } catch {
     // The on-chain vault still has a stable address-based identity.
   }
   return fallbackVaultMetadata(address);
+}
+
+/** Fetch memo-backed metadata in one RPC batch to avoid rate-limiting the vault index. */
+export async function loadVaultMetadataBatch(
+  connection: Connection,
+  addresses: string[],
+): Promise<Map<string, VaultMetadata>> {
+  const result = new Map<string, VaultMetadata>();
+  const missing: string[] = [];
+
+  for (const address of addresses) {
+    const cached = readCachedVaultMetadata(address);
+    if (cached) result.set(address, cached);
+    else missing.push(address);
+  }
+
+  if (missing.length > 0) {
+    try {
+      const response = await fetch(connection.rpcEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(missing.map((address, index) => ({
+          jsonrpc: "2.0",
+          id: index + 1,
+          method: "getSignaturesForAddress",
+          params: [address, { limit: 8, commitment: "confirmed" }],
+        }))),
+      });
+      if (!response.ok) throw new Error(`Metadata RPC returned ${response.status}`);
+      const payload = await response.json() as Array<{
+        id: number;
+        result?: Array<{ memo: string | null }>;
+      }>;
+      const byId = new Map(payload.map((entry) => [entry.id, entry.result ?? []]));
+      missing.forEach((address, index) => {
+        for (const signature of byId.get(index + 1) ?? []) {
+          const metadata = parseVaultMemo(signature.memo, address);
+          if (!metadata) continue;
+          result.set(address, metadata);
+          cacheVaultMetadata(address, metadata);
+          break;
+        }
+      });
+    } catch {
+      // Address fallbacks below keep account discovery independent of metadata RPCs.
+    }
+  }
+
+  for (const address of addresses) {
+    if (!result.has(address)) result.set(address, fallbackVaultMetadata(address));
+  }
+  return result;
 }

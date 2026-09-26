@@ -71,16 +71,3 @@ export function VaultCycle({
     </div>
   );
 }
-
-export function seededFundingSeries(address: string, progress: number): number[] {
-  let seed = 0;
-  for (const char of address) seed = (seed * 31 + char.charCodeAt(0)) >>> 0;
-  const end = Math.max(progress, 0.5);
-  const weights = Array.from({ length: 7 }, (_, i) => 0.65 + (((seed >> (i % 16)) & 15) / 18));
-  const sum = weights.reduce((a, b) => a + b, 0);
-  let running = 0;
-  return [0, ...weights.map((weight) => {
-    running += weight;
-    return (running / sum) * end;
-  })];
-}
