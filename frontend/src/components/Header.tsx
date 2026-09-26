@@ -42,7 +42,19 @@ export default function Header() {
             <Link href="/sectors">Vaults</Link>
             <a href="#how">How it works</a>
           </nav>
-          <Link href="/app" className="btn-primary landing-launch">Enter app <span>↗</span></Link>
+          <div className="landing-header-actions">
+            <details className="landing-menu">
+              <summary aria-label="Open navigation">
+                <span></span><span></span>
+              </summary>
+              <nav aria-label="Mobile website navigation">
+                <Link href="/markets"><span>01</span> Stocks</Link>
+                <Link href="/sectors"><span>02</span> Vaults</Link>
+                <a href="#how"><span>03</span> How it works</a>
+              </nav>
+            </details>
+            <Link href="/app" className="btn-primary landing-launch">Enter app <span>↗</span></Link>
+          </div>
         </div>
       </header>
     );
