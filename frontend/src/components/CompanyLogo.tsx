@@ -15,6 +15,7 @@ const LOGOS: Record<string, string> = {
   OPENAI: "/company-logos/OPENAI.png",
   POLYMARKET: "/company-logos/POLYMARKET.png",
   SPACEX: "/company-logos/SPACEX.png",
+  USDC: "/company-logos/USDC.svg",
 };
 
 export default function CompanyLogo({

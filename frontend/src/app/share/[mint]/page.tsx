@@ -106,9 +106,9 @@ export default async function SharePage({ params, searchParams }: PageProps) {
             </div>
             <div className="position-ledger">
               <span>Token target <strong>{tokenSet.map((token) => token.symbol).join(" · ")}</strong></span>
-              <span>Held in vault <strong>mUSDC</strong></span>
+              <span>Held in vault <strong className="quote-inline"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo" />USDC</strong></span>
             </div>
-            <p className="position-truth">This Share records a claim on the vault. The token set above is its signed allocation target; the current vault still holds mUSDC until basket execution is added to the program.</p>
+            <p className="position-truth">This Share records a claim on the vault. The token set above is its signed allocation target; the current vault still holds USDC until basket execution is added to the program.</p>
           </section>
         )}
 

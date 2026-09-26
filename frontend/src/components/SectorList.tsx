@@ -257,7 +257,7 @@ export default function SectorList() {
         <div className="vault-command-copy">
           <span className="live-label"><i /> ONCHAIN NOW</span>
           <p className="vault-command-eyebrow">Collective vault value</p>
-          <p className="vault-command-value">{groves === null ? "—" : fmtUSD(aggregate.tvl)}</p>
+          <p className="vault-command-value"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-hero" />{groves === null ? "—" : fmtUSD(aggregate.tvl)}</p>
           <p className="vault-command-note">Every deposit creates a unique position. NAV follows the pooled balance.</p>
         </div>
         <div className="vault-command-chart">
@@ -303,8 +303,8 @@ export default function SectorList() {
               })}
             </div>
           </div>
-          <label><span>Funding goal</span><div className="vault-input"><i>$</i><input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100" /></div><small>Minimum $1.00</small></label>
-          <label><span>Minimum position</span><div className="vault-input"><i>$</i><input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2" /></div><small>Per collectible</small></label>
+          <label><span>Funding goal</span><div className="vault-input"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-input" /><input value={goal} onChange={(e) => setGoal(e.target.value)} inputMode="decimal" placeholder="100" /><i>USDC</i></div><small>Minimum 1.00 USDC</small></label>
+          <label><span>Minimum position</span><div className="vault-input"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-input" /><input value={minDep} onChange={(e) => setMinDep(e.target.value)} inputMode="decimal" placeholder="2" /><i>USDC</i></div><small>Per collectible</small></label>
           <label><span>Funding window</span><div className="vault-input"><input value={days} onChange={(e) => setDays(e.target.value)} inputMode="decimal" placeholder="5" /><i>days</i></div><small>Until cycle close</small></label>
           <button onClick={create} disabled={busy} className="btn-primary vault-create-submit">{busy ? "Creating on-chain…" : "Create on-chain vault →"}</button>
         </div>
@@ -333,7 +333,7 @@ export default function SectorList() {
                 <p>{grove.metadata.tokens.map((token) => `${token.symbol} ${(token.weightBps / 100).toFixed(0)}%`).join(" · ")}</p>
               </div>}
               <div className="vault-card-value-row">
-                <div><small>VAULT VALUE</small><strong>{fmtUSD(grove.total)}</strong></div>
+                <div><small className="vault-quote-label"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo" />USDC VAULT VALUE</small><strong>{fmtUSD(grove.total)}</strong></div>
                 <span className="vault-open-arrow">↗</span>
               </div>
               <div className="vault-card-chart-head"><span>Funding curve</span><strong>{pct.toFixed(0)}%</strong></div>

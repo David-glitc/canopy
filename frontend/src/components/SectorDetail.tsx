@@ -370,9 +370,9 @@ export default function SectorDetail({ address }: { address: string }) {
               <i>↗</i>
             </a>)}
           </div>}
-          <p className="vault-detail-label">TOTAL VAULT VALUE</p>
+          <p className="vault-detail-label vault-quote-label"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo" />TOTAL VAULT VALUE</p>
           <div className="vault-detail-value">
-            <strong>${(Number(balance) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+            <div className="quote-value-large"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-value" /><strong>${(Number(balance) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong></div>
             <span>{pct.toFixed(1)}% funded</span>
           </div>
           <div className="vault-detail-chart-head">
@@ -391,7 +391,7 @@ export default function SectorDetail({ address }: { address: string }) {
             <div><span>Raised</span><strong>${(Number(grove.total) / 1e6).toFixed(2)}</strong></div>
             <div><span>Min. position</span><strong>${(Number(grove.minDeposit) / 1e6).toFixed(2)}</strong></div>
             <div><span>Collectors</span><strong>{grove.shareCount}</strong></div>
-            <div><span>Vault balance</span><strong>{vaultBal === null ? "Syncing" : `$${(Number(vaultBal) / 1e6).toFixed(2)}`}</strong></div>
+            <div><span>Vault balance</span><strong className="quote-inline">{vaultBal !== null && <CompanyLogo symbol="USDC" name="USDC" className="usdc-logo" />}{vaultBal === null ? "Syncing" : `$${(Number(vaultBal) / 1e6).toFixed(2)}`}</strong></div>
           </div>
           <div className="vault-timing">
             <div><span>CYCLE TIMING</span><strong>{timeLabel}</strong></div>
@@ -462,7 +462,7 @@ export default function SectorDetail({ address }: { address: string }) {
           <div className="glass rounded-2xl p-6">
             <h3 className="font-display font-bold">Add to your position</h3>
             <div className="mt-3 flex items-center gap-3">
-              <span className="text-2xl text-[var(--canopy-muted)]">$</span>
+              <CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-deposit" />
               <input
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
@@ -471,8 +471,8 @@ export default function SectorDetail({ address }: { address: string }) {
                 placeholder="5.00"
               />
             </div>
-            <p className="mt-2 font-mono2 text-sm text-[var(--canopy-muted)]">
-              Balance: {myBal === null ? "…" : `$${(Number(myBal) / 1e6).toFixed(2)} mUSDC`}
+            <p className="quote-balance mt-2 font-mono2 text-sm text-[var(--canopy-muted)]">
+              Balance: {myBal === null ? "…" : <><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo" /> ${(Number(myBal) / 1e6).toFixed(2)} USDC</>}
               {myBal !== null && myBal < 1_000_000n && (
                 <button onClick={faucet} disabled={busy !== null} className="ml-2 text-[var(--canopy-green)] no-underline transition-colors hover:text-[var(--canopy-text)] disabled:opacity-40">
                   Add mUSDC

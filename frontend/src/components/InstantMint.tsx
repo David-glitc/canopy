@@ -180,12 +180,11 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
             <p id="instant-amount-help" className="mt-1 text-sm text-[var(--canopy-muted)]">Minimum position · $1.50</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="status">Test network</span>
-            {connected && <button type="button" onClick={addFunds} disabled={busy !== null} className="btn-ghost btn-compact disabled:opacity-40">Add mUSDC</button>}
+            {connected && <button type="button" onClick={addFunds} disabled={busy !== null} className="btn-ghost btn-compact disabled:opacity-40">Add USDC</button>}
           </div>
         </div>
         <div className="mt-8 flex items-center gap-3 border-b border-[var(--canopy-line)] pb-5">
-          <span className="font-display text-4xl font-bold text-[var(--canopy-muted)]">$</span>
+          <CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-deposit" />
           <input
             id="instant-amount"
             value={usd}
@@ -215,7 +214,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           </div>
           <div className="flex justify-between">
             <span>Vault asset</span>
-            <span className="text-[var(--canopy-text)]">mUSDC</span>
+            <span className="quote-inline text-[var(--canopy-text)]"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo" />USDC</span>
           </div>
         </div>
         <button
@@ -234,7 +233,7 @@ export default function InstantMint({ asset }: { asset?: SelectedAsset }) {
           </p>
         )}
         <p className="mt-4 text-pretty text-xs leading-relaxed text-[var(--canopy-muted)]">
-          {asset ? `${asset.symbol} is encoded as the allocation target. This transaction deposits mUSDC; it does not execute the stock swap.` : "Choose a stock first to encode a token-set target."}
+          {asset ? `${asset.symbol} is encoded as the allocation target. This transaction deposits USDC; it does not execute the stock swap.` : "Choose a stock first to encode a token-set target."}
         </p>
       </div>
 

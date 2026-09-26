@@ -369,6 +369,14 @@ button:disabled { cursor: not-allowed; }
 .company-logo { position: relative; display: grid; flex: 0 0 auto; place-items: center; overflow: hidden; background: var(--paper); color: white; }
 .company-logo img { width: 100%; height: 100%; object-fit: contain; }
 .company-logo-fallback { font-size: .75rem; font-weight: 750; }
+.usdc-logo { width: 1rem; height: 1rem; border-radius: 50%; background: transparent; }
+.usdc-logo-input { width: 1.15rem; height: 1.15rem; }
+.usdc-logo-hero { width: .52em; height: .52em; }
+.usdc-logo-value { width: clamp(2rem,4vw,3.4rem); height: clamp(2rem,4vw,3.4rem); }
+.usdc-logo-deposit { width: 2rem; height: 2rem; }
+.quote-inline, .vault-quote-label { display: inline-flex !important; align-items: center; gap: .38rem; }
+.quote-balance .company-logo { display: inline-grid; vertical-align: -.15em; }
+.quote-value-large { display: flex; align-items: center; gap: .75rem; }
 .market-card-logo { width: 2.75rem; height: 2.75rem; border-radius: .9rem; }
 .price-feed-logo { width: 2.5rem; height: 2.5rem; border-radius: .78rem; }
 .market-card-contract { color: var(--quiet); font: 500 .69rem/1.3 var(--font-mono); }
@@ -437,7 +445,7 @@ button:disabled { cursor: not-allowed; }
 .live-label { display: inline-flex; width: max-content; align-items: center; gap: .5rem; padding: .45rem .65rem; border: 1px solid rgba(122,226,165,.16); border-radius: 999px; background: rgba(122,226,165,.06); color: #8ae8b0; font: 650 .68rem/1 var(--font-mono); letter-spacing: .04em; }
 .live-label i { width: .42rem; height: .42rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
 .vault-command-eyebrow { margin-top: auto; color: var(--muted); font-size: .75rem; font-weight: 650; text-transform: uppercase; letter-spacing: .06em; }
-.vault-command-value { margin-top: .5rem; font-size: clamp(3.1rem,6vw,5.6rem); line-height: .85; letter-spacing: -.075em; font-weight: 780; font-variant-numeric: tabular-nums; }
+.vault-command-value { display: flex; align-items: center; gap: .65rem; margin-top: .5rem; font-size: clamp(3.1rem,6vw,5.6rem); line-height: .85; letter-spacing: -.075em; font-weight: 780; font-variant-numeric: tabular-nums; }
 .vault-command-note { max-width: 24rem; margin-top: 1.25rem; color: var(--muted); font-size: .82rem; line-height: 1.55; }
 .vault-command-chart { align-self: end; padding: 2rem 0 1.5rem; }
 .vault-chart-head, .vault-card-chart-head, .vault-detail-chart-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--muted); font: 620 .68rem/1 var(--font-mono); letter-spacing: .08em; }
