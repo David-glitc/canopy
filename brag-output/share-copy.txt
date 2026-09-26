@@ -1,8 +1,1 @@
-What if a stock position opened like a booster pack?
-
-Canopy turns tokenized stocks into collectible Digital Matter. Browse xStocks and the official PreStocks catalog, mint a solo Share, or fund a 2–5-token group vault. Transaction data becomes the artifact's verifiable DNA.
-
-Built on Solana with PreStocks discovery and Pyth market data.
-
-Try it: https://xcanopy.vercel.app
-
+Canopy turns tokenized-stock positions into collectible, transferable claims — with live NAV, evolving Digital Matter, and bonded decision markets for vault composition. Built with PreStocks, Pyth, and Solana. https://xcanopy.vercel.app

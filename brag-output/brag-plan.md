@@ -1,54 +1,45 @@
-# Canopy demo video plan
+# Canopy demo film
 
-## Context
+## Audience and setting
 
-- **Audience:** STOCKLANA judges evaluating product clarity, sponsor integration, and working implementation.
-- **Setting:** standalone recorded product demo, watched with or without sound.
-- **Format:** 16:9 landscape, 1920×1080, 30 fps, approximately 52 seconds.
-- **Tone:** polished, cinematic product film with the restraint of a financial interface.
-- **Voice:** off. Every claim must be understandable from the picture and captions.
+A standalone 80-second product demo for hackathon judges. It must work with sound off, while narration and music make it feel like a deliberate product edit.
 
 ## Three messages
 
-1. Canopy turns a tokenized-stock position into collectible Digital Matter.
-2. Users can mint from one stock immediately or fund a 2–5-token group vault.
-3. PreStocks discovery, Pyth market data, Solana records, and deterministic DNA make the experience inspectable.
+1. A Canopy Share is a transferable NFT claim on a tokenized-stock vault position.
+2. The demo account makes ownership legible through NAV, allocation, redemption state, and evolving Digital Matter.
+3. Owners can bond composition changes and let PASS/FAIL markets produce an auditable vault decision.
 
-## Product evidence
+## Angle
 
-- Public landing page and collectible specimen.
-- Live app catalog containing xStocks and official PreStocks markets.
-- A selected AAPLx position carried into the instant mint screen.
-- Group vault interface with named stock sets, NAV, timing, and progress.
-- Digital Matter page showing real-time trait assembly.
-- Rankings screen showing the collection loop beyond minting.
+**A balance is data. A claim is identity.** Start with the familiar stock catalog, then reveal the new object Canopy creates: a collectible that carries the ownership claim and can participate in the vault's future.
 
-## Creative angle
+## User flow
 
-**The market, opened like a collectible.** The video begins with the familiar tension of opening a booster pack, then proves that the object is backed by legible market data and an onchain position. Large type creates the hook; real UI occupies most of the runtime.
+Discover xStocks and PreStocks → mint solo or enter a group vault → inspect the demo owner's Share and claim NAV → propose a NAV reweight → observe the PASS/FAIL decision market → close on the sponsor and protocol stack.
 
 ## Storyboard
 
-| Time | Scene | Picture | On-screen copy | Motion / sound |
-|---:|---|---|---|---|
-| 0–3s | Hook | Black graphite field, Canopy mark resolves from small tiles | WHAT IF A STOCK POSITION\nOPENED LIKE A BOOSTER PACK? | Tight bass hit, type rises and settles |
-| 3–7s | Brand reveal | Landing UI floats into a framed browser canvas | CANOPY · STOCKS BECOME DIGITAL MATTER | Slow push-in, soft interface click |
-| 7–15s | Catalog | App and market screens pan through xStocks and PreStocks rows | PUBLIC STOCKS + PRE-IPO MARKETS\nONE LIVE CATALOG | Cursor focus and row highlights |
-| 15–23s | Instant | AAPLx selected in the instant mint interface | PICK A TOKEN. SET A POSITION. MINT. | Crop moves from token identity to mint controls |
-| 23–32s | Vaults | Group-vault overview and stock-set cards | FUND 2–5 STOCK TOKENS TOGETHER\nEVERY SHARE STAYS ABOVE ZERO | Progress rail draws on, token marks stagger |
-| 32–41s | DNA | Digital Matter engine with trait paths and specimen | ECONOMICS ASSEMBLE THE ARTIFACT\nAT REVEAL TIME | Fine path-draw accents, restrained glow |
-| 41–48s | Proof | Sponsor/technical proof panel over real UI | PRESTOCKS DISCOVERY · PYTH DATA\nSOLANA OWNERSHIP · AUDITABLE DNA | Proof labels enter one beat apart |
-| 48–54s | Close | Canopy mark and URL | COLLECT THE MARKET.\nXCANOPY.VERCEL.APP | Mark locks up, final low hit, two-second hold |
+| Time | Beat | Picture | On-screen message |
+|---:|---|---|---|
+| 0–5s | Hook | Canopy mark and floating Share card | A balance is data. A claim is identity. |
+| 5–10s | Object | Live landing UI | A transferable claim, not a skin. |
+| 10–19s | Entry | Live market and instant-mint UI | Public stocks + PreStocks. Mint solo or fund together. |
+| 19–34s | Demo owner | Maya demo account, NAV chart, inventory | $12,842 claim NAV · 7 collectibles · 18.4% voting power |
+| 34–47s | Moat | Close crop of Share #2841 | The collectible is the position. |
+| 47–63s | Governance | Reweight proposal and 67% PASS market | Propose → price → decide |
+| 63–71s | Proof | Four-row protocol stack | PreStocks · Pyth · Solana · Canopy Markets |
+| 71–80s | Close | Mark, thesis, live URL | Collect the market. |
 
-## Readability rules
+## Audio direction
 
-- At most two lines of primary copy per beat.
-- UI remains on screen for at least six seconds per product beat.
-- Lime is reserved for action/proof; lavender marks identity/DNA.
-- Transitions use opacity, translate, and scale only.
-- No sponsor or technical claim appears without a supporting product screen.
+Natural voiceover explains what the UI proves instead of reading headings. A polished ende.app music bed sits at 16% beneath the narration. Seven restrained clicks and soft impacts accent scene changes and the governance reveal.
 
-## Why this exceeds the default 25-second brag format
+## Visual identity
 
-This is a hackathon judge demo rather than a social teaser. The extra runtime is used to show working sponsor integrations and distinct solo, vault, and DNA surfaces; it does not add abstract filler.
-
+- Background: `#09080b`
+- Panel: `#17151b`
+- Text: `#f4f2f7`
+- Action: `#d7ff72`
+- Identity: `#b89af4`
+- Format: 1920×1080, 30 fps, 80 seconds

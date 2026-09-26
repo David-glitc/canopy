@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 import { FundingCurve, VaultCycle } from "@/components/VaultVisuals";
 import { fallbackVaultMetadata, loadVaultMetadata, type VaultMetadata } from "@/lib/vault-metadata";
 import CompanyLogo from "@/components/CompanyLogo";
+import { buildInitDecisionMarket } from "@/lib/futarchy-ix";
 
 type RecRow = RecordData & { address: string };
 
@@ -56,6 +57,10 @@ export default function SectorDetail({ address }: { address: string }) {
   const [myBal, setMyBal] = useState<bigint | null>(null);
   const [networkTime, setNetworkTime] = useState<number | null>(null);
   const [metadata, setMetadata] = useState<VaultMetadata>(() => fallbackVaultMetadata(address));
+  const [proposalOpen, setProposalOpen] = useState(false);
+  const [proposalReason, setProposalReason] = useState("");
+  const [proposalWeights, setProposalWeights] = useState<Record<string, string>>({});
+  const [proposalLabels, setProposalLabels] = useState<Record<string, string>>({});
 
   const grovePk = useMemo(() => new PublicKey(address), [address]);
 
@@ -133,6 +138,30 @@ export default function SectorDetail({ address }: { address: string }) {
       void connection.removeAccountChangeListener(subscription);
     };
   }, [connection, grovePk, load]);
+
+  useEffect(() => {
+    if (metadata.tokens.length === 0) return;
+    setProposalWeights((current) => {
+      if (Object.keys(current).length > 0) return current;
+      return Object.fromEntries(metadata.tokens.map((token) => [token.symbol, String(token.weightBps / 100)]));
+    });
+  }, [metadata.tokens]);
+
+  useEffect(() => {
+    if (!markets) return;
+    const labels: Record<string, string> = {};
+    for (const market of markets) {
+      const saved = window.localStorage.getItem(`canopy:proposal:${market.address}`);
+      if (!saved) continue;
+      try {
+        const parsed = JSON.parse(saved) as { title?: string };
+        if (parsed.title) labels[market.address] = parsed.title;
+      } catch {
+        /* ignore malformed local proposal labels */
+      }
+    }
+    setProposalLabels(labels);
+  }, [markets]);
 
   async function run(label: string, fn: () => Promise<void>) {
     setError(null);
@@ -333,6 +362,62 @@ export default function SectorDetail({ address }: { address: string }) {
     });
   }
 
+  async function createProposal() {
+    if (!publicKey || !grove) return;
+    const weights = metadata.tokens.map((token) => ({
+      symbol: token.symbol,
+      weight: Number(proposalWeights[token.symbol] ?? token.weightBps / 100),
+    }));
+    const total = weights.reduce((sum, token) => sum + token.weight, 0);
+    if (weights.length < 2) {
+      setError("This vault needs at least two published assets before it can be reweighted.");
+      return;
+    }
+    if (weights.some((token) => !Number.isFinite(token.weight) || token.weight < 0) || Math.abs(total - 100) > 0.01) {
+      setError("Proposal weights must be positive and total exactly 100%.");
+      return;
+    }
+    if (!proposalReason.trim()) {
+      setError("Add a short reason for the proposed change.");
+      return;
+    }
+    if (myBal !== null && myBal < 1_000_000n) {
+      setError("A proposal needs a 1 USDC bond. Add demo USDC from the Deposit tab first.");
+      return;
+    }
+
+    await run("Publishing market…", async () => {
+      const proposalId = (markets?.reduce((max, market) => market.proposalId > max ? market.proposalId : max, 0n) ?? 0n) + 1n;
+      const now = BigInt(Math.floor(Date.now() / 1000));
+      const built = buildInitDecisionMarket({
+        proposer: publicKey,
+        grove: grovePk,
+        proposalId,
+        bond: 1_000_000n,
+        seed: 500_000n,
+        opensAt: now - 5n,
+        closesAt: now + 86_400n,
+      });
+      const title = `Reweight to ${weights.map((token) => `${token.symbol} ${token.weight}%`).join(" · ")}`;
+      const transaction = new Transaction().add(
+        ComputeBudgetProgram.setComputeUnitLimit({ units: 600_000 }),
+        built.instruction
+      );
+      const signature = await sendTransaction(transaction, connection, {
+        signers: [built.passMint, built.failMint],
+      });
+      await connection.confirmTransaction(signature, "confirmed");
+      window.localStorage.setItem(`canopy:proposal:${built.market.toBase58()}`, JSON.stringify({
+        title,
+        reason: proposalReason.trim().slice(0, 160),
+        weights,
+        proposer: publicKey.toBase58(),
+      }));
+      setProposalOpen(false);
+      setProposalReason("");
+    });
+  }
+
   const pct = grove.goal > 0n ? Math.min(100, (Number(grove.total) / Number(grove.goal)) * 100) : 0;
   const balance = vaultBal ?? grove.total;
   const nav = grove.shareCount > 0 ? Number(balance) / 1e6 / grove.shareCount : 0;
@@ -528,6 +613,35 @@ export default function SectorDetail({ address }: { address: string }) {
 
       {tab === "govern" && (
         <div className="mt-6 space-y-3">
+          <section className="decision-intro">
+            <div>
+              <p className="vault-section-label">BONDED GOVERNANCE</p>
+              <h3>Change the vault through a market.</h3>
+              <p>Any member can propose a new NAV composition by bonding 1 USDC. PASS and FAIL positions make conviction legible; silence keeps the current allocation.</p>
+            </div>
+            <button type="button" className="btn-primary" onClick={() => setProposalOpen((open) => !open)} disabled={!connected}>
+              {proposalOpen ? "Close composer" : connected ? "New proposal" : "Connect to propose"}
+            </button>
+          </section>
+
+          {proposalOpen && (
+            <section className="decision-composer">
+              <div className="decision-composer-head"><div><span>NAV REWEIGHT</span><h3>Set the composition if PASS wins.</h3></div><strong>1 USDC bond · 24h market</strong></div>
+              <div className="decision-weight-grid">
+                {metadata.tokens.map((token) => (
+                  <label key={token.mint}>
+                    <CompanyLogo symbol={token.symbol} name={token.symbol} />
+                    <span><strong>{token.symbol}</strong><small>Current {(token.weightBps / 100).toFixed(0)}%</small></span>
+                    <input type="number" min="0" max="100" step="1" value={proposalWeights[token.symbol] ?? ""} onChange={(event) => setProposalWeights((weights) => ({ ...weights, [token.symbol]: event.target.value }))} aria-label={`${token.symbol} proposed weight`} />
+                    <b>%</b>
+                  </label>
+                ))}
+              </div>
+              <label className="decision-reason"><span>WHY SHOULD THE MARKET PASS THIS?</span><input value={proposalReason} onChange={(event) => setProposalReason(event.target.value)} maxLength={160} placeholder="Example: Increase compute exposure before earnings" /></label>
+              <div className="decision-composer-foot"><p>The decision is recorded by Canopy Markets. Vault execution follows the published adapter for this token set.</p><button type="button" className="btn-primary" onClick={() => void createProposal()} disabled={busy !== null}>{busy ?? "Publish PASS / FAIL market"}</button></div>
+            </section>
+          )}
+
           {markets === null && <div className="glass h-24 animate-pulse rounded-2xl" />}
           {markets?.map((m) => {
             const price = marketPrice(m);
@@ -535,7 +649,7 @@ export default function SectorDetail({ address }: { address: string }) {
             return (
               <div key={m.address} className="glass rounded-2xl p-5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="font-mono2 text-sm font-bold">Proposal #{m.proposalId.toString()}</p>
+                  <p className="font-mono2 text-sm font-bold">{proposalLabels[m.address] ?? `Proposal #${m.proposalId.toString()}`}</p>
                   <span className={cn(
                     "rounded-full px-3 py-1 font-mono2 text-sm",
                     m.decided ? (m.passed ? "bg-[rgba(23,107,75,0.1)] text-[var(--canopy-green)]" : "bg-[var(--panel-2)] text-[var(--canopy-muted)]") : "bg-[rgba(91,85,201,0.1)] text-[var(--canopy-purple)]"

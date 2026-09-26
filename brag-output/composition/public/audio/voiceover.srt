@@ -1,0 +1,88 @@
+1
+00:00:00,050 --> 00:00:02,422
+Buying tokenized stock is easy.
+
+2
+00:00:02,422 --> 00:00:05,206
+But ownership still looks like a balance.
+
+3
+00:00:05,206 --> 00:00:10,012
+Canopy turns a stock position into a collectible, transferable claim.
+
+4
+00:00:10,012 --> 00:00:13,994
+Start with public xStocks or private-market PreStocks.
+
+5
+00:00:13,994 --> 00:00:18,930
+Fund one asset instantly, or enter a group vault with USDC.
+
+6
+00:00:18,930 --> 00:00:22,706
+This demo account owns seven pieces of Digital Matter.
+
+7
+00:00:22,706 --> 00:00:30,798
+Every card points back to a vault record: claim percentage, current NAV, composition, and redemption state.
+
+8
+00:00:30,798 --> 00:00:32,422
+The art can evolve.
+
+9
+00:00:32,422 --> 00:00:33,840
+The claim cannot.
+
+10
+00:00:33,840 --> 00:00:35,283
+Here is the moat.
+
+11
+00:00:35,283 --> 00:00:39,458
+The collectible is not a profile picture layered on finance.
+
+12
+00:00:39,458 --> 00:00:46,585
+It is the financial position, with identity assembled from allocation, ownership, market history, and time.
+
+13
+00:00:46,585 --> 00:00:48,749
+And the vault is not frozen.
+
+14
+00:00:48,749 --> 00:00:55,760
+Any owner can propose a new NAV composition, bond the change, and open PASS and FAIL positions.
+
+15
+00:00:55,760 --> 00:00:57,912
+Traders price the decision.
+
+16
+00:00:57,912 --> 00:01:02,783
+The time-weighted market chooses; silence preserves the current vault.
+
+17
+00:01:02,783 --> 00:01:04,613
+PreStocks discovery.
+
+18
+00:01:04,613 --> 00:01:06,430
+Pyth prices.
+
+19
+00:01:06,430 --> 00:01:08,143
+Solana ownership.
+
+20
+00:01:08,143 --> 00:01:10,154
+Bonded decision markets.
+
+21
+00:01:10,154 --> 00:01:14,922
+Canopy makes stock ownership collectible, governable, and legible.
+
+22
+00:01:14,922 --> 00:01:16,456
+Collect the market.
+

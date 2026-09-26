@@ -1,0 +1,17 @@
+Buying tokenized stock is easy. But ownership still looks like a balance.
+
+Canopy turns a stock position into a collectible, transferable claim.
+
+Start with public xStocks or private-market PreStocks. Fund one asset instantly, or enter a group vault with USDC.
+
+This demo account owns seven pieces of Digital Matter. Every card points back to a vault record: claim percentage, current NAV, composition, and redemption state. The art can evolve. The claim cannot.
+
+Here is the moat. The collectible is not a profile picture layered on finance. It is the financial position, with identity assembled from allocation, ownership, market history, and time.
+
+And the vault is not frozen. Any owner can propose a new NAV composition, bond the change, and open PASS and FAIL positions. Traders price the decision. The time-weighted market chooses; silence preserves the current vault.
+
+PreStocks discovery. Pyth prices. Solana ownership. Bonded decision markets.
+
+Canopy makes stock ownership collectible, governable, and legible.
+
+Collect the market.

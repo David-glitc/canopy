@@ -11,6 +11,7 @@ const pages = {
   vaults: '/sectors',
   matter: '/matter',
   rankings: '/leaderboard',
+  demo: '/demo',
 };
 
 (async () => {
@@ -24,6 +25,23 @@ const pages = {
     await page.close();
     process.stdout.write(`${name}\n`);
   }
+
+  const demo = await context.newPage();
+  await demo.goto(`${origin}/demo`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await demo.waitForTimeout(1500);
+  for (const [name, selector] of [
+    ['demo-portfolio', '[data-demo-shot="portfolio"]'],
+    ['demo-governance', '[data-demo-shot="governance"]'],
+    ['demo-moat', '[data-demo-shot="moat"]'],
+  ]) {
+    await demo.locator(selector).evaluate((element) => {
+      const top = element.getBoundingClientRect().top + window.scrollY - 92;
+      window.scrollTo({ top, behavior: 'instant' });
+    });
+    await demo.waitForTimeout(400);
+    await demo.screenshot({ path: path.join(__dirname, 'assets', `${name}.png`) });
+    process.stdout.write(`${name}\n`);
+  }
+  await demo.close();
   await browser.close();
 })();
-

@@ -46,6 +46,7 @@ export default function Header() {
           <nav className="landing-nav" aria-label="Website navigation">
             <Link href="/markets">Stocks</Link>
             <Link href="/sectors">Vaults</Link>
+            <Link href="/demo">Demo</Link>
             <a href="#how">How it works</a>
           </nav>
           <div className="landing-header-actions">
@@ -56,7 +57,8 @@ export default function Header() {
               <nav aria-label="Mobile website navigation">
                 <Link href="/markets"><span>01</span> Stocks</Link>
                 <Link href="/sectors"><span>02</span> Vaults</Link>
-                <a href="#how"><span>03</span> How it works</a>
+                <Link href="/demo"><span>03</span> Demo account</Link>
+                <a href="#how"><span>04</span> How it works</a>
               </nav>
             </details>
             <Link href="/app" className="btn-primary landing-launch">Enter app <span>↗</span></Link>

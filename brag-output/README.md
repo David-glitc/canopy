@@ -1,16 +1,8 @@
 # Canopy demo video
 
-Submission-ready product demo for Canopy.
+`canopy-demo.mp4` is the 80-second 1920×1080 submission master. It shows the current product, a clearly labeled demo account, the NFT ownership claim, live NAV and composition, and the bonded proposal/decision-market flow.
 
-## Deliverables
-
-- `canopy-demo.mp4` — 54-second 1920×1080 H.264/AAC master.
-- `brag.jpg` — social/video poster frame.
-- `share-copy.txt` — short launch copy.
-- `brag-plan.md` — narrative and shot plan.
-- `composition/` — editable Remotion source.
-
-## Re-render
+The editable Remotion project is in `composition/`. Re-render with:
 
 ```bash
 cd composition
@@ -18,5 +10,4 @@ npm install
 npm run render
 ```
 
-The composition uses product captures in `composition/public/assets`. After rendering, combine `canopy-demo-silent.mp4` with an audio track or use the existing final master.
-
+Audio uses an ende.app music bed bundled by the `latent-spaces/brag` skill and CC0 interface sounds, with a generated narration track and timed subtitles.
