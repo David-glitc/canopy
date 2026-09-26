@@ -38,11 +38,11 @@ export default function Header() {
             <span className="brand-copy"><strong>CANOPY</strong></span>
           </Link>
           <nav className="landing-nav" aria-label="Website navigation">
+            <Link href="/markets">Stocks</Link>
+            <Link href="/sectors">Vaults</Link>
             <a href="#how">How it works</a>
-            <a href="#ways-in">Ways in</a>
-            <Link href="/matter">DNA engine</Link>
           </nav>
-          <Link href="/app" className="btn-primary landing-launch">Open app <span>↗</span></Link>
+          <Link href="/app" className="btn-primary landing-launch">Enter app <span>↗</span></Link>
         </div>
       </header>
     );

@@ -1,60 +1,49 @@
 import Link from "next/link";
-import CompanyLogo from "@/components/CompanyLogo";
 import DigitalMatterLab from "@/components/DigitalMatterLab";
+import LandingVaultChart from "@/components/LandingVaultChart";
 
 export default function Home() {
   return (
     <div className="landing-page">
-      <section className="hero landing-hero">
-        <div className="shell hero-grid">
-          <div className="hero-copy-block">
-            <p className="page-kicker">Collectible stock ownership</p>
-            <h1 className="hero-title">Fund the basket. <span>Reveal your Share.</span></h1>
-            <p className="hero-copy">Pool capital into tokenized stocks. Mint sealed. Reveal a non-zero claim on the vault—and a one-of-one artifact built from the position.</p>
+      <section className="landing-hero">
+        <div className="shell landing-hero-grid">
+          <div className="landing-hero-copy">
+            <p className="page-kicker">Tokenized stock collectibles</p>
+            <h1>Collect stocks <span>like cards.</span></h1>
+            <p>Choose one stock or fund a basket. Mint sealed, reveal a non-zero Share, and let the position assemble its own identity.</p>
             <div className="hero-actions">
-              <Link href="/app" className="btn-primary">Open Canopy</Link>
-              <a href="#how" className="btn-secondary">How it works</a>
+              <Link href="/markets" className="btn-primary">Explore stocks <span>↗</span></Link>
+              <Link href="/sectors" className="btn-secondary">Browse vaults</Link>
             </div>
-            <div className="hero-note"><span><i />Weights total 100%</span><span><i />No zero outcomes</span><span><i />Verifiable DNA</span></div>
+            <div className="landing-hero-proof" aria-label="Protocol guarantees">
+              <span>Public + pre-IPO</span><span>Shares total 100%</span><span>Verifiable DNA</span>
+            </div>
           </div>
 
-          <div className="collectible-stage" aria-label="Canopy collectible backed by a stock token set">
-            <div className="specimen-card landing-specimen">
-              <div className="specimen-head"><span className="specimen-mark"><img src="/mark.svg" alt="" /></span><span className="specimen-series">VAULT SHARE · 01</span></div>
-              <div className="specimen-art landing-specimen-art">
-                <div className="landing-token-orbit">
-                  <CompanyLogo symbol="NVDA" name="NVIDIA" />
-                  <CompanyLogo symbol="AAPL" name="Apple" />
-                  <CompanyLogo symbol="OPENAI" name="OpenAI" />
-                </div>
-                <span className="specimen-symbol">12.4%</span>
-              </div>
-              <div className="specimen-foot"><span className="specimen-name">Mythic Share</span><span className="specimen-price"><strong>3 tokens</strong><span>claim weight</span></span></div>
-            </div>
-          </div>
+          <LandingVaultChart />
         </div>
       </section>
 
       <section id="how" className="landing-protocol">
         <div className="shell">
-          <div className="landing-section-head"><p className="page-kicker">The protocol</p><h2>Five moves. One real position.</h2></div>
+          <div className="landing-section-head"><p className="page-kicker">How it works</p><h2>Fund. Reveal. Own.</h2></div>
           <div className="protocol-rail">
             {["Fund", "Close", "Buy", "Reveal", "Own"].map((step, index) => <div key={step}><span>0{index + 1}</span><strong>{step}</strong></div>)}
           </div>
-          <p className="protocol-line">Deposit stablecoins → stocks enter the vault → bounded randomness assigns ownership → hold, trade, or redeem the Share.</p>
+          <p className="protocol-line">Deposit stablecoins. The vault closes, buys its token set, and reveals every Share. Nobody draws zero.</p>
         </div>
       </section>
 
       <section id="ways-in" className="shell landing-ways">
-        <div className="landing-section-head"><p className="page-kicker">Two ways in</p><h2>Pull solo. Reveal together.</h2></div>
+        <div className="landing-section-head"><p className="page-kicker">Two ways in</p><h2>Mint alone or pool together.</h2></div>
         <div className="landing-way-grid">
-          <Link href="/markets" className="landing-way-card"><span>01 · INSTANT</span><h3>Choose one stock.</h3><p>Create a micro-position and reveal its Digital Matter immediately.</p><strong>Explore markets ↗</strong></Link>
-          <Link href="/sectors" className="landing-way-card"><span>02 · GROUP VAULT</span><h3>Fund a token set.</h3><p>Join a named 2–5 stock vault, mint sealed, and reveal as a group.</p><strong>Browse vaults ↗</strong></Link>
+          <Link href="/markets" className="landing-way-card"><span>01 · INSTANT</span><h3>One stock.</h3><p>Choose a token, set the position, and reveal immediately.</p><strong>Explore stocks ↗</strong></Link>
+          <Link href="/sectors" className="landing-way-card"><span>02 · GROUP VAULT</span><h3>One basket.</h3><p>Fund a 2–5-token vault and reveal with the group.</p><strong>Browse vaults ↗</strong></Link>
         </div>
       </section>
 
       <section className="shell matter-home landing-matter">
-        <div className="matter-home-copy"><p className="page-kicker">Digital Matter</p><h2>Economics become identity.</h2><p>Basket, timing, deposit, and ownership weight assemble every artifact. No premade editions.</p><Link href="/matter" className="btn-secondary">Enter the DNA engine</Link></div>
+        <div className="matter-home-copy"><p className="page-kicker">Digital Matter</p><h2>The position becomes the character.</h2><p>Basket, timing, deposit, and ownership weight assemble the artifact at reveal.</p><Link href="/matter" className="btn-secondary">See the DNA engine</Link></div>
         <DigitalMatterLab compact />
       </section>
 
