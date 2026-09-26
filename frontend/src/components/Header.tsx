@@ -29,6 +29,12 @@ function Icon({ name }: { name: NavIcon }) {
 
 export default function Header() {
   const pathname = usePathname();
+  const appLinks = LINKS.map((link) => (
+    <Link key={link.href} href={link.href} aria-current={pathname.startsWith(link.href) ? "page" : undefined}>
+      <span className="nav-icon"><Icon name={link.icon} /></span>
+      <span>{link.label}</span>
+    </Link>
+  ));
   if (pathname === "/") {
     return (
       <header className="site-header landing-header">
@@ -60,22 +66,22 @@ export default function Header() {
     );
   }
   return (
-    <header className="site-header app-header">
-      <div className="shell header-row">
-        <Link href="/app" className="brand-link" aria-label="Canopy app home">
-          <span className="brand-mark"><img src="/mark.svg" alt="" width={30} height={30} /></span>
-          <span className="brand-copy"><strong>CANOPY</strong><small>APP</small></span>
-        </Link>
-        <nav className="primary-nav" aria-label="Primary navigation">
-          {LINKS.map((link) => (
-            <Link key={link.href} href={link.href} aria-current={pathname.startsWith(link.href) ? "page" : undefined}>
-              <span className="nav-icon"><Icon name={link.icon} /></span>
-              <span>{link.label}</span>
-            </Link>
-          ))}
-        </nav>
-        <div className="header-actions"><PwaInstall /><WalletButton /></div>
-      </div>
-    </header>
+    <>
+      <header className="site-header app-header">
+        <div className="shell header-row">
+          <Link href="/app" className="brand-link" aria-label="Canopy app home">
+            <span className="brand-mark"><img src="/mark.svg" alt="" width={30} height={30} /></span>
+            <span className="brand-copy"><strong>CANOPY</strong><small>APP</small></span>
+          </Link>
+          <nav className="primary-nav" aria-label="Primary navigation">
+            {appLinks}
+          </nav>
+          <div className="header-actions"><PwaInstall /><WalletButton /></div>
+        </div>
+      </header>
+      <nav className="mobile-primary-nav" aria-label="Primary navigation">
+        {appLinks}
+      </nav>
+    </>
   );
 }
