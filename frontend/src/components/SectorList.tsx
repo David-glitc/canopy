@@ -36,6 +36,16 @@ type GroveRow = GroveData & {
 
 const STATUS = ["Funding", "Closed", "Cancelled", "Revealed"] as const;
 
+function sortGroveRows(rows: GroveRow[]) {
+  return rows.sort((a, b) => {
+    const aPublished = a.metadata.tokens.length > 0 ? 1 : 0;
+    const bPublished = b.metadata.tokens.length > 0 ? 1 : 0;
+    if (aPublished !== bPublished) return bPublished - aPublished;
+    if (a.status !== b.status) return a.status - b.status;
+    return Number(b.deadline - a.deadline);
+  });
+}
+
 function fmtUSD(micros: bigint, digits = 2): string {
   return `$${(Number(micros) / 1e6).toLocaleString(undefined, { maximumFractionDigits: digits })}`;
 }
@@ -71,7 +81,6 @@ export default function SectorList() {
         connection.getProgramAccounts(CANOPY_ID, { filters: [{ dataSize: 8 + 119 }] }),
       ]);
       const addresses = accts.map(({ pubkey }) => pubkey.toBase58());
-      const metadataByAddress = await loadVaultMetadataBatch(connection, addresses);
       const depositsByGrove = new Map<string, Array<{ index: number; deposit: bigint }>>();
       for (const { account } of recordAccounts) {
         try {
@@ -95,21 +104,21 @@ export default function SectorList() {
           return [{
             address,
             ...parseGrove(new Uint8Array(account.data)),
-            metadata: metadataByAddress.get(address) ?? fallbackVaultMetadata(address),
+            metadata: fallbackVaultMetadata(address),
             fundingSeries: fundingSeries.length > 1 ? fundingSeries : [0, 0],
           }];
         } catch {
           return [];
         }
       });
-      rows.sort((a, b) => {
-        const aPublished = a.metadata.tokens.length > 0 ? 1 : 0;
-        const bPublished = b.metadata.tokens.length > 0 ? 1 : 0;
-        if (aPublished !== bPublished) return bPublished - aPublished;
-        if (a.status !== b.status) return a.status - b.status;
-        return Number(b.deadline - a.deadline);
-      });
-      setGroves(rows);
+      setGroves(sortGroveRows(rows));
+
+      const metadataByAddress = await loadVaultMetadataBatch(connection, addresses);
+      const enriched = rows.map((row) => ({
+        ...row,
+        metadata: metadataByAddress.get(row.address) ?? row.metadata,
+      }));
+      setGroves(sortGroveRows(enriched));
     } catch (cause) {
       setGroves((current) => current ?? []);
       setError((current) => current ?? `Could not refresh on-chain vaults: ${cause instanceof Error ? cause.message.slice(0, 100) : "RPC unavailable"}`);
@@ -133,7 +142,10 @@ export default function SectorList() {
   }, [connection, load]);
 
   const visibleGroves = useMemo(
-    () => (groves ?? []).filter((grove) => grove.metadata.tokens.length > 0),
+    () => (groves ?? []).filter((grove) =>
+      grove.metadata.tokens.length > 0 ||
+      (grove.status === 0 && Number(grove.deadline) > Math.floor(Date.now() / 1000))
+    ),
     [groves],
   );
 
@@ -255,10 +267,9 @@ export default function SectorList() {
     <div className="vault-dashboard">
       <section className="vault-command">
         <div className="vault-command-copy">
-          <span className="live-label"><i /> ONCHAIN NOW</span>
-          <p className="vault-command-eyebrow">Collective vault value</p>
+          <span className="live-label"><i /> LIVE</span>
+          <p className="vault-command-eyebrow">Total funded</p>
           <p className="vault-command-value"><CompanyLogo symbol="USDC" name="USDC" className="usdc-logo usdc-logo-hero" />{groves === null ? "—" : fmtUSD(aggregate.tvl)}</p>
-          <p className="vault-command-note">Every deposit creates a unique position. NAV follows the pooled balance.</p>
         </div>
         <div className="vault-command-chart">
           <div className="vault-chart-head"><span>VAULT FUNDING</span><strong>{aggregate.progress.toFixed(1)}%</strong></div>
@@ -273,8 +284,8 @@ export default function SectorList() {
 
       <div className="vault-toolbar">
         <div>
-          <p className="vault-section-label">LIVE VAULTS</p>
-          <p className="vault-toolbar-copy">{groves === null ? "Reading on-chain accounts…" : `${visibleGroves.length} published on-chain ${visibleGroves.length === 1 ? "vault" : "vaults"}`}</p>
+          <p className="vault-section-label">VAULTS</p>
+          <p className="vault-toolbar-copy">{groves === null ? "Reading on-chain accounts…" : `${visibleGroves.length} live on-chain ${visibleGroves.length === 1 ? "vault" : "vaults"}`}</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => void load()} className="btn-ghost px-4 py-2 text-sm">Refresh data</button>

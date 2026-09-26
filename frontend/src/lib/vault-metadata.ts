@@ -153,17 +153,23 @@ export async function loadVaultMetadataBatch(
 
   if (missing.length > 0) {
     try {
-      const response = await fetch(connection.rpcEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(missing.map((address, index) => ({
-          jsonrpc: "2.0",
-          id: index + 1,
-          method: "getSignaturesForAddress",
-          params: [address, { limit: 8, commitment: "confirmed" }],
-        }))),
-      });
-      if (!response.ok) throw new Error(`Metadata RPC returned ${response.status}`);
+      const requestBody = JSON.stringify(missing.map((address, index) => ({
+        jsonrpc: "2.0",
+        id: index + 1,
+        method: "getSignaturesForAddress",
+        params: [address, { limit: 8, commitment: "confirmed" }],
+      })));
+      let response: Response | null = null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        response = await fetch(connection.rpcEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: requestBody,
+        });
+        if (response.ok) break;
+        if (attempt === 0) await new Promise((resolve) => window.setTimeout(resolve, 450));
+      }
+      if (!response?.ok) throw new Error(`Metadata RPC returned ${response?.status ?? "no response"}`);
       const payload = await response.json() as Array<{
         id: number;
         result?: Array<{ memo: string | null }>;

@@ -7,17 +7,17 @@ export const metadata = {
 
 export default function SectorsPage() {
   return (
-    <div className="shell pb-24 pt-10 sm:pt-16">
+    <div className="shell pb-24 pt-8 sm:pt-12">
       <div className="vault-page-head">
         <div>
-          <p className="page-kicker">Group vaults</p>
-          <h1 className="page-title">Build the position together.</h1>
+          <p className="page-kicker">Vaults</p>
+          <h1 className="page-title">Fund a stock basket.</h1>
         </div>
         <p className="page-lede">
-          Fund a 2–5 token stock set. Mint sealed. Reveal a non-zero claim on the vault.
+          Create or join a live USDC funding cycle.
         </p>
       </div>
-      <div className="mt-10">
+      <div className="mt-6">
         <SectorList />
       </div>
     </div>
