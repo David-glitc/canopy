@@ -1,88 +1,85 @@
-# Canopy — collectible claims on tokenized equity
+# Canopy
 
-**A technocratic cipher-society for tokenized stocks on Solana.** Fund a Sector → mint a sealed Share → reveal a deterministic operative backed by transparent vault accounting → govern by market, not by whales. Solo pulls reveal instantly. Chrome, signal, math.
+**Collect stocks like cards.** Canopy is building collectible NFT ownership claims on tokenized stock portfolios on Solana. Fund with USDC, reveal a character, and redeem the underlying stock tokens. The dollar figure is the position’s estimated value; the NFT’s resale price can be higher or lower.
 
-Built for **STOCKLANA** (Solana tokenized-stocks hackathon).
+Built for STOCKLANA. [Open the app](https://xcanopy.vercel.app/app) · [Watch the film](https://xcanopy.vercel.app/film)
 
-## Demo
+**Implementation status:** the current devnet contracts hold and return test mUSDC. Stock choices are recorded targets; swaps and stock-token redemption are not implemented. The flow below describes the intended protocol, not a claim that today’s NFTs hold purchased stocks.
 
-- **Live app:** https://xcanopy.vercel.app
-- **Video walkthrough:** _(link after recording — shots below)_
-- **Programs (devnet):** `canopy` `9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf` ·
-  `canopy-futarchy` `BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k`
-- **Faucet:** in-app test funds (10 mUSDC + 0.05 SOL, devnet).
+## Demo videos
 
-## How it works
+[![Watch the Canopy stock-gacha film](https://34my0igsumg3dye4.public.blob.vercel-storage.com/launch/2026-09-27/stock-gacha-v2/canopy-stock-gacha-poster.jpg)](https://xcanopy.vercel.app/film)
 
-1. **Sectors** — permissionless funding cells with goal/deadline/min. Fund to
-   mint a sealed Core NFT Share. Close on goal, cancel + refund if short.
-2. **Reveal** — slot-hash entropy → deposit-weighted 0.5–2.0× rolls,
-   normalized to exactly 1e18 (floor > 0). Rarity follows ownership share.
-3. **Governance (futarchy)** — established Sectors are governed by conditional
-   PASS/FAIL markets. Proposers bond both sides so a book always exists; the
-   time-weighted price decides; silence keeps the status quo. No withdrawals.
-4. **Instant** — solo micro-vault ($1.50+) minted + revealed in one tx, 1% to
-   treasury. Same engine, zero waiting.
-5. **Cards** — deterministic 27-ingredient compositor (pixel bases modeled
-   from concept art + vector rarity frames + procedural overlays). Dual
-   rarity: economic (chain) + cosmetic (DNA frame).
+| Video | Watch |
+| --- | --- |
+| Stock-gacha journey · 60 seconds, narration and music | [Landscape](https://34my0igsumg3dye4.public.blob.vercel-storage.com/launch/2026-09-27/stock-gacha-v2/canopy-stock-gacha.mp4) · [Vertical](https://34my0igsumg3dye4.public.blob.vercel-storage.com/launch/2026-09-27/stock-gacha-v2/canopy-stock-gacha-vertical.mp4) |
+| Collectible art edit · 35 seconds, music | [Landscape](https://34my0igsumg3dye4.public.blob.vercel-storage.com/launch/2026-09-27/canopy-launch.mp4) · [Vertical](https://34my0igsumg3dye4.public.blob.vercel-storage.com/launch/2026-09-27/canopy-launch-vertical.mp4) |
 
-## Why Solana
+These films use illustrative portfolios to explain the product. They are not recordings of completed stock purchases. [English captions](frontend/public/canopy-film.vtt) accompany the journey film.
 
-PreStocks market references · Metaplex Core single-account NFTs with enforced
-plugins · verified Pyth Receiver prices · sub-cent fees that make $1.50 pulls
-practical.
+## Run locally
 
-## Run it
+Use Node.js 20.9+ and pnpm 10.25.0. From the repository root:
 
 ```bash
-# programs
-cargo build-sbf
-solana program deploy target/deploy/canopy.so --program-id target/deploy/canopy-keypair.json
-# scripts (devnet proofs)
-node scripts/prove-d2-groves.mjs && node scripts/prove-d3-futarchy.mjs
-node scripts/prove-d4-reveal.mjs && node scripts/prove-d5-instant.mjs
-# app
-pnpm install
-pnpm --dir frontend install
-pnpm --dir frontend dev   # http://localhost:3000
+cd frontend
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-Env (`frontend/.env.local`): `NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID`,
-`FAUCET_KEY_JSON='[...]'` (devnet drip wallet), and optionally `PYTH_API_KEY`.
+Open `http://localhost:3000`. The canonical app lives in `frontend`, not the root Next.js scaffold. See the [frontend setup](frontend/README.md) for Dynamic sign-in, RPC, storage and faucet configuration.
 
-## Layout
+## Instants and vaults
 
-| Path | What |
-|---|---|
-| `programs/canopy` | Groves, vaults, Shares, reveal, claim, instant, treasury |
-| `programs/canopy-futarchy` | Conditional vault + PASS/FAIL CPMM + TWAP + redeem |
-| `packages/card-engine` | DNA → layer spec (tests: `node --test`) |
-| `packages/registry` | xStock / mock asset registry |
-| `frontend` | Canonical Next.js app: markets, Instant, Sectors, card API, faucet |
-| `art` | Pixel/vector generators, layers, brand, contact sheets |
-| `scripts` | Devnet proofs (each asserts PASS on-chain) |
-| `keeper` | Crank scripts (automation batch) |
+| | Instant | Group vault |
+| --- | --- | --- |
+| Ownership | One NFT owns 100% of a personal portfolio | Each NFT owns a share of a shared portfolio |
+| Stock choice | Custom: 1–5 stocks and allocation weights. Mystery: one stock selected after mint from a committed pool | Creator configures the basket; contributors fund it |
+| Timing | No group fundraising cycle | Funding → close → buy → reveal |
+| Intended redemption | All stock tokens backing the personal position | The card’s share of each underlying stock token |
 
-## Hackathon tracks
+For a Mystery Instant, configure eligible stocks and draw odds before signing. The confirmed mint seed determines one stock target; there is no pre-mint draw. Current slot-hash entropy is not production-grade economic randomness. See [Instant modes](docs/instant-modes.md).
 
-- **PreStocks:** live private-market discovery and source-linked claim metadata.
-- **Pyth:** verified AAPL equity/AAPLx Receiver prices, confidence, freshness guard, and parity.
+### USDC in. Stock tokens out.
 
-## Video shots (90s)
+```text
+USDC deposit → purchase stock tokens → tokens held in vault
+                                             │
+                                   NFT ownership claim
+                                             │
+                               redeem underlying tokens
+```
 
-1. Landing → connect → faucet drip. 2. `/instant`: $2 mint → rip → Legendary →
-   claim. 3. `/sectors`: open Sector → fund ×2 → seal → commit → reveal →
-   weights Σ 100%. 4. Governance tab: proposal market, PASS price, finalize.
-   5. Card metadata/image routes + explorer links. End on doctrine.
+USDC funds the purchase. After execution, the portfolio consists of the acquired stock tokens. Redemption transfers those tokens to the NFT holder without selling them for USDC. A cancelled, unpurchased group vault instead refunds its funding currency.
 
-## Status & risks
+For example, if a vault holds 2 NVDAx and 4 AAPLx, a 10% ownership claim redeems 0.2 NVDAx and 0.4 AAPLx, subject to token precision. USD NAV estimates their value; it does not set a cash payout. Stock-token ownership is also distinct from direct ownership of issuer shares. See the [stock-claim model and implementation boundary](docs/stock-claims.md).
 
-Devnet demo with mock mUSDC settlement and PreStocks reference data. Programs
-are unaudited. BurnV1 close is unverified on the current devnet Core version,
-so claim ships as mark-and-pay. PreStocks eligibility restrictions apply. Not
-investment advice; capital at risk.
+## What exists today
+
+- **Funding and minting:** devnet vaults, Metaplex Core collectibles, reveal, cancellation/refunds and test mUSDC recovery.
+- **Instants:** configurable targets and post-mint mystery selection, encoded in the NFT URI. These do not execute purchases.
+- **Collectibles:** structured DNA, five character classes, compatible procedural traits, SVG/3D rendering, reveal animations and metadata snapshots. Cosmetic traits do not determine financial entitlement.
+- **Collector profiles:** names, bios, featured cards and current NFT inventory, with Dynamic sign-in.
+- **Market discovery:** public xStock and PreStocks references, plus Pyth price context. A catalog entry or logo is not evidence of a vault holding.
+- **Decision-market prototype:** conditional PASS/FAIL markets and TWAP resolution. Resolving a proposal does not currently execute stock-basket rebalancing.
+
+Stock swaps, in-kind redemption following the NFT’s current owner, and production economic randomness remain required. The existing claim instruction checks the original funder and pays quote tokens; transferring a card does not transfer that legacy withdrawal right. Programs are unaudited. Historical devnet proofs are documented in [DEVELOPMENT.md](DEVELOPMENT.md).
+
+## Repository
+
+| Path | Purpose |
+| --- | --- |
+| `programs/canopy` | Vault funding, minting, reveal, quote-token claim and treasury |
+| `programs/canopy-futarchy` | Conditional markets, TWAP and resolution |
+| `frontend` | Next.js app, profiles, markets and card APIs |
+| `frontend/src/lib/matter` | DNA, asset registry, scene assembly, SVG/GLB and snapshots |
+| `frontend/src/lib/instant-config.ts` | Versioned allocations and deterministic mystery target selection |
+| `packages/registry` | Stock and test-token registry |
+| `scripts` / `keeper` | Devnet proof scripts and lifecycle automation |
+| `brag-output/composition` | Remotion demo and launch-film sources |
+
+Deployed on **Solana devnet**: Canopy `9xmniHhMGswjyMGf9jW7YCireJaUARBozRSDWYU1Jrnf`; decision markets `BP4hBGTDh2a3Rq1jarE2CQUUpBJcdr5a2KWnwP9qu68k`.
 
 ## License
 
-MIT — see LICENSE.
+MIT — see [LICENSE](LICENSE).

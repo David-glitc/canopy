@@ -1,38 +1,45 @@
 # Canopy web app
 
-Canopy turns a private-market thesis into a collectible, verifiable claim on Solana. The app combines live [PreStocks](https://prestocks.com/products) discovery, Pyth equity/token feed context, devnet vaults, deterministic reveal cards, and conditional-market governance.
+The canonical Canopy interface: stock discovery, configurable Instants, group vaults, collectible profiles and procedural card reveals. See the [project README](../README.md) for the protocol model and demo videos.
 
-## Live app
-
-**https://xcanopy.vercel.app**
-
-The `/markets` desk loads the current PreStocks catalog from the official API. Selecting a company carries its symbol, Solana mint, and reference price into a Canopy claim. The Pyth panel resolves the canonical AAPL equity and AAPLx token feeds, reads fully verified Pyth Receiver accounts on Solana, and blocks parity calculations when either update is stale. A Pyth Pro key takes precedence when configured.
-
-All transactions currently settle on Solana devnet using mock mUSDC. The PreStocks reference is preserved in the NFT metadata; the app does not claim that the devnet vault holds the mainnet PreStocks asset.
+**USDC funds the purchase; the intended redemption delivers stock tokens.** USD NAV is a valuation. The current devnet implementation still holds and returns test mUSDC, with stock purchases and in-kind redemption pending.
 
 ## Run locally
 
+Use Node.js 20.9+ and pnpm 10.25.0. From this directory:
+
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Create `.env.local` for wallet and server integrations:
+Open `http://localhost:3000`. The app defaults to Solana devnet. It can render without a funded faucet wallet; wallet transactions and server integrations need the corresponding configuration.
 
-```bash
-NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID=...
-FAUCET_KEY_JSON='[...]'
-PYTH_API_KEY=...
-```
+## Configuration
 
-`PYTH_PRO_API_KEY` is also accepted. Keep Pyth credentials server-side.
+Set these in `.env.local` or your deployment environment. Never commit credentials.
 
-## Validate
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID` | Your Dynamic environment; configure allowed origins, email sign-in and Solana wallets in Dynamic |
+| `NEXT_PUBLIC_SOLANA_RPC_URL` | Browser RPC; defaults to public Solana devnet |
+| `SOLANA_DEVNET_RPC_URL` | Server RPC override for the faucet |
+| `FAUCET_KEY_JSON` | Server-only JSON secret-key array for a funded devnet faucet wallet |
+| `PYTH_API_KEY` or `PYTH_PRO_API_KEY` | Optional server-only Pyth API credential |
+| `BLOB_READ_WRITE_TOKEN` | Server-only Vercel Blob token for persistent metadata snapshots |
 
-```bash
-pnpm lint
-pnpm build
-node --test packages/card-engine/test.mjs
-```
+Use a Dynamic environment you control for your own deployment. Never point the current mUSDC contract setup at mainnet as a shortcut to stock support.
 
-The two deployed devnet programs are linked in the site footer.
+## Main surfaces
+
+| Route | Purpose |
+| --- | --- |
+| `/` / `/app` | Landing page / app home |
+| `/markets` | Stock discovery |
+| `/instant` | Configure a personal basket or a post-mint mystery stock target |
+| `/sectors` | Shared vaults |
+| `/profile` / `/people` | Inventory and collector profiles |
+| `/share/[mint]` | Card, actual vault balances and ownership details |
+| `/film` | Captioned launch film and vertical download |
+
+Actual token balances and planned allocations are separate data. A target ticker, stock logo or USD quote must never be displayed as proof of an executed purchase. See [stock claims](../docs/stock-claims.md) and [Instant configuration](../docs/instant-modes.md).
